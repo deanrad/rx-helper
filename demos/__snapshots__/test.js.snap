@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`All Demos concurrentFruit demo should abort in-flight renders in latest mode 1`] = `
+"  ①  🍓  💥
+  ②  🍌  🍌  💥
+  ③  🍉  🍉  🍉  💥
+  ⑨  🥑  🥑  🥑  🥑  🥑   ④  🍍  🍍  🍍  🍍  💥
+  ⑤  🍏  🍏  🍏  🍏  🍏  💥
+"
+`;
+
+exports[`All Demos concurrentFruit demo should run in parallel 1`] = `
+"  ①  🍓  💥
+  ②  🍌  🍌  💥
+  ③  🍉  🍉  🍉  💥
+  ⑨  🥑  🥑  🥑  🥑  🥑   ④  🥑  🍍  🥑  🍍  🥑  🍍  🥑  💥
+ 🍍  💥
+  ⑤  🍏  🍏  🍏  🍏  🍏  💥
+"
+`;
+
+exports[`All Demos concurrentFruit demo should run in series 1`] = `
+"  ①  🍓  💥
+  ②  🍌  🍌  💥
+  ③  🍉  🍉  🍉  💥
+  ⑨  🥑  🥑  🥑  🥑  🥑   ④  🥑  🥑  🥑  🥑  💥
+ 🍍   ⑤  🍍  🍍  🍍  💥
+ 🍏  🍏  🍏  🍏  🍏  💥
+"
+`;
+
+exports[`All Demos writeFileDemo should work asynchronously 1`] = `
+"> Got some data for file ./demos/scratch/actors.md: Jake Weary
+> Processing action Actor.save
+< Done processing - No more to do?
+OK Bye!
+"
+`;
+
+exports[`All Demos writeFileDemo should work synchronously 1`] = `
+"> Got some data for file ./demos/scratch/actors.md: Jake Weary
+> Processing action Actor.save
+File now contains: - Jake Weary
+
+< Done processing - No more to do?
+OK Bye!
+"
+`;
