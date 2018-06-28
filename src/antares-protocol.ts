@@ -1,4 +1,4 @@
-import { Observable, from, Subject, Subscription, asyncScheduler } from "rxjs"
+import { Observable, Subject, Subscription, asyncScheduler, from } from "rxjs"
 import { observeOn } from "rxjs/operators"
 import {
   AntaresProcessor,
@@ -16,7 +16,7 @@ export * from "./types"
 export class AntaresProtocol implements AntaresProcessor {
   subject: Subject<ActionStreamItem>
   action$: Observable<ActionStreamItem>
-  _rendererCount = 0
+  _subscriberCount = 0
   filterNames: Array<string>
   rendererNames: Array<string>
   activeRenders: Map<string, Subscription>
@@ -71,21 +71,28 @@ export class AntaresProtocol implements AntaresProcessor {
       !config || !config.mode || config.mode !== SubscribeMode.async,
       "addFilter only subscribes synchronously, check your config."
     )
-    const name = config.name || `filter_${++this._rendererCount}`
+    validateSubscriberName(config.name)
+    const name = config.name || `filter_${++this._subscriberCount}`
+    this.filterNames.push(name)
     // RxJS subscription mode is synchronous by default
+    const errHandler = (e: Error) => {
+      console.error("So sad, an error" + e.message)
+    }
+
     const sub = this.action$.subscribe(asi => {
       const { action, results } = asi
       const result = subscriber(asi)
       results.set(name, result)
-    })
+    }, errHandler)
     return sub
   }
 
   addRenderer(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
-    const name = config.name || `renderer_${++this._rendererCount}`
-    const concurrency = config.concurrency
-
+    validateSubscriberName(config.name)
+    const name = config.name || `renderer_${++this._subscriberCount}`
     this.rendererNames.push(name)
+
+    const concurrency = config.concurrency
     const sub = this.action$.pipe(observeOn(asyncScheduler)).subscribe(asi => {
       const itHasBegun = new Subject<boolean>()
       itHasBegun.complete()
@@ -118,6 +125,12 @@ export class AntaresProtocol implements AntaresProcessor {
         inProgress && inProgress.unsubscribe()
         subAndSave()
       }
+      // Bug hiding below: if you run the fruit serial demo,
+      // two keypresses in close succession will both run
+      // after the current inProgress, but not themselves serially
+      // ⑨  🥑   ②  🥑   ①  🥑  🥑  🥑  🥑  🥑  🥑  🥑  💥
+      // 🍌  🍓  💥
+      // 🍌  💥  <-- note the interleaving of banana and strawberry
       if (concurrency === Concurrency.serial) {
         inProgress ? inProgress.add(subAndSave) : subAndSave()
       }
@@ -128,3 +141,12 @@ export class AntaresProtocol implements AntaresProcessor {
     return sub
   }
 }
+
+function validateSubscriberName(name: string | undefined) {
+  assert(
+    !name || !reservedSubscriberNames.includes(name),
+    "The following subscriber names are reserved: " + reservedSubscriberNames.join(", ")
+  )
+}
+
+export const reservedSubscriberNames = ["completed", "then", "catch"]
