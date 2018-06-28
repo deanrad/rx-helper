@@ -10,21 +10,23 @@ import {
   SubscriberConfig,
   SubscribeMode
 } from "./types"
-const assert = require("assert")
+import assert from "assert"
 export * from "./types"
 
 export class AntaresProtocol implements AntaresProcessor {
-  subject: Subject<ActionStreamItem>
+  actionStream: Subject<ActionStreamItem>
   action$: Observable<ActionStreamItem>
   _subscriberCount = 0
   filterNames: Array<string>
+  allFilters: Map<string, Subscriber>
   rendererNames: Array<string>
   activeRenders: Map<string, Subscription>
 
   constructor() {
-    this.subject = new Subject<ActionStreamItem>()
-    this.action$ = this.subject.asObservable()
+    this.actionStream = new Subject<ActionStreamItem>()
+    this.action$ = this.actionStream.asObservable()
     this.filterNames = []
+    this.allFilters = new Map<string, Subscriber>()
     this.rendererNames = []
     this.activeRenders = new Map<string, Subscription>()
   }
@@ -39,13 +41,28 @@ export class AntaresProtocol implements AntaresProcessor {
     })
     const item = { action, results, renderBeginnings, renderEndings }
 
-    // synchronous renderers will run, or explode, upon the next line
-    this.subject.next(item)
+    // Run all filters sync (RxJS as of v6 no longer will sync error)
+    for (let filterName of this.allFilters.keys()) {
+      let filter = this.allFilters.get(filterName) || (() => null)
+      let result
+      let err
+      try {
+        result = filter(item)
+      } catch (ex) {
+        err = ex
+        throw ex
+      } finally {
+        results.set(filterName, result || err)
+      }
+    }
+
+    // If we passed filtering, next it on to the action stream
+    this.actionStream.next(item)
 
     // Our result is a shallow clone of the action...
     let resultObject = Object.assign({}, action)
 
-    // with readonly properties for each result
+    // Add readonly properties for each result
     for (let [key, value] of results.entries()) {
       Object.defineProperty(resultObject, key.toString(), {
         value,
@@ -55,7 +72,7 @@ export class AntaresProtocol implements AntaresProcessor {
       })
     }
 
-    // allow hooking the completion of async renders
+    // Allow hooking the completion of async renders
     Object.defineProperty(resultObject, "completed", {
       get() {
         return Promise.all(
@@ -63,10 +80,12 @@ export class AntaresProtocol implements AntaresProcessor {
         )
       }
     })
+
+    // Now they get their result
     return resultObject as ProcessResult
   }
 
-  addFilter(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
+  addFilter(filter: Subscriber, config: SubscriberConfig = {}): Subscription {
     assert(
       !config || !config.mode || config.mode !== SubscribeMode.async,
       "addFilter only subscribes synchronously, check your config."
@@ -74,16 +93,18 @@ export class AntaresProtocol implements AntaresProcessor {
     validateSubscriberName(config.name)
     const name = config.name || `filter_${++this._subscriberCount}`
     this.filterNames.push(name)
-    // RxJS subscription mode is synchronous by default
+    this.allFilters.set(name, filter)
+
     const errHandler = (e: Error) => {
       console.error("So sad, an error" + e.message)
     }
 
-    const sub = this.action$.subscribe(asi => {
-      const { action, results } = asi
-      const result = subscriber(asi)
-      results.set(name, result)
-    }, errHandler)
+    // The subscription does little except give us an object
+    // which, when unsubscribed, will remove our filter
+    const sub = this.action$.subscribe(asi => null, errHandler)
+    sub.add(() => {
+      this.allFilters.delete(name)
+    })
     return sub
   }
 

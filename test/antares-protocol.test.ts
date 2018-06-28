@@ -161,13 +161,13 @@ describe("AntaresProtocol", () => {
         return assertion
       })
       describe("errors in filters", () => {
-        xit("should propogate up to the caller of #process", () => {
+        it("should propogate up to the caller of #process", () => {
           antares.addFilter(() => {
             throw new Error("whoops!")
           })
           expect(() => {
             antares.process({ type: "timebomb" })
-          }).toThrow()
+          }).toThrowErrorMatchingSnapshot()
         })
       })
       describe("errors in async renderers", () => {
