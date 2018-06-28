@@ -1,3 +1,4 @@
+// @ts-nocheck
 const Demos = require("./configs")
 const { AntaresProtocol } = require("../src/antares-protocol")
 

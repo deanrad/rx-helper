@@ -14,6 +14,13 @@ async function sequentiallyRun() {
 
     const [demoFn, config] = Demos[key]
 
+    // pick up CLI overrides
+    for(let key of Object.keys(config)) {
+      if (process.env[key]) {
+        config[key] = process.env[key]
+      }
+    }
+
     log("\n" + `Demo ${key} (${JSON.stringify(config)})` + "\n--------")
     await demoFn({ AntaresProtocol, config, stdout, log, append, interactive })
     // give some time to flush

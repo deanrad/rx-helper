@@ -104,7 +104,8 @@ module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = fal
         s.next(Number(ch))
       } else {
         process.stdin.pause()
-        s.error("Not 0-9.\nBye!")
+        log("Not 0-9.\nBye!")
+        s.complete()
       }
     })
 
