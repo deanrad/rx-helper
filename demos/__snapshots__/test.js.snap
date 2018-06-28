@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`All Demos batchedWriteDemo should run slower without batching 1`] = `
+"TODO run this demo
+"
+`;
+
+exports[`All Demos batchedWriteDemo should run utlimately faster with batching 1`] = `
+"TODO run this demo
+"
+`;
+
 exports[`All Demos concurrentFruit demo should abort in-flight renders in latest mode 1`] = `
 "  ①  🍓  💥
   ②  🍌  🍌  💥

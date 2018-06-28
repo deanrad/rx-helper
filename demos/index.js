@@ -1,4 +1,14 @@
-// this file is to run npm run demos; npm run demos:test uses jest
+// This file is to run all demos+configs specified in configs.js
+// Example: npm run demos     # run them all, building the JS first
+//          node demos/index  # run them to skip the build if no antares change made
+//
+//          # Only demos whos key in config matches 'Fruit'
+//          cross-env DEMO=Fruit npm run demos
+//
+//          # Substitutes an Observable taken from user input for a hard-coded one
+//          cross-env DEMO=Speak INTERACTIVE=1 npm run demos 
+// See also: npm run demos:test (uses jest)
+// See alse: ./configs.js
 const Demos = require("./configs")
 const process = require("process")
 const { stdout } = process
