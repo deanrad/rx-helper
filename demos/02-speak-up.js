@@ -1,7 +1,7 @@
 const { interval, Observable, Subject, from } = require("rxjs")
-const { map, take } = require("rxjs/operators")
+const { flatMap, map, take, zip } = require("rxjs/operators")
 
-const sayings = ["International House of Pancakes", "Starbucks"]
+const sayings = from(["International House of Pancakes", "Starbucks", "Dunkin"])
 
 /*
     The flow of this demo is:
@@ -15,27 +15,39 @@ const sayings = ["International House of Pancakes", "Starbucks"]
 module.exports = ({ AntaresProtocol, log, config }) => {
   const interactive = !!process.env.INTERACTIVE
   const infinite = !!process.env.INFINITE
-  const { count, concurrency = "parallel" } = config
-  doIt()
-  return startTick()
+  const { count = 2, concurrency = "parallel", tickInterval = 250 } = config
+  // show elapsing of time in the log
+  if (!interactive) {
+    startTick(log, tickInterval)
+  }
 
-  function doIt() {
+  return doIt()
+
+  async function doIt() {
     let antares = new AntaresProtocol()
 
     // This one speaks things
     antares.addRenderer(speakIt, { concurrency })
 
-    // process our actions
-    getActions(interactive).subscribe(action => {
-      log(`> Processing action: Actor.save(${action.payload.toSpeak})`)
-      antares.process(action)
-      log("< Done Processing")
-    })
+    // We don't await the processing of each action, but we
+    // return a promise for the completion of all renderings
+    // because the demo runner needs that to serialize demos.
+    let allRenders = Promise.resolve()
+    return getActions(interactive)
+      .pipe(
+        flatMap(action => {
+          log(`> Processing action: Say.speak("${action.payload.toSpeak}")`)
+          let result = antares.process(action)
+          log("< Done Processing")
+          return result.completed.then(() => log("< Done speaking"))
+        })
+      )
+      .toPromise()
   }
 
   function getActions(interactive) {
-    return getDemoActions() // XXX interactive mode is busted
-    // return interactive ? from(getUserActions()) : getDemoActions()
+    //return getDemoActions() // XXX interactive mode is busted
+    return interactive ? getUserActions() : getDemoActions()
   }
 
   // By returning an Observable, we can either hand back a static array
@@ -43,28 +55,32 @@ module.exports = ({ AntaresProtocol, log, config }) => {
   function getDemoActions() {
     if (infinite) {
       const faker = require("faker")
-      return interval(1000).pipe(
+      const controls = [
         map(() => ({
           payload: {
             toSpeak: faker.company.catchPhrase()
           }
         }))
-      )
+      ]
+      if (count) {
+        controls.push(take(count))
+      }
+      return interval(1000).pipe(...controls)
     }
 
-    const sayingsAsActions = sayings
-      .slice(0, count || 2)
-      .map(saying => ({ payload: { toSpeak: saying } }))
     return interval(250).pipe(
-      map(i => sayingsAsActions[i]),
-      take(2)
+      zip(sayings, (_, toSpeak) => ({
+        payload: {
+          toSpeak
+        }
+      })),
+      take(count)
     )
   }
 
   function getUserActions() {
     const inquirer = require("inquirer")
-    return Promise.race([
-      new Promise((resolve, reject) => setTimeout(reject, 10000)),
+    return from(
       inquirer
         .prompt([
           {
@@ -76,6 +92,10 @@ module.exports = ({ AntaresProtocol, log, config }) => {
             message: "Type your 2nd thing to say:"
           }
         ])
+        .then(result => {
+          startTick(log, tickInterval)
+          return result
+        })
         .then(({ say1, say2 }) => {
           return [
             {
@@ -90,12 +110,17 @@ module.exports = ({ AntaresProtocol, log, config }) => {
             }
           ]
         })
-    ])
+      ).pipe(
+        // expand these into their individual actions
+        flatMap(arr => from(arr)),
+        // space them out: zip 'waits' on its argument
+        //zip(interval(tickInterval * 2), action => action)
+      )
   }
 
-  function startTick() {
+  function startTick(log, interval) {
     // overall timing to show us where we're at and exit tidily
-    let tick = setInterval(() => log("•"), 250)
+    let tick = setInterval(() => log("•"), interval)
     return new Promise(resolve =>
       setTimeout(() => {
         clearInterval(tick)
@@ -116,7 +141,6 @@ module.exports = ({ AntaresProtocol, log, config }) => {
       try {
         const say = require("say")
         say.speak(toSpeak, null, null, () => {
-          log("Done rendering")
           observer.complete()
         })
 
