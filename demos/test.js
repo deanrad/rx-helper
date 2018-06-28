@@ -94,7 +94,7 @@ describe("All Demos", () => {
       await demoFn({ AntaresProtocol, config, log, append })
       expect(output).toMatchSnapshot()
     })
-    it("should abort in-flight renders in latest mode", async () => {
+    it("should abort in-flight renders in cutoff mode", async () => {
       const [demoFn, config] = Demos.freshFruit
       await demoFn({ AntaresProtocol, config, log, append })
       expect(output).toMatchSnapshot()
@@ -102,15 +102,14 @@ describe("All Demos", () => {
   })
 
   describe("batchedWriteDemo", () => {
+    // these run just for timing info
     it("should run slower without batching", async () => {
-      const [demoFn, config] = Demos.batchedWriteFile
+      const [demoFn, config] = Demos.unBatchedWriteFile
       await demoFn({ AntaresProtocol, config, log, append })
-      expect(output).toMatchSnapshot()
     })
     it("should run utlimately faster with batching", async () => {
       const [demoFn, config] = Demos.batchedWriteFile
       await demoFn({ AntaresProtocol, config, log, append })
-      expect(output).toMatchSnapshot()
     })
   })
 })

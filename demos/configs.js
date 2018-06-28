@@ -15,11 +15,11 @@ let configs = {
   ],
   batchedWriteFile: [
     require("./04-batched-write"),
-    { xform: "s => s.pipe(bufferCount(1000))"}
+    { count: 5000, xform: "s => s.pipe(bufferCount(1000))"}
   ],
   unBatchedWriteFile: [
     require("./04-batched-write"),
-    { xform: "s => s"}
+    { count: 5000, xform: "s => s"}
   ]
 }
 

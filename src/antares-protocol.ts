@@ -113,54 +113,60 @@ export class AntaresProtocol implements AntaresProcessor {
   addRenderer(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
     validateSubscriberName(config.name)
     const name = config.name || `renderer_${++this._subscriberCount}`
+
+    const xform = config.xform || (stream => stream)
     this.rendererNames.push(name)
 
     const concurrency = config.concurrency
-    const sub = this.action$.pipe(observeOn(asyncScheduler)).subscribe(asi => {
-      const itHasBegun = new Subject<boolean>()
-      itHasBegun.complete()
-      asi.renderBeginnings.set(name, itHasBegun)
+    const sub = xform(this.action$)
+      .pipe(observeOn(asyncScheduler))
+      // Note if our stream has been transformed with such as bufferCount,
+      // we won't be processing an ASI, but rather some reduction of one
+      .subscribe(asi => {
+        const itHasBegun = new Subject<boolean>()
+        itHasBegun.complete()
+        asi.renderBeginnings && asi.renderBeginnings.set(name, itHasBegun)
 
-      // Renderers return Observables, usually of actions
-      const results = subscriber(asi)
+        // Renderers return Observables, usually of actions
+        const results = subscriber(asi)
 
-      // Eventually we may send actions back through, but for now at least subscribe
-      const completer = {
-        complete() {
-          // @ts-ignore
-          asi.renderEndings.get(name).complete()
-        },
-        error() {
-          // @ts-ignore
-          asi.renderEndings.get(name).error()
+        // Eventually we may send actions back through, but for now at least subscribe
+        const completer = {
+          complete() {
+            // @ts-ignore
+            asi.renderEndings && asi.renderEndings.get(name).complete()
+          },
+          error() {
+            // @ts-ignore
+            asi.renderEndings && asi.renderEndings.get(name).error()
+          }
         }
-      }
 
-      const inProgress = this.activeRenders.get(name)
-      let thisSub
-      const subAndSave = () => {
-        thisSub = results.subscribe(completer)
-        this.activeRenders.set(name, thisSub)
-      }
+        const inProgress = this.activeRenders.get(name)
+        let thisSub
+        const subAndSave = () => {
+          thisSub = results.subscribe(completer)
+          this.activeRenders.set(name, thisSub)
+        }
 
-      if (concurrency === Concurrency.cutoff) {
-        // cancel any in progress - the latest one is all we care
-        inProgress && inProgress.unsubscribe()
-        subAndSave()
-      }
-      // Bug hiding below: if you run the fruit serial demo,
-      // two keypresses in close succession will both run
-      // after the current inProgress, but not themselves serially
-      // ⑨  🥑   ②  🥑   ①  🥑  🥑  🥑  🥑  🥑  🥑  🥑  💥
-      // 🍌  🍓  💥
-      // 🍌  💥  <-- note the interleaving of banana and strawberry
-      if (concurrency === Concurrency.serial) {
-        inProgress ? inProgress.add(subAndSave) : subAndSave()
-      }
-      if (concurrency === Concurrency.parallel) {
-        subAndSave()
-      }
-    })
+        if (concurrency === Concurrency.cutoff) {
+          // cancel any in progress - the latest one is all we care
+          inProgress && inProgress.unsubscribe()
+          subAndSave()
+        }
+        // Bug hiding below: if you run the fruit serial demo,
+        // two keypresses in close succession will both run
+        // after the current inProgress, but not themselves serially
+        // ⑨  🥑   ②  🥑   ①  🥑  🥑  🥑  🥑  🥑  🥑  🥑  💥
+        // 🍌  🍓  💥
+        // 🍌  💥  <-- note the interleaving of banana and strawberry
+        if (concurrency === Concurrency.serial) {
+          inProgress ? inProgress.add(subAndSave) : subAndSave()
+        }
+        if (concurrency === Concurrency.parallel) {
+          subAndSave()
+        }
+      })
     return sub
   }
 }

@@ -48,10 +48,15 @@ export enum Concurrency {
   cutoff = "cutoff"
 }
 
+export interface StreamTransformer {
+  (stream: Observable<any>): Observable<any>
+}
+
 export interface SubscriberConfig {
   mode?: SubscribeMode
   name?: string
   concurrency?: Concurrency
+  xform?: StreamTransformer
 }
 
 /**
