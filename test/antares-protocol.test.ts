@@ -160,6 +160,26 @@ describe("AntaresProtocol", () => {
         // And return the assertion
         return assertion
       })
+      it("should run filters in order", () => {
+        expect.assertions(1)
+
+        // Define some functions about which we solely care
+        //  about their (synchronous) side-effects
+        let counter = 1
+        const incrementer = () => {
+          return counter += 0.1
+        }
+        const doubler = () => {
+          return counter *= 2
+        }
+
+        antares.addFilter(incrementer, { name: "inc" })
+        antares.addFilter(doubler, { name: "double" })
+
+        let result = antares.process(anyAction)
+        const { double, inc } = result
+        expect({ double, inc }).toMatchSnapshot()
+      })
       describe("errors in filters", () => {
         it("should propogate up to the caller of #process", () => {
           antares.addFilter(() => {
@@ -172,6 +192,7 @@ describe("AntaresProtocol", () => {
       })
       describe("errors in async renderers", () => {
         it("should not propogate up to the caller of #process", undefined)
+        it("should unsubscribe the renderer", undefined)
       })
     })
   })

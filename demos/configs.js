@@ -12,6 +12,10 @@ let configs = {
   freshFruit: [
     require("./03-concurrent-fruit"),
     { concurrency: "cutoff", outerInterval: 1000, innerInterval: 185 }
+  ],
+  batchedWriteFile: [
+    require("./04-batched-write"),
+    { xform: "s => s.pipe(bufferCount(1000))"}
   ]
 }
 

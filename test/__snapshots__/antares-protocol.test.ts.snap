@@ -1,3 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AntaresProtocol #process behavior errors in filters should propogate up to the caller of #process 1`] = `"whoops!"`;
+
+exports[`AntaresProtocol #process behavior should run filters in order 1`] = `
+Object {
+  "double": 2.2,
+  "inc": 1.1,
+}
+`;
