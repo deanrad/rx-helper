@@ -112,6 +112,15 @@ describe("All Demos", () => {
       await demoFn({ AntaresProtocol, config, log, append })
     })
   })
+
+  describe("cheatCodeDemo", () => {
+    it.only("should run the test", async () => {
+      const [demoFn, config] = Demos.cheatCode
+      await demoFn({ AntaresProtocol, config, log, append })
+      expect(output).toMatchSnapshot()
+    })
+    it("should run the test interactively", undefined)
+  })
 })
 
 // snapshots wont work for tests that sometimes aren't run - Jest says 'obsolete'!

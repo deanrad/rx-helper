@@ -15,12 +15,10 @@ let configs = {
   ],
   batchedWriteFile: [
     require("./04-batched-write"),
-    { count: 5000, xform: "s => s.pipe(bufferCount(1000))"}
+    { count: 5000, xform: "s => s.pipe(bufferCount(1000))" }
   ],
-  unBatchedWriteFile: [
-    require("./04-batched-write"),
-    { count: 5000, xform: "s => s"}
-  ]
+  unBatchedWriteFile: [require("./04-batched-write"), { count: 5000, xform: "s => s" }],
+  cheatCode: [require("./05-cheat-code"), { xform: "s => s /* TODO test timing */" }]
 }
 
 const failsInCI = {

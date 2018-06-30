@@ -39,7 +39,7 @@
     "commitmsg": "validate-commit-msg",
     "size": "size-limit",
     "demos": "npm run build && node demos/index",
-    "demos:test": "jest --expand --coverage false --testRegex=\"/demos/test\\.(ts|tsx|js)$\"",
+    "demos:test": "jest -u --expand --coverage false --testRegex=\"/demos/test\\.(ts|tsx|js)$\"",
     "prereqs:windows": "npm install -g --production node-gyp windows-build-tools"
   },
   "size-limit": [
