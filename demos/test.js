@@ -114,7 +114,7 @@ describe("All Demos", () => {
   })
 
   describe("cheatCodeDemo", () => {
-    it.only("should run the test", async () => {
+    it("should run the test", async () => {
       const [demoFn, config] = Demos.cheatCode
       await demoFn({ AntaresProtocol, config, log, append })
       expect(output).toMatchSnapshot()

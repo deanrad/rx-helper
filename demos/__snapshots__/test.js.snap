@@ -1,20 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`All Demos cheatCodeDemo should run the test 1`] = `
-"
-Press a key five times in a second to get a star (✨🌟✨), or 'x' to eXit:
-🕛
-🕐
-🕑
-🕒
-🕓
-🕕 🕕 🕕 🕕 🕕
-✨🌟✨
- *You got it!*
+"Press a key five times in a second to get a star (✨🌟✨), or 'x' to eXit:
 
- Bye
-
-"
+🕛 
+🕐 
+🕑 
+🕒 
+🕓 
+🕕  🕕  🕕  🕖  🕖   ✨🌟✨!
+🕗 "
 `;
 
 exports[`All Demos concurrentFruit demo should abort in-flight renders in cutoff mode 1`] = `

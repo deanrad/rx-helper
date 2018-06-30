@@ -2,7 +2,7 @@ const { Subject } = require("rxjs")
 const { bufferCount, map, tap } = require("rxjs/operators")
 const fs = require("fs")
 const faker = require("faker")
-const filePath = "./demos/scratch/04-batchWrite.txt"
+const filePath = "./demos/scratch/04-batched.yml"
 
 module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = false }) => {
   const { xform: xformJS = "s => s", count = 3 } = config
