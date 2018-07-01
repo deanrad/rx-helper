@@ -12,6 +12,7 @@ module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = fal
   const antares = new AntaresProtocol()
 
   // clear out file
+  fs.appendFileSync(filePath, "\n") // creates if doesn't exist
   fs.truncateSync(filePath)
 
   const completed = new Subject()
