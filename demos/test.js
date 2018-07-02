@@ -48,28 +48,20 @@ describe("All Demos", () => {
   })
   describe("writeFileDemo", () => {
     it("should work synchronously", async () => {
-      const [demoFn, config] = Demos.writeFileSync
-
-      await demoFn({ AntaresProtocol, config, log })
-
+      await runDemo(Demos.writeFileAsFilter)
       expect(output).toMatchSnapshot()
     })
 
     it("should work asynchronously", async () => {
-      const [demoFn, config] = Demos.writeFileAsync
-
-      await demoFn({ AntaresProtocol, config, log })
-
+      await runDemo(Demos.writeFileAsRenderer)
       expect(output).toMatchSnapshot()
     })
   })
 
   describe("speakUpDemo", () => {
-    // wait for others' output to flush
     beforeAll(async () => {
       return await new Promise(resolve => setTimeout(resolve, 200))
     })
-
     it("should hear overlapping speakings", async () => {
       if (!process.env.CI) {
         const [demoFn, config] = Demos.doubleSpeak || [() => true, {}]
@@ -85,18 +77,15 @@ describe("All Demos", () => {
 
   describe("concurrentFruit demo", () => {
     it("should run in parallel", async () => {
-      const [demoFn, config] = Demos.concurrentFruit
-      await demoFn({ AntaresProtocol, config, log, append })
+      await runDemo(Demos.concurrentFruit)
       expect(output).toMatchSnapshot()
     })
     it("should run in series", async () => {
-      const [demoFn, config] = Demos.serialFruit
-      await demoFn({ AntaresProtocol, config, log, append })
+      await runDemo(Demos.serialFruit)
       expect(output).toMatchSnapshot()
     })
     it("should abort in-flight renders in cutoff mode", async () => {
-      const [demoFn, config] = Demos.freshFruit
-      await demoFn({ AntaresProtocol, config, log, append })
+      await runDemo(Demos.freshFruit)
       expect(output).toMatchSnapshot()
     })
   })
@@ -104,19 +93,18 @@ describe("All Demos", () => {
   describe("batchedWriteDemo", () => {
     // these run just for timing info
     it("should run slower without batching", async () => {
-      const [demoFn, config] = Demos.unBatchedWriteFile
-      await demoFn({ AntaresProtocol, config, log, append })
+      expect.assertions(0)
+      await runDemo(Demos.unBatchedWriteFile)
     })
     it("should run utlimately faster with batching", async () => {
-      const [demoFn, config] = Demos.batchedWriteFile
-      await demoFn({ AntaresProtocol, config, log, append })
+      expect.assertions(0)
+      await runDemo(Demos.batchedWriteFile)
     })
   })
 
   describe("cheatCodeDemo", () => {
     it("should run the test", async () => {
-      const [demoFn, config] = Demos.cheatCode
-      await demoFn({ AntaresProtocol, config, log, append })
+      await runDemo(Demos.cheatCode)
       expect(output).toMatchSnapshot()
     })
     it("should run the test interactively", undefined)
@@ -137,3 +125,8 @@ const expectedSpeak = `•
 < Done speaking
 < Done speaking
 `
+async function runDemo(demo) {
+  const [demoFn, config] = demo
+  return await demoFn({ AntaresProtocol, config, log, append });
+}
+

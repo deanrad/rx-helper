@@ -1,6 +1,6 @@
 let configs = {
-  writeFileSync: [require("./01-write-file"), { syncRender: true }],
-  writeFileAsync: [require("./01-write-file"), { syncRender: false }],
+  writeFileAsFilter: [require("./01-write-file"), { processAs: "filter" }],
+  writeFileAsRenderer: [require("./01-write-file"), { processAs: "renderer" }],
   concurrentFruit: [
     require("./03-concurrent-fruit"),
     { concurrency: "parallel", outerInterval: 1000, innerInterval: 185 }

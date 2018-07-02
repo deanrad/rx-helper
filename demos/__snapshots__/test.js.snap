@@ -52,6 +52,7 @@ OK Bye!
 exports[`All Demos writeFileDemo should work synchronously 1`] = `
 "> Got some data for file ./demos/scratch/actors.md: Jake Weary
 > Processing action Actor.save
+
 File now contains: - Jake Weary
 
 < Done processing - No more to do?
