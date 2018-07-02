@@ -1,6 +1,6 @@
 import { default as faker } from "faker"
 import fs from "fs"
-import { Observable, of } from "rxjs"
+import { Observable, Subject, of } from "rxjs"
 import { delay, first, map, take, toArray } from "rxjs/operators"
 import {
   Action,
@@ -12,10 +12,14 @@ import {
   reservedSubscriberNames
 } from "../src/antares-protocol"
 
+// a mutable variable, reset between tests
+let counter = 0
+
 describe("AntaresProtocol", () => {
   let antares: AntaresProtocol
 
   beforeEach(() => {
+    counter = 0
     antares = new AntaresProtocol()
   })
   // Sanity check
@@ -97,6 +101,9 @@ describe("AntaresProtocol", () => {
   })
 
   describe("#process", () => {
+    beforeEach(() => {
+      counter = 0
+    })
     describe("arguments", () => {
       describe("action", () => {
         it("should be an action", () => {
@@ -141,6 +148,20 @@ describe("AntaresProtocol", () => {
         const serailizedResult = JSON.stringify(antares.process(anyAction))
         expect(serailizedResult).not.toContain(retVal)
       })
+
+      describe("#completed: (all triggered renderers are done)", () => {
+        it("With no renderers, Should return a Promise for an empty array", () => {
+          expect.assertions(1)
+
+          const result = antares.process(anyAction)
+          return result.completed.then(r => {
+            expect(r).toBeInstanceOf(Array)
+          })
+        })
+
+        it("With 2 triggered renderers, should promise for the longer completion", undefined)
+        it("With some untriggered, should promise only for those that were triggered", undefined)
+      })
     })
     describe("behavior", () => {
       it("should emit the action on the action$ Observable", () => {
@@ -167,10 +188,10 @@ describe("AntaresProtocol", () => {
         //  about their (synchronous) side-effects
         let counter = 1
         const incrementer = () => {
-          return counter += 0.1
+          return (counter += 0.1)
         }
         const doubler = () => {
-          return counter *= 2
+          return (counter *= 2)
         }
 
         antares.addFilter(incrementer, { name: "inc" })
@@ -235,4 +256,27 @@ const inSilence = itFn => {
   // preserve arity in returned fn
   return itFn.length === 1 ? done => callIt(done) : () => callIt(undefined)
 }
+
+const slightDelay = [
+  () => {
+    const done = new Subject()
+    setTimeout(() => {
+      counter += 1
+      done.complete()
+    }, 10)
+    return done.asObservable()
+  },
+  { name: "slightDelay" }
+]
+const longerDelay = [
+  () => {
+    const done = new Subject()
+    setTimeout(() => {
+      counter *= 1.1
+      done.complete()
+    }, 40)
+    return done.asObservable()
+  },
+  { name: "longerDelay" }
+]
 //#endregion
