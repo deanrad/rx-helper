@@ -13,6 +13,10 @@ let configs = {
     require("./03-concurrent-fruit"),
     { concurrency: "cutoff", outerInterval: 1000, innerInterval: 185 }
   ],
+  muteFruit: [
+    require("./03-concurrent-fruit"),
+    { concurrency: "mute", outerInterval: 1000, innerInterval: 185 }
+  ],
   batchedWriteFile: [
     require("./04-batched-write"),
     {

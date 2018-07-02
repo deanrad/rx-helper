@@ -8,8 +8,8 @@ exports[`All Demos cheatCodeDemo should run the test 1`] = `
 🕑 
 🕒 
 🕓 
-🕕  🕕  🕕  🕖  🕖   ✨🌟✨!
-🕗 "
+🕕  🕕  🕕  🕕  🕕   ✨🌟✨!
+🕖 "
 `;
 
 exports[`All Demos concurrentFruit demo should abort in-flight renders in cutoff mode 1`] = `
@@ -17,6 +17,15 @@ exports[`All Demos concurrentFruit demo should abort in-flight renders in cutoff
   ②  🍌  🍌  💥
   ③  🍉  🍉  🍉  💥
   ⑨  🥑  🥑  🥑  🥑  🥑   ④  🍍  🍍  🍍  🍍  💥
+  ⑤  🍏  🍏  🍏  🍏  🍏  💥
+"
+`;
+
+exports[`All Demos concurrentFruit demo should mute/drop new renders in mute mode 1`] = `
+"  ①  🍓  💥
+  ②  🍌  🍌  💥
+  ③  🍉  🍉  🍉  💥
+  ⑨  🥑  🥑  🥑  🥑  🥑   ④  🥑  🥑  🥑  🥑  💥
   ⑤  🍏  🍏  🍏  🍏  🍏  💥
 "
 `;

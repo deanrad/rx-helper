@@ -7,8 +7,7 @@ import {
   Concurrency,
   ProcessResult,
   Subscriber,
-  SubscriberConfig,
-  SubscribeMode
+  SubscriberConfig
 } from "./types"
 
 // Leave this as require not import! https://github.com/webpack/webpack/issues/1019
@@ -88,10 +87,6 @@ export class AntaresProtocol implements AntaresProcessor {
   }
 
   addFilter(filter: Subscriber, config: SubscriberConfig = {}): Subscription {
-    assert(
-      !config || !config.mode || config.mode !== SubscribeMode.async,
-      "addFilter only subscribes synchronously, check your config."
-    )
     validateSubscriberName(config.name)
     const name = config.name || `filter_${++this._subscriberCount}`
     this.filterNames.push(name)
@@ -147,6 +142,13 @@ export class AntaresProtocol implements AntaresProcessor {
         const subAndSave = () => {
           thisSub = results.subscribe(completer)
           this.activeRenders.set(name, thisSub)
+        }
+
+        if (concurrency === Concurrency.mute) {
+          // Will not start new if one is in progress
+          if (!inProgress || (inProgress && inProgress.closed)) {
+            subAndSave()
+          }
         }
 
         if (concurrency === Concurrency.cutoff) {

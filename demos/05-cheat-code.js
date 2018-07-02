@@ -62,7 +62,10 @@ module.exports = ({ AntaresProtocol, config = {}, log, append }) => {
       },
       {
         delta: 0,
-        lastTime: -1
+        lastTime: -1,
+        firstTime: undefined,
+        timestamp: null,
+        value: null
       }
     ),
     tap(({ value, timestamp, second, delta }) => {
@@ -83,7 +86,7 @@ module.exports = ({ AntaresProtocol, config = {}, log, append }) => {
       take(5),
       concat(
         interval(150).pipe(
-          delay(2500),
+          delay(2000),
           take(5)
         ),
         of(1).pipe(delay(1000))

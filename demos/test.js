@@ -88,6 +88,10 @@ describe("All Demos", () => {
       await runDemo(Demos.freshFruit)
       expect(output).toMatchSnapshot()
     })
+    it("should mute/drop new renders in mute mode", async () => {
+      await runDemo(Demos.muteFruit)
+      expect(output).toMatchSnapshot()
+    })
   })
 
   describe("batchedWriteDemo", () => {

@@ -7,7 +7,6 @@ import {
   ActionStreamItem,
   AntaresProtocol,
   ProcessResult,
-  SubscribeMode,
   Subscriber,
   reservedSubscriberNames
 } from "../src/antares-protocol"
@@ -46,14 +45,6 @@ describe("AntaresProtocol", () => {
           expect(spy).toHaveBeenCalled()
         })
       })
-      describe("config argument", () => {
-        it("should not have mode async since filters are only sync", () => {
-          expect.assertions(1)
-          expect(() => {
-            antares.addFilter(nullFn, { mode: SubscribeMode.async })
-          }).toThrow()
-        })
-      })
     })
   })
 
@@ -65,6 +56,12 @@ describe("AntaresProtocol", () => {
         })
       })
       describe("config argument", () => {
+        describe("concurrency", () => {
+          it('should run in parallel mode', undefined)
+          it('should run in series mode', undefined)
+          it('should run in cutoff mode', undefined)
+          it('should run in mute mode', undefined)
+        })
         describe("name", () => {
           it("will be filter_N if not given for a filter", () => {
             expect(antares.filterNames).not.toContain("filter_1")

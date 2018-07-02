@@ -29,11 +29,6 @@ export interface ActionStreamItem {
   renderEndings: Map<String, Subject<boolean>>
 }
 
-export enum SubscribeMode {
-  sync = "sync",
-  async = "async"
-}
-
 /**
  * @description When a renderer (async usually) returns an Observable, it's possible
  * that multiple renderings will be active at once (see demo 'speak-up'). The options
@@ -45,7 +40,8 @@ export enum SubscribeMode {
 export enum Concurrency {
   parallel = "parallel",
   serial = "serial",
-  cutoff = "cutoff"
+  cutoff = "cutoff",
+  mute = "mute"
 }
 
 export interface StreamTransformer {
@@ -53,7 +49,6 @@ export interface StreamTransformer {
 }
 
 export interface SubscriberConfig {
-  mode?: SubscribeMode
   name?: string
   concurrency?: Concurrency
   xform?: StreamTransformer
