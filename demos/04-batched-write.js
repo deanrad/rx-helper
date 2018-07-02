@@ -40,7 +40,9 @@ module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = fal
     fs.appendFileSync(filePath, combinedString)
   }
 
-  // use the batched renderer?
+  // Use either renderer. Note - typically the same renderer could work
+  // in either mode, if a map step were included in the xform, to take
+  // the array returned by bufferCount and pre-consolidate it.
   const renderer = xformJS === "s => s" ? writeToFile : writeBatchToFile
   antares.addRenderer(renderer, {
     name: "fileWriter",
