@@ -2,10 +2,9 @@ const { Subject } = require("rxjs")
 const { bufferCount, map, tap } = require("rxjs/operators")
 const fs = require("fs")
 const faker = require("faker")
-const filePath = "./demos/scratch/04-batched.yml"
 
 module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = false }) => {
-  const { xform: xformJS = "s => s", count = 3 } = config
+  const { xform: xformJS = "s => s", count = 3, file: filePath } = config
 
   const xform = eval(xformJS)
 
@@ -16,35 +15,46 @@ module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = fal
   fs.truncateSync(filePath)
 
   const completed = new Subject()
+  let totalProcessed = 0
 
-  // Use one of these two approaches
+  // Evaled by config in the batched case
+  // Returns one single text writing action from a batch.
+  function consolidateWriteActions(batch) {
+    log(`writing (${batch.length}) items `)
+    totalProcessed += batch.length
+
+    // Reducer to extract and join the text
+    const combinedTexts = batch.reduce((joined, { action }) => {
+      return joined + ` - ${action.payload.text}\n`
+    }, "")
+
+    // Remember to return at least the action property of an ASI
+    return {
+      action: {
+        type: "writeIt",
+        payload: {
+          text: combinedTexts
+        },
+        meta: { index: totalProcessed }
+      }
+    }
+  }
+
+  // Write a single action to the file
   const writeToFile = asi => {
     // log(`writing 1 item`)
     const { action } = asi
     fs.appendFileSync(filePath, ` - ${action.payload.text}\n`)
 
     // shoehorn in a way for our test to know we're done
-    if (action.meta.index + 1 === count) {
+    if (action.meta.index + 1 >= count) {
       completed.complete()
     }
   }
 
-  const writeBatchToFile = batch => {
-    log(`writing (${batch.length}) items `)
-    const combinedString = batch.reduce((joined, { action }) => {
-      // shoehorn in a way for our test to know we're done
-      action.meta.index + 1 === count && completed.complete()
-
-      return joined + ` - ${action.payload.text}\n`
-    }, "")
-    fs.appendFileSync(filePath, combinedString)
-  }
-
-  // Use either renderer. Note - typically the same renderer could work
-  // in either mode, if a map step were included in the xform, to take
-  // the array returned by bufferCount and pre-consolidate it.
-  const renderer = xformJS === "s => s" ? writeToFile : writeBatchToFile
-  antares.addRenderer(renderer, {
+  // Now set up the renderer, and process
+  const renderer = writeToFile
+  antares.addRenderer(writeToFile, {
     name: "fileWriter",
     xform
   })

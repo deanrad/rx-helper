@@ -15,9 +15,16 @@ let configs = {
   ],
   batchedWriteFile: [
     require("./04-batched-write"),
-    { count: 5000, xform: "s => s.pipe(bufferCount(1000))" }
+    {
+      count: 5000,
+      file: "./demos/scratch/04-batched.yml",
+      xform: "s => s.pipe(bufferCount(1000), map(consolidateWriteActions))"
+    }
   ],
-  unBatchedWriteFile: [require("./04-batched-write"), { count: 5000, xform: "s => s" }],
+  unBatchedWriteFile: [
+    require("./04-batched-write"),
+    { count: 5000, file: "./demos/scratch/04-unbatched.yml", xform: "s => s" }
+  ],
   cheatCode: [require("./05-cheat-code"), { xform: "s => s /* TODO test timing */" }]
 }
 
