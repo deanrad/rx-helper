@@ -1,5 +1,5 @@
 import { Observable, Subject, Subscription, asyncScheduler, from, of, empty } from "rxjs"
-import { observeOn } from "rxjs/operators"
+import { observeOn, last, startWith } from "rxjs/operators"
 import {
   AntaresProcessor,
   Action,
@@ -22,6 +22,7 @@ export class AntaresProtocol implements AntaresProcessor {
   allFilters: Map<string, Subscriber>
   rendererNames: Array<string>
   activeRenders: Map<string, Subscription>
+  activeResults: Map<string, Observable<any>>
 
   constructor() {
     this.actionStream = new Subject<ActionStreamItem>()
@@ -30,15 +31,20 @@ export class AntaresProtocol implements AntaresProcessor {
     this.allFilters = new Map<string, Subscriber>()
     this.rendererNames = []
     this.activeRenders = new Map<string, Subscription>()
+    this.activeResults = new Map<string, Observable<any>>()
   }
 
   process(action: Action): ProcessResult {
     const results = new Map<String, any>()
     const renderBeginnings = new Map<String, Subject<boolean>>()
     const renderEndings = new Map<String, Subject<boolean>>()
+
+    // In order to do completion detection, we need to set these
+    // locations up synchronously, and let them be read later.
     this.rendererNames.forEach(name => {
       renderBeginnings.set(name, new Subject<boolean>())
       renderEndings.set(name, new Subject<boolean>())
+      this.activeResults.set(name, empty())
     })
     const item = { action, results, renderBeginnings, renderEndings }
 
@@ -75,10 +81,31 @@ export class AntaresProtocol implements AntaresProcessor {
 
     // Allow hooking the completion of async renders
     Object.defineProperty(resultObject, "completed", {
-      get() {
-        return Promise.all(
+      get: () => {
+        const completedObject = Promise.all(
           Array.from(renderEndings.values()).map(s => s.asObservable().toPromise())
         )
+        for (let name of this.rendererNames) {
+          Object.defineProperty(completedObject, name, {
+            get: () => {
+              return new Promise(resolve => {
+                // only on the next callstack is our results Observable ready
+                setTimeout(() => {
+                  const results = this.activeResults.get(name)
+                  // @ts-ignore # we should detect its an Observable
+                  results
+                    .pipe(
+                      startWith(undefined),
+                      last()
+                    )
+                    .toPromise()
+                    .then(resolve)
+                }, 0)
+              })
+            }
+          })
+        }
+        return completedObject
       }
     })
 
@@ -124,11 +151,14 @@ export class AntaresProtocol implements AntaresProcessor {
 
         // Renderers return Observables, usually of actions
         const _results = subscriber(asi)
-        const results = _results && _results.subscribe // an Observable
-          ? _results
-          : _results && _results[Symbol.iterator] && !_results.substring
-            ? from(_results) // an iterable, such as an array, but not string
-            : of(_results)
+        const results =
+          _results && _results.subscribe // an Observable
+            ? _results
+            : _results && _results[Symbol.iterator] && !_results.substring
+              ? from(_results) // an iterable, such as an array, but not string
+              : of(_results)
+
+        this.activeResults.set(name, results)
 
         // Eventually we may send actions back through, but for now at least subscribe
         const completer = {

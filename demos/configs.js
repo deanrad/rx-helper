@@ -3,19 +3,19 @@ let configs = {
   writeFileAsRenderer: [require("./01-write-file"), { processAs: "renderer" }],
   parallelFruit: [
     require("./03-concurrent-fruit"),
-    { concurrency: "parallel", outerInterval: 300, innerInterval: 50 }
+    { concurrency: "parallel", outerInterval: 280, innerInterval: 50 }
   ],
   serialFruit: [
     require("./03-concurrent-fruit"),
-    { concurrency: "serial", outerInterval: 300, innerInterval: 50 }
+    { concurrency: "serial", outerInterval: 280, innerInterval: 45 }
   ],
   freshFruit: [
     require("./03-concurrent-fruit"),
-    { concurrency: "cutoff", outerInterval: 300, innerInterval: 50 }
+    { concurrency: "cutoff", outerInterval: 280, innerInterval: 50 }
   ],
   muteFruit: [
     require("./03-concurrent-fruit"),
-    { concurrency: "mute", outerInterval: 300, innerInterval: 50 }
+    { concurrency: "mute", outerInterval: 280, innerInterval: 50 }
   ],
   batchedWriteFile: [
     require("./04-batched-write"),
@@ -27,7 +27,7 @@ let configs = {
   ],
   unBatchedWriteFile: [
     require("./04-batched-write"),
-    { count: 5000, file: "./demos/scratch/04-unbatched.yml", xform: "s => s" }
+    { count: 3000, file: "./demos/scratch/04-unbatched.yml", xform: "s => s" }
   ],
   cheatCode: [require("./05-cheat-code"), { xform: "s => s /* TODO test timing */" }]
 }

@@ -170,13 +170,49 @@ describe("AntaresProtocol", () => {
 
           return antares.process(anyAction).completed
         })
-        it("Resolves if you have no renderers", () => {
+        it("can get a promise for a renderers final value via completed.rendererName", () => {
+          expect.assertions(4)
+
+          // This 'renderer' returns an Observable which yields 3.14 after 20msec
+          antares.addRenderer(() => of(2.71828, 3.14).pipe(delay(20)), { name: "thing1" })
+
+          // Renderer can return simple object
+          antares.addRenderer(() => 7, { name: "thing2" })
+
+          // Can return null or undefined
+          antares.addRenderer(() => null, { name: "nully" })
+
+          // Renderer returns an array
+          antares.addRenderer(() => ["---", "=--", "==-", "==="], { name: "progressBars" })
+
+          const result = antares.process(anyAction)
+          return result.completed.thing1
+            .then(r => {
+              expect(r).toEqual(3.14)
+            })
+            .then(() =>
+              result.completed.thing2.then(r => {
+                expect(r).toEqual(7)
+              })
+            )
+            .then(() =>
+              result.completed.nully.then(r => {
+                expect(r).toEqual(null)
+              })
+            )
+            .then(() =>
+              result.completed.progressBars.then(r => {
+                expect(r).toEqual("===")
+              })
+            )
+        })
+        it("resolves if you have no renderers", () => {
           expect.assertions(0)
           const result = antares.process(anyAction)
           return result.completed
         })
-        it("Resolves even if a renderer is cutoff by itself", undefined)
-        it("Resolves even if you have a time-delayed renderer", undefined)
+        it("resolves even if you have a time-delayed renderer", undefined)
+        it("resolves even if a renderer is cutoff by itself", undefined)
       })
     })
     describe("behavior", () => {

@@ -14,7 +14,7 @@ node_js:
   - 8
 os:
   - linux
-#  - osx  # doesn't run on the slow CI servers
+  - osx
 script:
   - npm run test:ci
 after_success:

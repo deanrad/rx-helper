@@ -131,6 +131,10 @@ const expectedSpeak = `•
 `
 async function runDemo(demo) {
   const [demoFn, config] = demo
-  return await demoFn({ AntaresProtocol, config, log, append });
+  if (process.env.CI) {
+    // CI is flaky on small timings - we should have the same output with a larger timing
+    if (config.innerInterval) config.innerInterval = 2 * (config.innerInterval + 5)
+    if (config.outerInterval) config.outerInterval *= 2
+  }
+  return await demoFn({ AntaresProtocol, config, log, append })
 }
-
