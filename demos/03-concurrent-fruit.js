@@ -1,7 +1,6 @@
 const { Subject, interval } = require("rxjs")
 const { startWith, endWith, map, mapTo, take, tap } = require("rxjs/operators")
 
-const simNumbers = [1, 2, 3, 9, 4, 5]
 const circleCharacter = { 1: "①", 2: "②", 3: "③", 4: "④", 5: "⑤", 6: "⑥", 7: "⑦", 8: "⑧", 9: "⑨" }
 const fruitCharacter = {
   1: "🍓",
@@ -18,6 +17,7 @@ const fruitCharacter = {
 module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = false }) => {
   const { outerInterval, innerInterval, concurrency } = config
 
+  const numArray = config.numArray ? eval(config.numArray) : [1, 2, 3, 9, 4, 5]
   return runDemo()
 
   function runDemo() {
@@ -72,8 +72,8 @@ module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = fal
   // an observable of numbers every second
   function simulatedUserInput() {
     return interval(outerInterval).pipe(
-      map(i => simNumbers[i]),
-      take(simNumbers.length)
+      map(i => numArray[i]),
+      take(numArray.length)
     )
   }
 
