@@ -162,13 +162,16 @@ export class AntaresProtocol implements AntaresProcessor {
 
         // Eventually we may send actions back through, but for now at least subscribe
         const completer = {
-          complete() {
+          complete: () => {
             // @ts-ignore
             asi.renderEndings && asi.renderEndings.get(name).complete()
           },
-          error() {
+          error: () => {
             // @ts-ignore
             asi.renderEndings && asi.renderEndings.get(name).error()
+            sub.unsubscribe()
+            this.activeRenders.delete(name)
+            this.rendererNames = this.rendererNames.filter(n => n === name)
           }
         }
 

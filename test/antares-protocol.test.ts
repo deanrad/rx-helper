@@ -264,7 +264,17 @@ describe("AntaresProtocol", () => {
         })
       })
       describe("errors in async renderers", () => {
-        it("should not propogate up to the caller of #process", undefined)
+        it("should not propogate up to the caller of #process", () => {
+          expect.assertions(0)
+          let sub = antares.addRenderer(
+            () => {
+              throw new Error("Who_ops")
+            },
+            { name: "janky" }
+          )
+          antares.process(anyAction)
+        })
+
         it("should unsubscribe the renderer", undefined)
       })
     })
