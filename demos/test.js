@@ -62,7 +62,7 @@ describe("All Demos", () => {
     beforeAll(async () => {
       return await new Promise(resolve => setTimeout(resolve, 200))
     })
-    it("should hear overlapping speakings", async () => {
+    it.skip("should hear overlapping speakings", async () => {
       if (!process.env.CI) {
         const [demoFn, config] = Demos.doubleSpeak || [() => true, {}]
 

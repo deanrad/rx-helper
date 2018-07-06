@@ -141,6 +141,7 @@ export class AntaresProtocol implements AntaresProcessor {
 
     const concurrency = config.concurrency || Concurrency.parallel
     const { processResults } = config
+    let previousAsi: ActionStreamItem
     const sub = xform(this.action$)
       .pipe(observeOn(asyncScheduler))
       // Note if our stream has been transformed with such as bufferCount,
@@ -206,11 +207,22 @@ export class AntaresProtocol implements AntaresProcessor {
         // 🍌  🍓  💥
         // 🍌  💥  <-- note the interleaving of banana and strawberry
         if (concurrency === Concurrency.serial) {
-          inProgress ? inProgress.add(subAndSave) : subAndSave()
+          if (!previousAsi) {
+            subAndSave()
+          } else {
+            // @ts-ignore
+            previousAsi.renderEndings
+              .get(name)
+              .toPromise()
+              .then(() => {
+                subAndSave()
+              })
+          }
         }
         if (concurrency === Concurrency.parallel) {
           subAndSave()
         }
+        previousAsi = asi
       })
     return sub
   }
