@@ -11,7 +11,7 @@ import {
 } from "./types"
 
 // Leave this as require not import! https://github.com/webpack/webpack/issues/1019
-const assert = require("assert")
+const assert = (typeof require === "undefined") ? () => null : require("assert")
 export * from "./types"
 
 export class AntaresProtocol implements AntaresProcessor {
