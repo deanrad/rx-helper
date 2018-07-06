@@ -1,13 +1,12 @@
 import { default as faker } from "faker"
 import fs from "fs"
-import { Observable, Subject, of } from "rxjs"
+import { Observable, Subject, of, empty } from "rxjs"
 import { delay, first, map, take, toArray } from "rxjs/operators"
 import {
   Action,
   ActionStreamItem,
   AntaresProtocol,
   Concurrency,
-  ProcessResult,
   Subscriber,
   reservedSubscriberNames
 } from "../src/antares-protocol"
@@ -22,10 +21,12 @@ describe("AntaresProtocol", () => {
     counter = 0
     antares = new AntaresProtocol()
   })
+
   // Sanity check
   it("is instantiable", () => {
     expect(new AntaresProtocol()).toBeInstanceOf(AntaresProtocol)
   })
+
   it("has instance methods", () => {
     const antares = new AntaresProtocol()
     expect(antares).toMatchObject({
@@ -56,6 +57,7 @@ describe("AntaresProtocol", () => {
           antares.addFilter(nullFn)
         })
       })
+
       describe("config argument", () => {
         describe("name", () => {
           it("will be filter_N if not given for a filter", () => {
@@ -63,11 +65,13 @@ describe("AntaresProtocol", () => {
             antares.addFilter(() => 3.141)
             expect(antares.filterNames).toContain("filter_1")
           })
+
           it("will be renderer_N if not given for a renderer", () => {
             expect(antares.rendererNames).not.toContain("renderer_1")
             antares.addRenderer(() => 3.141)
             expect(antares.rendererNames).toContain("renderer_1")
           })
+
           it("cannot be a reserved name", () => {
             expect.assertions(reservedSubscriberNames.length)
             reservedSubscriberNames.forEach(badName => {
@@ -105,6 +109,31 @@ describe("AntaresProtocol", () => {
           it("should run in cutoff mode (shown in demo)", undefined)
           it("should run in mute mode (shown in demo)", undefined)
         })
+        describe("processResults", () => {
+          it("should enable returned actions from renderer to go through antares.process", () => {
+            expect.assertions(1)
+            antares.addRenderer(
+              ({ action }) => {
+                if (action.type === "addTwo") {
+                  counter += 2
+                  return empty()
+                }
+                counter += 1
+                return of({ type: "addTwo" })
+              },
+              { processResults: true }
+            )
+
+            // since this render returns another action, we'll get two calls
+            antares.process({ type: "addOne" })
+            return new Promise(resolve => {
+              setTimeout(() => {
+                expect(counter).toEqual(3)
+                resolve()
+              }, 20)
+            })
+          })
+        })
       })
     })
   })
@@ -113,6 +142,7 @@ describe("AntaresProtocol", () => {
     beforeEach(() => {
       counter = 0
     })
+
     describe("arguments", () => {
       describe("action", () => {
         it("should be an action", () => {
@@ -121,12 +151,14 @@ describe("AntaresProtocol", () => {
         })
       })
     })
+
     describe("return value", () => {
       it("should be a superset of the action", () => {
         expect.assertions(1)
         const result = antares.process(anyAction)
         expect(result).toMatchObject(anyAction)
       })
+
       it("should have a field for each filter", () => {
         expect.assertions(8)
 
@@ -150,6 +182,7 @@ describe("AntaresProtocol", () => {
         expect(result._id).toEqual(secondRetVal)
         expect(result).toHaveProperty("_id", secondRetVal)
       })
+
       it("should not serialize result properties, allowing them to be complex", () => {
         expect.assertions(1)
         const retVal = "abc123"
@@ -170,6 +203,7 @@ describe("AntaresProtocol", () => {
 
           return antares.process(anyAction).completed
         })
+
         it("can get a promise for a renderers final value via completed.rendererName", () => {
           expect.assertions(4)
 
@@ -206,11 +240,13 @@ describe("AntaresProtocol", () => {
               })
             )
         })
+
         it("resolves if you have no renderers", () => {
           expect.assertions(0)
           const result = antares.process(anyAction)
           return result.completed
         })
+
         it("resolves even if you have a time-delayed renderer", undefined)
         it("resolves even if a renderer is cutoff by itself", undefined)
       })
@@ -233,6 +269,7 @@ describe("AntaresProtocol", () => {
         // And return the assertion
         return assertion
       })
+
       it("should run filters in order", () => {
         expect.assertions(1)
 
@@ -253,6 +290,7 @@ describe("AntaresProtocol", () => {
         const { double, inc } = result
         expect({ double, inc }).toMatchSnapshot()
       })
+
       describe("errors in filters", () => {
         it("should propogate up to the caller of #process", () => {
           antares.addFilter(() => {
@@ -263,6 +301,7 @@ describe("AntaresProtocol", () => {
           }).toThrowErrorMatchingSnapshot()
         })
       })
+
       describe("errors in async renderers", () => {
         it("should not propogate up to the caller of #process", () => {
           expect.assertions(0)

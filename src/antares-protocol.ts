@@ -140,6 +140,7 @@ export class AntaresProtocol implements AntaresProcessor {
     this.rendererNames.push(name)
 
     const concurrency = config.concurrency || Concurrency.parallel
+    const { processResults } = config
     const sub = xform(this.action$)
       .pipe(observeOn(asyncScheduler))
       // Note if our stream has been transformed with such as bufferCount,
@@ -162,6 +163,10 @@ export class AntaresProtocol implements AntaresProcessor {
 
         // Eventually we may send actions back through, but for now at least subscribe
         const completer = {
+          next: (resultAction: Action) => {
+            if (!processResults) return
+            this.process(resultAction)
+          },
           complete: () => {
             // @ts-ignore
             asi.renderEndings && asi.renderEndings.get(name).complete()

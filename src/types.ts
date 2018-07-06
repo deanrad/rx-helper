@@ -52,6 +52,7 @@ export interface SubscriberConfig {
   name?: string
   concurrency?: Concurrency
   xform?: StreamTransformer
+  processResults?: Boolean
 }
 
 /**
