@@ -1,4 +1,4 @@
-import { Observable, Subject, Subscription, asyncScheduler, from } from "rxjs"
+import { Observable, Subject, Subscription, asyncScheduler, from, of, empty } from "rxjs"
 import { observeOn } from "rxjs/operators"
 import {
   AntaresProcessor,
@@ -11,7 +11,7 @@ import {
 } from "./types"
 
 // Leave this as require not import! https://github.com/webpack/webpack/issues/1019
-const assert = (typeof require === "undefined") ? () => null : require("assert")
+const assert = typeof require === "undefined" ? () => null : require("assert")
 export * from "./types"
 
 export class AntaresProtocol implements AntaresProcessor {
@@ -112,7 +112,7 @@ export class AntaresProtocol implements AntaresProcessor {
     const xform = config.xform || (stream => stream)
     this.rendererNames.push(name)
 
-    const concurrency = config.concurrency
+    const concurrency = config.concurrency || Concurrency.parallel
     const sub = xform(this.action$)
       .pipe(observeOn(asyncScheduler))
       // Note if our stream has been transformed with such as bufferCount,
@@ -123,7 +123,12 @@ export class AntaresProtocol implements AntaresProcessor {
         asi.renderBeginnings && asi.renderBeginnings.set(name, itHasBegun)
 
         // Renderers return Observables, usually of actions
-        const results = subscriber(asi)
+        const _results = subscriber(asi)
+        const results = _results && _results.subscribe // an Observable
+          ? _results
+          : _results && _results[Symbol.iterator] && !_results.substring
+            ? from(_results) // an iterable, such as an array, but not string
+            : of(_results)
 
         // Eventually we may send actions back through, but for now at least subscribe
         const completer = {

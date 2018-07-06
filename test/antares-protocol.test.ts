@@ -6,6 +6,7 @@ import {
   Action,
   ActionStreamItem,
   AntaresProtocol,
+  Concurrency,
   ProcessResult,
   Subscriber,
   reservedSubscriberNames
@@ -36,7 +37,7 @@ describe("AntaresProtocol", () => {
 
   describe("#addFilter", () => {
     describe("arguments", () => {
-      describe("subscriber argument", () => {
+      describe("function argument", () => {
         it("will be called synchronously when an action is processed", () => {
           const spy = jest.fn()
           antares.addFilter(spy)
@@ -50,18 +51,12 @@ describe("AntaresProtocol", () => {
 
   describe("#addFilter or #addRenderer", () => {
     describe("arguments", () => {
-      describe("subscriber argument", () => {
+      describe("function argument", () => {
         it("should be a function", () => {
           antares.addFilter(nullFn)
         })
       })
       describe("config argument", () => {
-        describe("concurrency", () => {
-          it('should run in parallel mode', undefined)
-          it('should run in series mode', undefined)
-          it('should run in cutoff mode', undefined)
-          it('should run in mute mode', undefined)
-        })
         describe("name", () => {
           it("will be filter_N if not given for a filter", () => {
             expect(antares.filterNames).not.toContain("filter_1")
@@ -92,6 +87,23 @@ describe("AntaresProtocol", () => {
           subscription.unsubscribe()
           antares.process(anyAction)
           expect(callCount).toEqual(1)
+        })
+      })
+    })
+  })
+
+  describe("#addRenderer", () => {
+    describe("arguments", () => {
+      describe("first argument", () => {
+        it("should return an Observable", undefined)
+        it("may return null or an object to be cast to Observable", undefined)
+      })
+      describe("config argument", () => {
+        describe("concurrency", () => {
+          it("should run in parallel mode (shown in demo)", undefined)
+          it("should run in series mode (shown in demo)", undefined)
+          it("should run in cutoff mode (shown in demo)", undefined)
+          it("should run in mute mode (shown in demo)", undefined)
         })
       })
     })
@@ -147,17 +159,24 @@ describe("AntaresProtocol", () => {
       })
 
       describe("#completed: (all triggered renderers are done)", () => {
-        it("With no renderers, Should return a Promise for an empty array", () => {
-          expect.assertions(1)
-
-          const result = antares.process(anyAction)
-          return result.completed.then(r => {
-            expect(r).toBeInstanceOf(Array)
+        it("is a Promise for all async renderers' results to have completed", () => {
+          antares.addRenderer(() => of("🐌").pipe(delay(100)), {
+            name: "snail",
+            concurrency: Concurrency.serial
           })
-        })
+          antares.addRenderer(() => of("⚡").pipe(delay(20)), {
+            name: "quickie"
+          })
 
-        it("With 2 triggered renderers, should promise for the longer completion", undefined)
-        it("With some untriggered, should promise only for those that were triggered", undefined)
+          return antares.process(anyAction).completed
+        })
+        it("Resolves if you have no renderers", () => {
+          expect.assertions(0)
+          const result = antares.process(anyAction)
+          return result.completed
+        })
+        it("Resolves even if a renderer is cutoff by itself", undefined)
+        it("Resolves even if you have a time-delayed renderer", undefined)
       })
     })
     describe("behavior", () => {
