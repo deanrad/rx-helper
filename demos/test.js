@@ -46,7 +46,7 @@ describe("All Demos", () => {
   beforeEach(() => {
     output = ""
   })
-  describe("writeFileDemo", () => {
+  describe("File-rendering Demo", () => {
     it("should work synchronously", async () => {
       await runDemo(Demos.writeFileAsFilter)
       expect(output).toMatchSnapshot()
@@ -58,7 +58,7 @@ describe("All Demos", () => {
     })
   })
 
-  describe("speakUpDemo", () => {
+  describe("Spoken-rendering Demo", () => {
     beforeAll(async () => {
       return await new Promise(resolve => setTimeout(resolve, 200))
     })
@@ -75,9 +75,9 @@ describe("All Demos", () => {
     })
   })
 
-  describe("concurrentFruit demo", () => {
+  describe("Fruit Concurrency Demo", () => {
     it("should run in parallel", async () => {
-      await runDemo(Demos.concurrentFruit)
+      await runDemo(Demos.parallelFruit)
       expect(output).toMatchSnapshot()
     })
     it("should run in series", async () => {
@@ -94,7 +94,7 @@ describe("All Demos", () => {
     })
   })
 
-  describe("batchedWriteDemo", () => {
+  describe("Batched Write Demo", () => {
     // these run just for timing info
     it("should run slower without batching", async () => {
       expect.assertions(0)
@@ -106,7 +106,7 @@ describe("All Demos", () => {
     })
   })
 
-  describe("cheatCodeDemo", () => {
+  describe("Cheat-Code Demo", () => {
     it("should run the test", async () => {
       await runDemo(Demos.cheatCode)
       expect(output).toMatchSnapshot()
