@@ -1,7 +1,7 @@
 import { Observable, Subject, Subscription } from "rxjs"
 import { SubscriberConfig } from "./types"
 
-export interface AntaresProcessor {
+export interface ActionProcessor {
   process(action: Action): ProcessResult
   addFilter(subscriber: Subscriber, config: SubscriberConfig): Subscription
   addRenderer(subscriber: Subscriber, config: SubscriberConfig): Subscription

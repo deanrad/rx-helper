@@ -3,12 +3,12 @@ const { bufferCount, map, tap } = require("rxjs/operators")
 const fs = require("fs")
 const faker = require("faker")
 
-module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = false }) => {
+module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
   const { xform: xformJS = "s => s", count = 3, file: filePath } = config
 
   const xform = eval(xformJS)
 
-  const antares = new AntaresProtocol()
+  const antares = new Agent()
 
   // clear out file
   fs.appendFileSync(filePath, "\n") // creates if doesn't exist

@@ -1,7 +1,7 @@
 const fs = require("fs")
 const { Subject } = require("rxjs")
 
-module.exports = ({ AntaresProtocol, config = {}, log, interactive = false }) => {
+module.exports = ({ Agent, config = {}, log, interactive = false }) => {
   const fileName = "./demos/scratch/actors.md"
   
   // Allows for signaling completion
@@ -12,7 +12,7 @@ module.exports = ({ AntaresProtocol, config = {}, log, interactive = false }) =>
   return done.toPromise()
 
   async function runDemo() {
-    let antares = new AntaresProtocol()
+    let antares = new Agent()
 
     // Tell antares we have a renderer to apply
     if (config.processAs === "filter") {

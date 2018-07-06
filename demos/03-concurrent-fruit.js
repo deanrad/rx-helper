@@ -14,14 +14,14 @@ const fruitCharacter = {
   9: "🥑"
 }
 
-module.exports = ({ AntaresProtocol, config = {}, log, append, interactive = false }) => {
+module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
   const { outerInterval, innerInterval, concurrency } = config
 
   const numArray = config.numArray ? eval(config.numArray) : [1, 2, 3, 9, 4, 5]
   return runDemo()
 
   function runDemo() {
-    const antares = new AntaresProtocol()
+    const antares = new Agent()
 
     // Add a renderer which returns a process (Observable) that, when
     // Antares subscribes to it, will pull values through the pipe of

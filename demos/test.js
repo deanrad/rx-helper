@@ -30,7 +30,7 @@
 // It's best if tests are forgiving at least to 40ms, though
 // ideally this should come down to 15ms or less.
 const Demos = require("./configs")
-const { AntaresProtocol } = require("../src/antares-protocol")
+const { Agent } = require("../src/antares-protocol")
 
 let output = ""
 const appendLine = s => {
@@ -66,7 +66,7 @@ describe("All Demos", () => {
       if (!process.env.CI) {
         const [demoFn, config] = Demos.doubleSpeak || [() => true, {}]
 
-        await demoFn({ AntaresProtocol, config, log })
+        await demoFn({ Agent, config, log })
 
         // snapshots wont work for tests that sometimes aren't run - Jest says 'obsolete'!
         // test output is too highly variable
@@ -136,5 +136,5 @@ async function runDemo(demo) {
     if (config.innerInterval) config.innerInterval = 2 * (config.innerInterval + 5)
     if (config.outerInterval) config.outerInterval *= 2
   }
-  return await demoFn({ AntaresProtocol, config, log, append })
+  return await demoFn({ Agent, config, log, append })
 }

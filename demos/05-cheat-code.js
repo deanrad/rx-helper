@@ -13,10 +13,10 @@ const {
   throttleTime
 } = require("rxjs/operators")
 const clocks = ["🕛", "🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚"]
-module.exports = ({ AntaresProtocol, config = {}, log, append }) => {
+module.exports = ({ Agent, config = {}, log, append }) => {
   const prompt = "Press a key five times in a second to get a star (✨🌟✨), or 'x' to eXit:"
   const interactive = !!process.env.INTERACTIVE
-  const antares = new AntaresProtocol()
+  const antares = new Agent()
 
   antares.addRenderer(
     () => {

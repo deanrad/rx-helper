@@ -1,7 +1,7 @@
 import { Observable, Subject, Subscription, asyncScheduler, from, of, empty } from "rxjs"
 import { observeOn, last, startWith } from "rxjs/operators"
 import {
-  AntaresProcessor,
+  ActionProcessor,
   Action,
   ActionStreamItem,
   Concurrency,
@@ -14,15 +14,22 @@ import {
 const assert = typeof require === "undefined" ? () => null : require("assert")
 export * from "./types"
 
-export class AntaresProtocol implements AntaresProcessor {
-  actionStream: Subject<ActionStreamItem>
+/**
+ * @description Represents the instance of an Antares action processor which is
+ * usually the only one in this JavaScript runtime. The heart and circulatory system of
+ * an Agent is `action$`, its action stream.
+ */
+export class Agent implements ActionProcessor {
+  /** @description The heart and circulatory system of an Agent is `action$`, its action stream. */
   action$: Observable<ActionStreamItem>
-  _subscriberCount = 0
   filterNames: Array<string>
-  allFilters: Map<string, Subscriber>
   rendererNames: Array<string>
-  activeRenders: Map<string, Subscription>
-  activeResults: Map<string, Observable<any>>
+
+  private _subscriberCount = 0
+  private actionStream: Subject<ActionStreamItem>
+  private allFilters: Map<string, Subscriber>
+  private activeRenders: Map<string, Subscription>
+  private activeResults: Map<string, Observable<any>>
 
   constructor() {
     this.actionStream = new Subject<ActionStreamItem>()
@@ -34,6 +41,12 @@ export class AntaresProtocol implements AntaresProcessor {
     this.activeResults = new Map<string, Observable<any>>()
   }
 
+  /** @description Process sends an Action (eg Flux Standard Action), which
+   * is an object with a payload and type description, through the chain of
+   * filters, and then out through any applicable renderers.
+   * @throws Throws if a filter errs, but not if a renderer errs.
+   *
+   */
   process(action: Action): ProcessResult {
     const results = new Map<String, any>()
     const renderBeginnings = new Map<String, Subject<boolean>>()
@@ -113,6 +126,12 @@ export class AntaresProtocol implements AntaresProcessor {
     return resultObject as ProcessResult
   }
 
+  /** @description Filters are synchronous functions that sequentially process
+   * each item on `action$`, possibly changing them or creating synchronous
+   * state changes. Useful for type-checking, writing to a memory-based store.
+   * For creating consequences (aka async side-effects aka renders) outside of
+   * the running Agent, write and attach a Renderer. Filters run in series.
+   */
   addFilter(filter: Subscriber, config: SubscriberConfig = {}): Subscription {
     validateSubscriberName(config.name)
     const name = config.name || `filter_${++this._subscriberCount}`
@@ -132,6 +151,13 @@ export class AntaresProtocol implements AntaresProcessor {
     return sub
   }
 
+  /** @description Renderers are functions that exist to create side-effects
+   * outside of the Antares Agent - called Renderings. This can be changes to a
+   * DOM, to a database, or communications (eg AJAX) sent on the wire. If its
+   * an async behavior, it should be a Renderer not a filter. Renderers run
+   * in parallel with respect to other renderers. The way they act with respect
+   * to their own overlap, is per their `concurrency` config parameter.
+   */
   addRenderer(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
     validateSubscriberName(config.name)
     const name = config.name || `renderer_${++this._subscriberCount}`

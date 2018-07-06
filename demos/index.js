@@ -16,7 +16,7 @@ const log = s => stdout.write(s + "\n")
 const append = s => stdout.write(s)
 const interactive = !!process.env.INTERACTIVE
 const whichDemo = process.env.DEMO
-const { AntaresProtocol } = require("../dist/antares-protocol.umd")
+const { Agent } = require("../dist/antares-protocol.umd")
 
 async function sequentiallyRun() {
   for (let key of Object.keys(Demos)) {
@@ -32,7 +32,7 @@ async function sequentiallyRun() {
     }
 
     log("\n" + `Demo ${key} (${JSON.stringify(config)})` + "\n--------")
-    await demoFn({ AntaresProtocol, config, stdout, log, append, interactive })
+    await demoFn({ Agent, config, stdout, log, append, interactive })
     // give some time to flush
     await new Promise(resolve => setTimeout(resolve, 200))
   }

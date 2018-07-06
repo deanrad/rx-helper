@@ -12,7 +12,7 @@ const sayings = from(["International House of Pancakes", "Starbucks", "Dunkin"])
         a stream of renderings you can control
     - option A: If you had a promise for the rendering, you could await it in renderer
 */
-module.exports = ({ AntaresProtocol, log, config }) => {
+module.exports = ({ Agent, log, config }) => {
   const interactive = !!process.env.INTERACTIVE
   const infinite = !!process.env.INFINITE
   const { count = 2, concurrency = "parallel", tickInterval = 250 } = config
@@ -24,7 +24,7 @@ module.exports = ({ AntaresProtocol, log, config }) => {
   return doIt()
 
   async function doIt() {
-    let antares = new AntaresProtocol()
+    let antares = new Agent()
 
     // This one speaks things
     antares.addRenderer(speakIt, { concurrency })

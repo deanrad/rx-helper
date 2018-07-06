@@ -5,13 +5,14 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Antares Client-side Test</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="//cdnjs.cloudflare.com/ajax/libs/rxjs/6.2.1/rxjs.umd.min.js"></script>
     <script src="./dist/antares-protocol.umd.js"></script>
     <script>
         let antares
         if (typeof AntaresProtocol !== "undefined") {
-            antares = new AntaresProtocol.AntaresProtocol
+            antares = new AntaresProtocol.Agent
             console.log("Antares is Ready")
         } else {
             console.log("Antares Loading Error")
@@ -20,7 +21,10 @@
 </head>
 
 <body>
-
+<h1>Links</h1>
+<ul>
+    <li><a href="docs/index.html">JSDoc Documentation</a></li>
+</ul>
 </body>
 
 </html>

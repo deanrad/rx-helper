@@ -5,7 +5,7 @@ import { delay, first, map, take, toArray } from "rxjs/operators"
 import {
   Action,
   ActionStreamItem,
-  AntaresProtocol,
+  Agent,
   Concurrency,
   Subscriber,
   reservedSubscriberNames
@@ -14,21 +14,21 @@ import {
 // a mutable variable, reset between tests
 let counter = 0
 
-describe("AntaresProtocol", () => {
-  let antares: AntaresProtocol
+describe("Agent", () => {
+  let antares: Agent
 
   beforeEach(() => {
     counter = 0
-    antares = new AntaresProtocol()
+    antares = new Agent()
   })
 
   // Sanity check
   it("is instantiable", () => {
-    expect(new AntaresProtocol()).toBeInstanceOf(AntaresProtocol)
+    expect(new Agent()).toBeInstanceOf(Agent)
   })
 
   it("has instance methods", () => {
-    const antares = new AntaresProtocol()
+    const antares = new Agent()
     expect(antares).toMatchObject({
       process: expect.any(Function),
       addFilter: expect.any(Function),
