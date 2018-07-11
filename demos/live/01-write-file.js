@@ -9,6 +9,21 @@ const writeLine = text => ({
   }
 })
 
+// Returns a single action from a batch
+const consolidator = batch => {
+  let combinedNames = ""
+  for(let item of batch) {
+    const { action } = item
+    combinedNames += `${action.payload.text}\n - `
+  }
+  combinedNames = combinedNames.replace(/\s-\s$/, "")
+    
+  // The returned object should match what a renderer expects
+  return {
+    action: writeLine(combinedNames)
+  }
+}
+
 const fileRenderer = ({ action }) => {
   return after(2000, () => {
     const { path, text, encoding } = action.payload
@@ -35,5 +50,5 @@ const names = ["Jake Weary", "ScarJo", "Chris Hemsworth", "Mark Ruffalo"]
 const actions = Array
   .from(Array(100).keys())
   .map(i => writeLine(names[i % names.length]))
-  
+
 actions.forEach(action => agent.process(action))
