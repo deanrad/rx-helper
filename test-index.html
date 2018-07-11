@@ -8,23 +8,106 @@
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="//cdnjs.cloudflare.com/ajax/libs/rxjs/6.2.1/rxjs.umd.min.js"></script>
-    <script src="./dist/antares-protocol.umd.js"></script>
+    <script src="./dist/antares-protocol.js"></script>
     <script>
         let antares
+        let after // an RxJS-Observable-based delay utility
         if (typeof AntaresProtocol !== "undefined") {
             antares = new AntaresProtocol.Agent
+            after = AntaresProtocol.after
             console.log("Antares is Ready")
         } else {
             console.log("Antares Loading Error")
         }
     </script>
+    <style>
+        #c {
+            border: 1px solid black;
+            /* TODO make fancy drawing later :) */
+        }
+    </style>
 </head>
 
 <body>
-<h1>Links</h1>
-<ul>
-    <li><a href="docs/index.html">JSDoc Documentation</a></li>
-</ul>
+    <h1>Links</h1>
+    <ul>
+        <li>
+            <a href="docs/index.html">JSDoc Documentation</a>
+        </li>
+    </ul>
+    <canvas id="c"></canvas>
+
+    <script>
+        // Set up our references to vars and functions
+        const { interval } = rxjs
+        const { map, tap } = rxjs.operators
+
+        // Do a fun animation
+        const canvas = document.getElementById("c")
+        const context = canvas.getContext("2d")
+        context.fillStyle = 'red'
+
+        const width = 70
+        const drawKitt = (pos) => {
+            const fromX = 5 + pos * 4
+            context.clearRect(0, 0, canvas.width, canvas.height)
+            context.fillRect(fromX, 50, 20, 50)
+        }
+
+        const work = interval(16).pipe(
+            map(i => {
+                const doubleX = i % (width * 2)
+                if (doubleX > width) {
+                    return (width * 2) - doubleX
+                } else {
+                    return doubleX
+                }
+            }),
+            tap(pos => drawKitt(pos))
+        )
+
+        work.subscribe() // alias for start()
+    </script>
+    <script>
+        // What are the properties of our hashChange renderer, and what should it be named?
+        const config = {
+            actionsOfType: 'hashChange',
+            concurrency: 'serial' // 'cutoff', 'serial', 'parallel', 'mute'
+        }
+
+        antares.addRenderer(({ action }) => {
+            return after(2000, () => document.location.hash = action.payload)
+        }, config)
+
+        antares.process({
+            type: 'hashChange',
+            payload: 'WhatWouldYouLikeToKnow?'
+        })
+
+        /*
+            Quiz - Match the concurrency mode to the desired outcome when this code is run:
+
+            `antares.process({ type: 'hashChange', payload: 'Funny' }); antares.process({ type: 'hashChange', payload: 'Honey' }); antares.process({ type: 'hashChange', payload: 'Money' })`
+
+            Money, 6000 msec       Money 2000 msec        Funny 2000 msec          
+
+            Answers:
+            serial: Money 6000 msec
+            cutoff: Money 2000 msec
+            parallel: Money 2000 msec
+            mute: Funny 2000 msec
+
+            --- 
+            Quiz - When would you use cutoff instead of parallel?
+
+            a) You want to limit resource usage
+            b) You want every request to run to completion
+            c) You have an issue where renders update the UI with old data
+            d) You want to prevent new renders from being done while one is in progress already
+
+            A: a) and c)
+        */
+    </script>
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 import { Observable, Subject, Subscription, asyncScheduler, from, of, empty } from "rxjs"
-import { observeOn, last, startWith } from "rxjs/operators"
+import { observeOn, last, startWith, filter } from "rxjs/operators"
 import {
   ActionProcessor,
   Action,
@@ -7,12 +7,14 @@ import {
   Concurrency,
   ProcessResult,
   Subscriber,
-  SubscriberConfig
+  SubscriberConfig,
+  StreamTransformer
 } from "./types"
 
 // Leave this as require not import! https://github.com/webpack/webpack/issues/1019
 const assert = typeof require === "undefined" ? () => null : require("assert")
 export * from "./types"
+export * from "./operators"
 
 /**
  * @description Represents the instance of an Antares action processor which is
@@ -138,13 +140,9 @@ export class Agent implements ActionProcessor {
     this.filterNames.push(name)
     this.allFilters.set(name, filter)
 
-    const errHandler = (e: Error) => {
-      console.error("So sad, an error" + e.message)
-    }
-
     // The subscription does little except give us an object
     // which, when unsubscribed, will remove our filter
-    const sub = this.action$.subscribe(asi => null, errHandler)
+    const sub = this.action$.subscribe(asi => null)
     sub.add(() => {
       this.allFilters.delete(name)
     })
@@ -159,10 +157,11 @@ export class Agent implements ActionProcessor {
    * to their own overlap, is per their `concurrency` config parameter.
    */
   addRenderer(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
-    validateSubscriberName(config.name)
+    validateConfig(config)
+
     const name = config.name || `renderer_${++this._subscriberCount}`
 
-    const xform = config.xform || (stream => stream)
+    const xform = streamTransformerFrom(config)
     this.rendererNames.push(name)
 
     const concurrency = config.concurrency || Concurrency.parallel
@@ -188,8 +187,8 @@ export class Agent implements ActionProcessor {
 
         this.activeResults.set(name, results)
 
-        // Eventually we may send actions back through, but for now at least subscribe
         const completer = {
+          // If we're set up to do so, send results back through #process
           next: (resultAction: Action) => {
             if (!processResults) return
             this.process(resultAction)
@@ -258,6 +257,35 @@ function validateSubscriberName(name: string | undefined) {
   assert(
     !name || !reservedSubscriberNames.includes(name),
     "The following subscriber names are reserved: " + reservedSubscriberNames.join(", ")
+  )
+}
+
+function streamTransformerFrom(config: SubscriberConfig): StreamTransformer {
+  if (config.xform) return config.xform
+
+  const { actionsOfType } = config
+  let predicate
+  if (actionsOfType) {
+    const predicate =
+      actionsOfType instanceof RegExp
+        ? ({ action }: ActionStreamItem) => actionsOfType.test(action.type)
+        : ({ action }: ActionStreamItem) => actionsOfType === action.type
+
+    const xform: StreamTransformer = s => {
+      return s.pipe(filter(predicate))
+    }
+    return xform
+  }
+
+  return s => s
+}
+// Throws if any violations
+function validateConfig(config: SubscriberConfig) {
+  validateSubscriberName(config.name)
+
+  assert(
+    !config.xform || !config.actionsOfType,
+    "For simple control of renderer trigers, use config.actionType; use xform for more complicated ones. Never both."
   )
 }
 

@@ -8,18 +8,19 @@ import {
   Agent,
   Concurrency,
   Subscriber,
-  reservedSubscriberNames
+  reservedSubscriberNames,
+  after
 } from "../src/antares-protocol"
 
 // a mutable variable, reset between tests
 let counter = 0
 
 describe("Agent", () => {
-  let antares: Agent
+  let agent: Agent
 
   beforeEach(() => {
     counter = 0
-    antares = new Agent()
+    agent = new Agent()
   })
 
   // Sanity check
@@ -41,9 +42,9 @@ describe("Agent", () => {
       describe("function argument", () => {
         it("will be called synchronously when an action is processed", () => {
           const spy = jest.fn()
-          antares.addFilter(spy)
+          agent.addFilter(spy)
           expect(spy).not.toHaveBeenCalled()
-          antares.process(anyAction)
+          agent.process(anyAction)
           expect(spy).toHaveBeenCalled()
         })
       })
@@ -54,29 +55,29 @@ describe("Agent", () => {
     describe("arguments", () => {
       describe("function argument", () => {
         it("should be a function", () => {
-          antares.addFilter(nullFn)
+          agent.addFilter(nullFn)
         })
       })
 
       describe("config argument", () => {
         describe("name", () => {
           it("will be filter_N if not given for a filter", () => {
-            expect(antares.filterNames).not.toContain("filter_1")
-            antares.addFilter(() => 3.141)
-            expect(antares.filterNames).toContain("filter_1")
+            expect(agent.filterNames).not.toContain("filter_1")
+            agent.addFilter(() => 3.141)
+            expect(agent.filterNames).toContain("filter_1")
           })
 
           it("will be renderer_N if not given for a renderer", () => {
-            expect(antares.rendererNames).not.toContain("renderer_1")
-            antares.addRenderer(() => 3.141)
-            expect(antares.rendererNames).toContain("renderer_1")
+            expect(agent.rendererNames).not.toContain("renderer_1")
+            agent.addRenderer(() => 3.141)
+            expect(agent.rendererNames).toContain("renderer_1")
           })
 
           it("cannot be a reserved name", () => {
             expect.assertions(reservedSubscriberNames.length)
             reservedSubscriberNames.forEach(badName => {
               expect(() => {
-                antares.addFilter(nullFn, { name: badName })
+                agent.addFilter(nullFn, { name: badName })
               }).toThrow()
             })
           })
@@ -85,11 +86,11 @@ describe("Agent", () => {
       describe("return value", () => {
         it("is a subscription", () => {
           let callCount = 0
-          const subscription = antares.addFilter(() => callCount++)
-          const result = antares.process(anyAction)
+          const subscription = agent.addFilter(() => callCount++)
+          const result = agent.process(anyAction)
           expect(callCount).toEqual(1)
           subscription.unsubscribe()
-          antares.process(anyAction)
+          agent.process(anyAction)
           expect(callCount).toEqual(1)
         })
       })
@@ -105,14 +106,67 @@ describe("Agent", () => {
       describe("config argument", () => {
         describe("concurrency", () => {
           it("should run in parallel mode (shown in demo)", undefined)
-          it("should run in series mode (shown in demo)", undefined)
-          it("should run in cutoff mode (shown in demo)", undefined)
-          it("should run in mute mode (shown in demo)", undefined)
+          it("should run in series mode", () => {
+            expect.assertions(2)
+            // This renderer takes 10msec to complete, and adds increment to counter
+            agent.addRenderer(() => after(10, () => (counter += 1)), {
+              concurrency: Concurrency.serial,
+              name: "inc"
+            })
+
+            let result1 = agent.process(anyAction)
+            let result2 = agent.process(anyAction)
+            return result1.completed
+              .then(() => {
+                expect(counter).toEqual(1)
+              })
+              .then(() => result2.completed)
+              .then(() => {
+                expect(counter).toEqual(2)
+              })
+          })
+
+          it("should run in cutoff mode", () => {
+            let increment = 0
+            // each action raises the increment
+            agent.addFilter(() => ++increment)
+
+            // This renderer takes time to complete, and adds increment to counter
+            agent.addRenderer(() => after(40, () => (counter += increment)), {
+              concurrency: Concurrency.cutoff
+            })
+
+            // If we process 2 actions fast enough, we should cutoff the first
+            let result = agent.process(anyAction) // filter makes increment 1
+            result = agent.process(anyAction) // filter makes increment 2
+
+            return result.completed.then(() => {
+              expect(counter).toEqual(0 + 2)
+            })
+          })
+
+          it("should run in mute mode", () => {
+            let increment = 0
+            // each action raises the increment
+            agent.addFilter(() => ++increment)
+
+            // This renderer takes time to complete, and adds increment to counter
+            agent.addRenderer(() => after(40, () => (counter += increment)), {
+              concurrency: Concurrency.mute
+            })
+
+            // If we process 2 actions fast enough, we should cutoff the first
+            let result1 = agent.process(anyAction) // filter makes increment 1
+
+            return result1.completed.then(() => {
+              expect(counter).toEqual(0 + 1)
+            })
+          })
         })
         describe("processResults", () => {
           it("should enable returned actions from renderer to go through antares.process", () => {
             expect.assertions(1)
-            antares.addRenderer(
+            agent.addRenderer(
               ({ action }) => {
                 if (action.type === "addTwo") {
                   counter += 2
@@ -125,12 +179,40 @@ describe("Agent", () => {
             )
 
             // since this render returns another action, we'll get two calls
-            antares.process({ type: "addOne" })
+            agent.process({ type: "addOne" })
             return new Promise(resolve => {
               setTimeout(() => {
                 expect(counter).toEqual(3)
                 resolve()
               }, 20)
+            })
+          })
+        })
+        describe("validation", () => {
+          it("should not accept xform and actionType argument", undefined)
+        })
+        describe("xform", () => {
+          it("accepts a function that modifies the Action Stream", undefined)
+        })
+        describe("actionType", () => {
+          it("should only run the render on matching actions (String)", () => {
+            expect.assertions(1)
+            agent.addRenderer(() => of(++counter), { name: "inc", actionsOfType: "Counter.inc" })
+            let result1 = agent.process(anyAction)
+            let result2 = agent.process({ type: "Counter.inc" }).completed.inc
+
+            return result2.then(() => {
+              expect(counter).toEqual(1)
+            })
+          })
+          it("should only run the action render on matching actions (Regexp)", () => {
+            expect.assertions(1)
+            agent.addRenderer(() => of(++counter), { name: "inc", actionsOfType: /^Counter\./ })
+            let result1 = agent.process(anyAction)
+            let result2 = agent.process({ type: "Counter.inc" }).completed.inc
+
+            return result2.then(() => {
+              expect(counter).toEqual(1)
             })
           })
         })
@@ -147,7 +229,7 @@ describe("Agent", () => {
       describe("action", () => {
         it("should be an action", () => {
           expect.assertions(0)
-          antares.process(anyAction)
+          agent.process(anyAction)
         })
       })
     })
@@ -155,7 +237,7 @@ describe("Agent", () => {
     describe("return value", () => {
       it("should be a superset of the action", () => {
         expect.assertions(1)
-        const result = antares.process(anyAction)
+        const result = agent.process(anyAction)
         expect(result).toMatchObject(anyAction)
       })
 
@@ -164,10 +246,10 @@ describe("Agent", () => {
 
         const firstRetVal = 1
         const secondRetVal = "abc123"
-        antares.addFilter(() => firstRetVal)
-        antares.addFilter(() => secondRetVal, { name: "_id" })
+        agent.addFilter(() => firstRetVal)
+        agent.addFilter(() => secondRetVal, { name: "_id" })
 
-        const result = antares.process(anyAction)
+        const result = agent.process(anyAction)
 
         // Any way u want, u got it
         const { filter_1, _id } = result
@@ -186,40 +268,40 @@ describe("Agent", () => {
       it("should not serialize result properties, allowing them to be complex", () => {
         expect.assertions(1)
         const retVal = "abc123"
-        antares.addFilter(() => retVal)
-        const serailizedResult = JSON.stringify(antares.process(anyAction))
+        agent.addFilter(() => retVal)
+        const serailizedResult = JSON.stringify(agent.process(anyAction))
         expect(serailizedResult).not.toContain(retVal)
       })
 
       describe("#completed: (all triggered renderers are done)", () => {
         it("is a Promise for all async renderers' results to have completed", () => {
-          antares.addRenderer(() => of("🐌").pipe(delay(100)), {
+          agent.addRenderer(() => of("🐌").pipe(delay(100)), {
             name: "snail",
             concurrency: Concurrency.serial
           })
-          antares.addRenderer(() => of("⚡").pipe(delay(20)), {
+          agent.addRenderer(() => of("⚡").pipe(delay(20)), {
             name: "quickie"
           })
 
-          return antares.process(anyAction).completed
+          return agent.process(anyAction).completed
         })
 
         it("can get a promise for a renderers final value via completed.rendererName", () => {
           expect.assertions(4)
 
           // This 'renderer' returns an Observable which yields 3.14 after 20msec
-          antares.addRenderer(() => of(2.71828, 3.14).pipe(delay(20)), { name: "thing1" })
+          agent.addRenderer(() => of(2.71828, 3.14).pipe(delay(20)), { name: "thing1" })
 
           // Renderer can return simple object
-          antares.addRenderer(() => 7, { name: "thing2" })
+          agent.addRenderer(() => 7, { name: "thing2" })
 
           // Can return null or undefined
-          antares.addRenderer(() => null, { name: "nully" })
+          agent.addRenderer(() => null, { name: "nully" })
 
           // Renderer returns an array
-          antares.addRenderer(() => ["---", "=--", "==-", "==="], { name: "progressBars" })
+          agent.addRenderer(() => ["---", "=--", "==-", "==="], { name: "progressBars" })
 
-          const result = antares.process(anyAction)
+          const result = agent.process(anyAction)
           return result.completed.thing1
             .then(r => {
               expect(r).toEqual(3.14)
@@ -243,7 +325,7 @@ describe("Agent", () => {
 
         it("resolves if you have no renderers", () => {
           expect.assertions(0)
-          const result = antares.process(anyAction)
+          const result = agent.process(anyAction)
           return result.completed
         })
 
@@ -256,7 +338,7 @@ describe("Agent", () => {
         expect.assertions(1)
 
         // Build up our assertion
-        const assertion = antares.action$
+        const assertion = agent.action$
           .pipe(first())
           .toPromise()
           .then(asi => {
@@ -264,7 +346,7 @@ describe("Agent", () => {
           })
 
         // Then process an action
-        antares.process(anyAction)
+        agent.process(anyAction)
 
         // And return the assertion
         return assertion
@@ -283,43 +365,48 @@ describe("Agent", () => {
           return (counter *= 2)
         }
 
-        antares.addFilter(incrementer, { name: "inc" })
-        antares.addFilter(doubler, { name: "double" })
+        agent.addFilter(incrementer, { name: "inc" })
+        agent.addFilter(doubler, { name: "double" })
 
-        let result = antares.process(anyAction)
+        let result = agent.process(anyAction)
         const { double, inc } = result
         expect({ double, inc }).toMatchSnapshot()
       })
 
       describe("errors in filters", () => {
         it("should propogate up to the caller of #process", () => {
-          antares.addFilter(() => {
+          agent.addFilter(() => {
             throw new Error("whoops!")
           })
           expect(() => {
-            antares.process({ type: "timebomb" })
+            agent.process({ type: "timebomb" })
           }).toThrowErrorMatchingSnapshot()
         })
       })
 
       describe("errors in async renderers", () => {
-        it("should not propogate up to the caller of #process", () => {
-          expect.assertions(0)
-          let sub = antares.addRenderer(
-            () => {
-              throw new Error("Who_ops")
-            },
-            { name: "janky" }
-          )
-          antares.process(anyAction)
-        })
-
+        it("should not propogate up to the caller of #process, but surface somewhere", undefined)
         it("should unsubscribe the renderer", undefined)
       })
     })
   })
 })
 
+describe("Utilities", () => {
+  describe("after", () => {
+    it("should schedule the execution of a function later", () => {
+      expect.assertions(1)
+
+      let counter = 0
+      // prettier-ignore
+      let result = after(1, () => {
+        return ++counter
+      }).toPromise().then(() => expect(counter).toEqual(1))
+
+      return result
+    })
+  })
+})
 //#region Util Functions Below
 const justTheAction = ({ action }: ActionStreamItem) => action
 const toAction = (x: any): Action => ({ type: "wrapper", payload: x })

@@ -29,7 +29,8 @@ let configs = {
     require("./04-batched-write"),
     { count: 3000, file: "./demos/scratch/04-unbatched.yml", xform: "s => s" }
   ],
-  cheatCode: [require("./05-cheat-code"), { xform: "s => s /* TODO test timing */" }]
+  cheatCode: [require("./05-cheat-code"), { xform: "s => s /* TODO test timing */" }],
+  sessionTimeout: [require("./06-session-timeout"), { inactivityInterval: 300, warningInterval: 100, }]
 }
 
 const failsInCI = {

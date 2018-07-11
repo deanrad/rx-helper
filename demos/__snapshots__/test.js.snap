@@ -67,3 +67,15 @@ exports[`All Demos Fruit Concurrency Demo should run in series 1`] = `
  🍍  🍍  🍍  🍍  💥
 "
 `;
+
+exports[`All Demos Session Timeout Demo should run the test 1`] = `
+"Your session will timeout in 5 seconds. Keep pressing keys to keep it alive
+Got a keypress
+Got a keypress
+You will be logged out soon..
+Got a keypress
+Got a keypress
+You will be logged out soon..
+You have been logged out.
+"
+`;

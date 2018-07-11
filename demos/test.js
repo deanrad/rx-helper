@@ -111,7 +111,13 @@ describe("All Demos", () => {
       await runDemo(Demos.cheatCode)
       expect(output).toMatchSnapshot()
     })
-    it("should run the test interactively", undefined)
+  })
+
+  describe("Session Timeout Demo", () => {
+    it("should run the test", async () => {
+      await runDemo(Demos.sessionTimeout)
+      expect(output).toMatchSnapshot()
+    })
   })
 })
 

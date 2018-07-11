@@ -1,0 +1,15 @@
+{
+  "name": "antares-live",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "antares-protocol": "^2.0.0"
+  }
+}

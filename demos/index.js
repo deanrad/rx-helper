@@ -16,7 +16,7 @@ const log = s => stdout.write(s + "\n")
 const append = s => stdout.write(s)
 const interactive = !!process.env.INTERACTIVE
 const whichDemo = process.env.DEMO
-const { Agent } = require("../dist/antares-protocol.umd")
+const { Agent } = require("../dist/antares-protocol")
 
 async function sequentiallyRun() {
   for (let key of Object.keys(Demos)) {

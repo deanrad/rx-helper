@@ -45,7 +45,7 @@ export enum Concurrency {
 }
 
 export interface StreamTransformer {
-  (stream: Observable<any>): Observable<any>
+  (stream: Observable<ActionStreamItem>): Observable<ActionStreamItem>
 }
 
 export interface SubscriberConfig {
@@ -53,6 +53,7 @@ export interface SubscriberConfig {
   concurrency?: Concurrency
   xform?: StreamTransformer
   processResults?: Boolean
+  actionsOfType?: String | RegExp
 }
 
 /**

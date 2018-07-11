@@ -12,7 +12,9 @@ const {
   filter,
   throttleTime
 } = require("rxjs/operators")
+const { getUserInputFromStdin } = require("./utils")
 const clocks = ["🕛", "🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚"]
+
 module.exports = ({ Agent, config = {}, log, append }) => {
   const prompt = "Press a key five times in a second to get a star (✨🌟✨), or 'x' to eXit:"
   const interactive = !!process.env.INTERACTIVE
@@ -78,7 +80,7 @@ module.exports = ({ Agent, config = {}, log, append }) => {
   ]
 
   function getActions(interactive) {
-    return interactive ? getUserInputFromStdin() : getScriptedActions()
+    return interactive ? getUserInputFromStdin(log) : getScriptedActions()
   }
 
   function getScriptedActions() {
@@ -92,31 +94,6 @@ module.exports = ({ Agent, config = {}, log, append }) => {
         of(1).pipe(delay(1000))
       )
     )
-  }
-
-  function getUserInputFromStdin() {
-    // set up stdin
-    const keypress = require("keypress")
-    keypress(process.stdin)
-    process.stdin.setRawMode(true)
-    process.stdin.resume()
-
-    // A Subject is something that you can push values at, and
-    // it can be subscribed to as an Observable of those values
-    const s = new Subject()
-
-    // set up handler and return the stream as Observable
-    process.stdin.on("keypress", (ch, key = {}) => {
-      if (key.name == "x" || (key && key.ctrl && key.name == "c")) {
-        process.stdin.pause()
-        s.complete()
-        log("\nBye!")
-        return process.exit()
-      }
-      s.next()
-    })
-
-    return s.asObservable()
   }
 
   // the promise to be awaited by the runner
