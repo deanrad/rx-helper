@@ -11,15 +11,14 @@ const writeLine = text => ({
 
 const fileRenderer = ({ action }) => {
   const { path, text, encoding } = action.payload
-  const line = text + "\n"
+  const line = " - " + text + "\n"
 
   const fs = require("fs")
   fs.appendFileSync(path, line, encoding)
 }
 const logger = ({ action }) => {
-    console.log(`Got ${action.payload.text}`)
+  console.log(`Got ${action.payload.text}`)
 }
-
 
 // Make the fileRenderer responsible for certain actions
 agent.addRenderer(fileRenderer)
