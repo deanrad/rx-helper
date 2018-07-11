@@ -16,9 +16,14 @@ const fileRenderer = ({ action }) => {
   const fs = require("fs")
   fs.appendFileSync(path, line, encoding)
 }
+const logger = ({ action }) => {
+    console.log(`Got ${action.payload.text}`)
+}
+
 
 // Make the fileRenderer responsible for certain actions
 agent.addRenderer(fileRenderer)
+agent.addRenderer(logger)
 
 const action = writeLine("Jake Weary")
 agent.process(action)
