@@ -25,16 +25,15 @@ const logger = ({ action }) => {
 // Make the fileRenderer responsible for certain actions
 agent.addFilter(logger)
 agent.addRenderer(fileRenderer, {
-    concurrency: "serial"
+  concurrency: "serial"
 })
 
 const action = writeLine("Jake Weary")
 
-const actions = [
-  writeLine("Jake Weary"),
-  writeLine("ScarJo"),
-  writeLine("Chris Hemsworth"),
-  writeLine("Mark Ruffalo")
-]
-
+const names = ["Jake Weary", "ScarJo", "Chris Hemsworth", "Mark Ruffalo"]
+// prettier-ignore
+const actions = Array
+  .from(Array(100).keys())
+  .map(i => writeLine(names[i % names.length]))
+  
 actions.forEach(action => agent.process(action))
