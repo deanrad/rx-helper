@@ -5,9 +5,20 @@ const writeLine = text => ({
   payload: {
     text,
     encoding: "UTF8",
-    path: "../scratch/live-actors.yml"
+    path: "./demos/scratch/live-actors.yml"
   }
 })
 
-const action = writeLine('Jake Weary')
+const fileRenderer = ({ action }) => {
+  const { path, text, encoding } = action.payload
+  const line = text + "\n"
+
+  const fs = require("fs")
+  fs.appendFileSync(path, line, encoding)
+}
+
+// Make the fileRenderer responsible for certain actions
+agent.addRenderer(fileRenderer)
+
+const action = writeLine("Jake Weary")
 agent.process(action)
