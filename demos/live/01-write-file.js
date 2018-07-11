@@ -1,3 +1,4 @@
+const { bufferCount, map } = require("rxjs/operators")
 const { Agent, after } = require("antares-protocol")
 const agent = new Agent()
 
@@ -40,7 +41,11 @@ const logger = ({ action }) => {
 // Make the fileRenderer responsible for certain actions
 agent.addFilter(logger)
 agent.addRenderer(fileRenderer, {
-  concurrency: "serial"
+  // concurrency: "serial"
+  xform: actionStream => actionStream.pipe(
+    bufferCount(25),
+    map(consolidator)
+  )
 })
 
 const action = writeLine("Jake Weary")
