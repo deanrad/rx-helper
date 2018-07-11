@@ -11,10 +11,6 @@ export interface Subscriber {
   (item: ActionStreamItem): any
 }
 
-export interface SafeSubscriber {
-  (item: ActionStreamItem): any
-}
-
 export interface Action {
   type: string
   payload?: any
@@ -33,14 +29,19 @@ export interface ActionStreamItem {
  * @description When a renderer (async usually) returns an Observable, it's possible
  * that multiple renderings will be active at once (see demo 'speak-up'). The options
  * are:
- * - parallel - a mergeMap will be performed
- * - serial - a concatMap will be performed
- * - cutoff - a switchMap will be performed
+ * - parallel: Concurrent renders are unlimited, unadjusted
+ * - serial: Concurrency of 1, render starts are queued
+ * - cutoff: Concurrency of 1, any existing render is killed
+ * - mute: Concurrency of 1, existing render prevents new renders
  */
 export enum Concurrency {
+  /** @description Concurrent renders are unlimited, unadjusted */
   parallel = "parallel",
+  /** @description Concurrency of 1, render starts are queued */
   serial = "serial",
+  /** @description Concurrency of 1, any existing render is killed */
   cutoff = "cutoff",
+  /** @description Concurrency of 1, existing render prevents new renders */
   mute = "mute"
 }
 

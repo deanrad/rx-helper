@@ -13,8 +13,20 @@ import {
 
 // Leave this as require not import! https://github.com/webpack/webpack/issues/1019
 const assert = typeof require === "undefined" ? () => null : require("assert")
-export * from "./types"
+export {
+  Action,
+  ActionStreamItem,
+  Concurrency,
+  ProcessResult,
+  StreamTransformer,
+  Subscriber,
+  SubscriberConfig
+} from "./types"
+
+// Export utility rxjs operators and our own custom
 export * from "./operators"
+export { from, of, empty, concat } from "rxjs"
+export { startWith, last, filter, delay, map, mapTo } from "rxjs/operators"
 
 /**
  * @description Represents the instance of an Antares action processor which is
