@@ -23,8 +23,10 @@ const logger = ({ action }) => {
 }
 
 // Make the fileRenderer responsible for certain actions
-agent.addRenderer(fileRenderer)
 agent.addFilter(logger)
+agent.addRenderer(fileRenderer, {
+    concurrency: "serial"
+})
 
 const action = writeLine("Jake Weary")
 
