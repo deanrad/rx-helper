@@ -24,7 +24,7 @@ const logger = ({ action }) => {
 
 // Make the fileRenderer responsible for certain actions
 agent.addRenderer(fileRenderer)
-agent.addRenderer(logger)
+agent.addFilter(logger)
 
 const action = writeLine("Jake Weary")
 
