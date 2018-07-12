@@ -15,7 +15,41 @@ Antares is an architecture for real-time web apps. <a href="https://s3.amazonaws
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![try on runkit](https://badge.runkitcdn.com/antares-protocol.svg)](https://npm.runkit.com/antares-protocol)
 ![twitter link](https://img.shields.io/badge/twitter-@deaniusaur-55acee.svg)
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/deanius)
+
+## Why Antares?
+
+Read up on the kinds of problems Antares solves in [the Wiki](https://github.com/deanius/antares-ts/wiki/Antares-Background).
+
+## Testing? Yes, please!
+
+Antares is highly tested. And since testing async is hard, some integration level tests run a bunch of complex stuff (our [demos](#demos)), and simply assert on the console output. The slightest change in behavior can thus be visible in the output of the demo as a large change. This, with Jest Snapshot testing makes asserting on our output a piece of cake.
+
+For unit tests, check out [what the unit test suite looks like](https://travis-ci.org/deanius/antares-ts/jobs/403257425#L139) on a recent CI build. (Thanks to Dan Abromov for illustrating in his 2015 `react-dnd/dnd-core` project what a nicely formatted test suite output can be)
+
+## Demos!
+
+Antares has demos whose output is tested in CI on MacOS, Linux, and Windows. Because concurrency must be interacted with to truly be understood, many of the demos support you interacting with them in a console, or at least changing their parameters in config (`demos/config.js`)
+
+```
+> git clone https://github.com/deanius/antares-ts antares
+> cd antares; npm i 
+> npm run demos                         # run 'em all
+```
+See the output of a run of all demos on [Travis CI](https://travis-ci.org/deanius/antares-ts/jobs/402981544#L681), and if you run them locally, make sure you have sound turned on! (It's a core principle of Antares that not all renders are to a DOM)
+
+Here are some more ways you can run demos, including using [`cross-env`](https://www.npmjs.com/package/cross-env) on windows
+
+```
+> DEMO=muteFruit INTERACTIVE=1 node demos/index
+> DEMO=muteFruit innerInterval=100 outerInterval=100 node demos/index
+> cross-env DEMO=muteFruit innerInterval= node demos/index
+```
+
+## Show your love!
+
+* Display a badge on your project: ![I ♥️ Antares](https://img.shields.io/badge/built--with-antares-blue.svg)
+* Donate to the project [![to the project](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/deanius), or somewhere you think you can pay it forward, even if not here!
+
 ## Gratitude, Props, Thanks To
 
 * Dan Abramov - [Redux](https://redux.js.org) ![twitter](https://img.shields.io/badge/twitter-@dan_abramov-55acee.svg)
