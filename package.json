@@ -29,7 +29,7 @@
     "test:watch": "jest --watch",
     "test:prod": "npm run lint && jest --expand --no-coverage --no-cache",
     "test:ci": "npm run test:prod && npm run build && npm run size && npm run demos",
-    "test:client": "serve -n",
+    "test:client": "serve -t -n",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",

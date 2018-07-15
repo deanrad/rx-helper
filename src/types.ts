@@ -1,6 +1,17 @@
 import { Observable, Subject, Subscription } from "rxjs"
 import { SubscriberConfig } from "./types"
 
+/** @description Options that get mixed into the agent as read-only
+ * properties upon construction. Whitelisted to: agentId
+ */
+export interface AgentConfig {
+  /** @description Any value: One Suggestion is hex digits (a4ad3d) but
+   * the way you'll create this will depend on your environment.
+   */
+  agentId?: any
+  [key: string]: any
+}
+
 export interface ActionProcessor {
   process(action: Action): ProcessResult
   addFilter(subscriber: Subscriber, config: SubscriberConfig): Subscription

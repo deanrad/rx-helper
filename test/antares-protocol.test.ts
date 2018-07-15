@@ -9,7 +9,9 @@ import {
   Concurrency,
   Subscriber,
   reservedSubscriberNames,
-  after
+  after,
+  agentConfigFilter,
+  AgentConfig
 } from "../src/antares-protocol"
 
 // a mutable variable, reset between tests
@@ -26,6 +28,25 @@ describe("Agent", () => {
   // Sanity check
   it("is instantiable", () => {
     expect(new Agent()).toBeInstanceOf(Agent)
+  })
+
+  describe("config argument", () => {
+    it("should set agentId", () => {
+      const agentId = 2.718 // or 'a3efcd' typically
+      expect(new Agent({ agentId })).toHaveProperty("agentId", 2.718)
+    })
+    it("should not set properties not whitelisted", () => {
+      expect(Agent.configurableProps).not.toContain("momofuku")
+      expect(new Agent({ momofuku: "yes" })).not.toHaveProperty("momofuku")
+    })
+  })
+
+  describe("instance properties", () => {
+    it("has readonly agentId", () => {
+      expect(() => {
+        new Agent({ agentId: 1234 }).agentId = 4321
+      }).toThrow()
+    })
   })
 
   it("has instance methods", () => {
@@ -406,7 +427,25 @@ describe("Utilities", () => {
       return result
     })
   })
+
+  describe("agentConfigFilter", () => {
+    it("should return a filter that adds agentConfig properties to an actions meta", () => {
+      const config: AgentConfig = { agentId: 12345 }
+      const agent = new Agent(config)
+      const filter = agentConfigFilter(agent)
+      agent.addFilter(filter)
+
+      const action = { type: "gotmeta" }
+      agent.process(action)
+      expect(action).toMatchObject(action)
+      // @ts-ignore // yep, filters may mutate their actions
+      expect(action.meta.agentId).toEqual(12345)
+      // @ts-ignore // again, filters may mutate their actions. Write it, Bart
+      expect(action.meta).toMatchObject(config)
+    })
+  })
 })
+
 //#region Util Functions Below
 const justTheAction = ({ action }: ActionStreamItem) => action
 const toAction = (x: any): Action => ({ type: "wrapper", payload: x })

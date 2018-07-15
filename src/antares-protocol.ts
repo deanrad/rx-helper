@@ -4,6 +4,7 @@ import {
   ActionProcessor,
   Action,
   ActionStreamItem,
+  AgentConfig,
   Concurrency,
   ProcessResult,
   Subscriber,
@@ -15,6 +16,7 @@ import {
 const assert = typeof require === "undefined" ? () => null : require("assert")
 export {
   Action,
+  AgentConfig,
   ActionStreamItem,
   Concurrency,
   ProcessResult,
@@ -38,6 +40,7 @@ export class Agent implements ActionProcessor {
   action$: Observable<ActionStreamItem>
   filterNames: Array<string>
   rendererNames: Array<string>
+  [key: string]: any
 
   private _subscriberCount = 0
   private actionStream: Subject<ActionStreamItem>
@@ -45,7 +48,9 @@ export class Agent implements ActionProcessor {
   private activeRenders: Map<string, Subscription>
   private activeResults: Map<string, Observable<any>>
 
-  constructor() {
+  public static configurableProps = ["agentId"]
+
+  constructor(config: AgentConfig = {}) {
     this.actionStream = new Subject<ActionStreamItem>()
     this.action$ = this.actionStream.asObservable()
     this.filterNames = []
@@ -53,6 +58,16 @@ export class Agent implements ActionProcessor {
     this.rendererNames = []
     this.activeRenders = new Map<string, Subscription>()
     this.activeResults = new Map<string, Observable<any>>()
+
+    for (let key of Object.keys(config)) {
+      Agent.configurableProps.includes(key) &&
+        Object.defineProperty(this, key.toString(), {
+          value: config[key],
+          writable: false,
+          enumerable: true,
+          configurable: false
+        })
+    }
   }
 
   /** @description Process sends an Action (eg Flux Standard Action), which
@@ -302,3 +317,16 @@ function validateConfig(config: SubscriberConfig) {
 }
 
 export const reservedSubscriberNames = ["completed", "then", "catch"]
+
+/** @description Constructs a filter (see agent.addFilter) which mixes AgentConfig properties
+ * into the meta of an action
+ */
+export const agentConfigFilter = (agent: Agent) => ({ action }: ActionStreamItem) => {
+  Object.assign(action, { meta: action.meta || {} })
+  Agent.configurableProps.forEach(key => {
+    Object.assign(action.meta, { [key]: agent[key] })
+  })
+}
+
+/** @description Pretty-print an action */
+export const pp = (action: Action) => JSON.stringify(action)
