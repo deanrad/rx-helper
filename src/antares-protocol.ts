@@ -36,6 +36,8 @@ export { startWith, last, filter, delay, map, mapTo } from "rxjs/operators"
  * an Agent is `action$`, its action stream.
  */
 export class Agent implements ActionProcessor {
+  public static configurableProps = ["agentId"]
+
   /** @description The heart and circulatory system of an Agent is `action$`, its action stream. */
   action$: Observable<ActionStreamItem>
   filterNames: Array<string>
@@ -47,8 +49,6 @@ export class Agent implements ActionProcessor {
   private allFilters: Map<string, Subscriber>
   private activeRenders: Map<string, Subscription>
   private activeResults: Map<string, Observable<any>>
-
-  public static configurableProps = ["agentId"]
 
   constructor(config: AgentConfig = {}) {
     this.actionStream = new Subject<ActionStreamItem>()
