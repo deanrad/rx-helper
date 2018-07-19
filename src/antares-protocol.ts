@@ -333,7 +333,7 @@ export const agentConfigFilter = (agent: Agent) => ({ action }: ActionStreamItem
  * random, just more random than: https://xkcd.com/221/
  */
 export const randomId = (length: number = 7) => {
-  Math.floor(Math.pow(2, length * 4) * Math.random()).toString(16)
+  return Math.floor(Math.pow(2, length * 4) * Math.random()).toString(16)
 }
 
 /** @description A filter that adds a string of hex digits to

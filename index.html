@@ -16,10 +16,12 @@
         let agent
         let after // an RxJS-Observable-based delay utility
         let ajaxStreamingGet
+        let randomIdFilter
         if (typeof AntaresProtocol !== "undefined") {
             agent = new AntaresProtocol.Agent
             after = AntaresProtocol.after
             ajaxStreamingGet = AntaresProtocol.ajaxStreamingGet
+            randomIdFilter = AntaresProtocol.randomIdFilter
             console.log("Antares is Ready")
         } else {
             console.log("Antares Loading Error")
@@ -73,6 +75,7 @@
 
         // Send all actions, including those returned by renderers through the store
         agent.addFilter(({ action }) => store.dispatch(action))
+        agent.addFilter(randomIdFilter())
 
         // For actions like http/*, do the streaming get, dispatching incrementally
         // and telling the agent to store under the id field returned eg /users/123
@@ -83,10 +86,18 @@
                     type: 'agent/remember',
                     payload: { id: responseItem.id, name: responseItem.name, full_name: responseItem.full_name },
                     meta: {
-                        key: [...((action.meta || {}).key || []), responseItem.id]
+                        key: [...((action.meta || {}).key || []), responseItem.id],
+                        parentActionId: (action.meta || {}).actionId
                     }
                 }))),
-                take(5)
+                take(5),
+                catchError(e => {
+                    const { request, status, responseType, response } = e
+                    return of({
+                        type: 'http/error',
+                        payload: { request, status, responseType, response }
+                    })
+                })
             )
         }, { name: 'httpGet', actionsOfType: /^http.get/, processResults: true })
 

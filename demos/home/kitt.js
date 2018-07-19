@@ -1,6 +1,6 @@
 // Set up our references to vars and functions
-const { interval } = rxjs
-const { map, tap, take, concatMap } = rxjs.operators
+const { interval, of } = rxjs
+const { catchError, map, tap, take, concatMap } = rxjs.operators
 
 // Do a fun animation
 const canvas = document.getElementById("c")
