@@ -106,7 +106,7 @@
             type: 'http/get',
             payload: {
                 url: 'https://api.github.com/search/repositories?q=antares&sort=stars',
-                pattern: '!items[*]',
+                expandKey: 'items'
             },
             meta: { key: ['repos'] }
         })

@@ -81,7 +81,7 @@ export interface ProcessResult {
 
 export interface StreamingGetOptions {
   url: string
-  pattern: string
+  expandKey: string
   method?: "GET" | "POST"
   headers?: Object
   body?: string | Object

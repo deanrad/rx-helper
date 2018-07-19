@@ -1,19 +1,20 @@
-import { Observable, from } from "rxjs"
+import { Observable, from, of } from "rxjs"
 import { ajax } from "rxjs/ajax"
 import { StreamingGetOptions } from "./types"
-const { of } = require("rxjs")
-const { delay, map, flatMap } = require("rxjs/operators")
+import { delay, map, flatMap, tap } from "rxjs/operators"
 
 /** @description Delays the occurrence of an object, or the
  * invocation of a function, for the number of milliseconds given
  * @returns An Observable of the desired effect/object
  * @example after(100, {type: 'Timedout'}).subscribe(action => ...)
  */
-export const after = (ms: Number, objOrFn: Object | Function): Observable<any> => {
-  const [obj, effect] = objOrFn instanceof Function ? [null, objOrFn] : [objOrFn, () => null]
+export const after = (ms: number, objOrFn: Object | Function): Observable<any> => {
+  const [obj, effect] =
+    objOrFn instanceof Function ? [null, objOrFn] : [objOrFn, (value: Object) => null]
 
   return of(obj).pipe(
     delay(ms),
+    // @ts-ignore
     map(effect)
   )
 }
@@ -27,11 +28,12 @@ export const ajaxStreamingGet = (opts: StreamingGetOptions): Observable<any> => 
     url: opts.url,
     method: opts.method || "GET",
     withCredentials: Boolean(opts.withCredentials),
-    timeout: opts.timeout || 30*1000
+    timeout: opts.timeout || 30 * 1000
   }).pipe(
     // @ts-ignore
     flatMap(ajax => {
-      ajax.response instanceof Array ? from(ajax.response) : of(ajax.response)
+      const resultArr = opts.expandKey ? ajax.response[opts.expandKey] : ajax.response
+      return resultArr instanceof Array ? from(resultArr) : of(resultArr)
     })
   )
 }
