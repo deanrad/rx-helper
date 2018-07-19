@@ -86,7 +86,16 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
     keypress(process.stdin)
     process.stdin.setRawMode(true)
     process.stdin.resume()
-    console.log("Push some number keys! (0-9), x to eXit.")
+
+    let prompt = ""
+    for (i = 1; i <= 9; i++) {
+      prompt += circleCharacter[i] + " :" + fruitCharacter[i] + "  "
+    }
+    console.log(
+      `Press a number to download a fruit (higher numbers take longer). Push x to eXit.
+      ${prompt}`
+    )
+    console.log()
 
     // A Subject is something that you can push values at, and
     // it can be subscribed to as an Observable of those values
