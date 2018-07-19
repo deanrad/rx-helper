@@ -9,29 +9,37 @@ const { storeFilter } = require("./store")
 const agent = new Agent({ agentId: `http://localhost:${port}` })
 agent.addFilter(storeFilter)
 agent.addFilter(randomIdFilter)
-
+agent.addRenderer(
+  ({ action, context = {} }) => {
+    const { res } = context
+    const { payload } = action
+    // we dont have different endpoints yet
+    if (payload.path.includes("api")) {
+      res.json({ id: randomId() })
+      return
+    } else {
+      res.sendFile("index.html", { root: "." })
+      return
+    }
+  },
+  { actionsOfType: "http/get" }
+)
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static("."))
 app.use(morgan("dev"))
 
+// Unlike a regular express router, our sole job here is to put an action
+// on the stream with sufficient context for a renderer to respond.
 app.get("*", function(req, res) {
   const { query, body, path } = req
   const payload = { query, body, path }
 
   const type = "http/" + req.method.toLowerCase()
   const action = { type, payload }
-  agent.process(action)
+
+  agent.process(action, { req, res })
 
   console.log(payload)
-
-  // we dont have different endpoints yet
-  if (req.path.includes("api")) {
-    res.json({ id: randomId() })
-    return
-  } else {
-    res.sendFile("index.html", { root: "." })
-    return
-  }
 })
 
 app.listen(port, () => console.log(`Listening on radio FM http://localhost:${port}`))
