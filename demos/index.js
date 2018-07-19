@@ -6,7 +6,7 @@
 //          cross-env DEMO=Fruit npm run demos
 //
 //          # Substitutes an Observable taken from user input for a hard-coded one
-//          cross-env DEMO=Speak INTERACTIVE=1 npm run demos 
+//          cross-env DEMO=Speak INTERACTIVE=1 npm run demos
 // See also: npm run demos:test (uses jest)
 // See alse: ./configs.js
 const Demos = require("./configs")
@@ -25,7 +25,7 @@ async function sequentiallyRun() {
     const [demoFn, config] = Demos[key]
 
     // pick up CLI overrides
-    for(let key of Object.keys(config)) {
+    for (let key of Object.keys(config)) {
       if (process.env[key]) {
         config[key] = process.env[key]
       }

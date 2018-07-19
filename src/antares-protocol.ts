@@ -328,5 +328,26 @@ export const agentConfigFilter = (agent: Agent) => ({ action }: ActionStreamItem
   })
 }
 
+/** @description A random enough identifier, 1 in a million or so,
+ * to identify actions in a stream. Not globally or cryptographically
+ * random, just more random than: https://xkcd.com/221/
+ */
+export const randomId = (length: number = 7) => {
+  Math.floor(Math.pow(2, length * 4) * Math.random()).toString(16)
+}
+
+/** @description A filter that adds a string of hex digits to
+ * action.meta.actionId to uniquely identify an action among its neighbors.
+ * @see randomId
+ */
+export const randomIdFilter = (length: number, key = "actionId") => ({
+  action
+}: ActionStreamItem) => {
+  action.meta = action.meta || {}
+  const newId = randomId(length)
+  // @ts-ignore
+  action.meta[key] = newId
+}
+
 /** @description Pretty-print an action */
 export const pp = (action: Action) => JSON.stringify(action)

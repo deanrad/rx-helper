@@ -30,11 +30,14 @@ let configs = {
     { count: 3000, file: "./demos/scratch/04-unbatched.yml", xform: "s => s" }
   ],
   cheatCode: [require("./05-cheat-code"), { xform: "s => s /* TODO test timing */" }],
-  sessionTimeout: [require("./06-session-timeout"), { inactivityInterval: 300, warningInterval: 100, }]
+  sessionTimeout: [
+    require("./06-session-timeout"),
+    { inactivityInterval: 300, warningInterval: 100 }
+  ]
 }
 
 const failsInCI = {
-  doubleSpeak: [require("./02-speak-up"), { count: 2 }],
+  doubleSpeak: [require("./02-speak-up"), { count: 2, concurrency: "parallel" }],
   patientSpeak: [require("./02-speak-up"), { count: 2, concurrency: "serial" }],
   interruptingSpeak: [require("./02-speak-up"), { count: 2, concurrency: "cutoff" }]
 }

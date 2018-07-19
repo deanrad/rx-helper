@@ -1,7 +1,7 @@
 import { default as faker } from "faker"
 import fs from "fs"
-import { Observable, Subject, of, empty } from "rxjs"
-import { delay, first, map, take, toArray } from "rxjs/operators"
+import { Subject, of, empty } from "rxjs"
+import { delay, first } from "rxjs/operators"
 import {
   Action,
   ActionStreamItem,

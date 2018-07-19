@@ -4,17 +4,22 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Antares Client-side Test</title>
+    <title>Antares Agent Client-side Test</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="//cdnjs.cloudflare.com/ajax/libs/rxjs/6.2.1/rxjs.umd.min.js"></script>
+    <script src="//unpkg.com/redux@4.0.0/dist/redux.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fast-json-patch/2.0.6/fast-json-patch.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.core.js"></script>
     <script src="./dist/antares-protocol.js"></script>
     <script>
-        let antares
+        let agent
         let after // an RxJS-Observable-based delay utility
+        let ajaxStreamingGet
         if (typeof AntaresProtocol !== "undefined") {
-            antares = new AntaresProtocol.Agent
+            agent = new AntaresProtocol.Agent
             after = AntaresProtocol.after
+            ajaxStreamingGet = AntaresProtocol.ajaxStreamingGet
             console.log("Antares is Ready")
         } else {
             console.log("Antares Loading Error")
@@ -23,7 +28,6 @@
     <style>
         #c {
             border: 1px solid black;
-            /* TODO make fancy drawing later :) */
         }
     </style>
 </head>
@@ -37,59 +41,99 @@
     </ul>
     <canvas id="c"></canvas>
 
+    <!-- this little canvas demo doesnt go through the Agent so as
+    not to clutter the logs, but its an Observable so it could -->
+    <script src="demos/home/kitt.js">
+    </script>
     <script>
-        // Set up our references to vars and functions
-        const { interval } = rxjs
-        const { map, tap } = rxjs.operators
-
-        // Do a fun animation
-        const canvas = document.getElementById("c")
-        const context = canvas.getContext("2d")
-        context.fillStyle = 'red'
-
-        const width = 70
-        const drawKitt = (pos) => {
-            const fromX = 5 + pos * 4
-            context.clearRect(0, 0, canvas.width, canvas.height)
-            context.fillRect(fromX, 50, 20, 50)
+        // TODO write this with jsonpatch
+        const antaresReducer = (state = {}, action) => {
+            let keyPath = (action.meta || {}).key || []
+            let path = "/" + keyPath.join("/")
+            switch (action.type) {
+                case "agent/remember":
+                    let firstLevel = state[keyPath[0]]
+                    return {
+                        ...state,
+                        [keyPath[0]]: {
+                            ...firstLevel,
+                            [keyPath[1]]: action.payload
+                        }
+                    }
+                    break;
+                default:
+                    return state;
+            }
         }
 
-        const work = interval(16).pipe(
-            map(i => {
-                const doubleX = i % (width * 2)
-                if (doubleX > width) {
-                    return (width * 2) - doubleX
-                } else {
-                    return doubleX
-                }
-            }),
-            tap(pos => drawKitt(pos))
+        const store = Redux.createStore(
+            antaresReducer,
+            window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
         )
 
-        work.subscribe() // alias for start()
+        // Send all actions, including those returned by renderers through the store
+        agent.addFilter(({ action }) => store.dispatch(action))
+
+        // For actions like http/*, do the streaming get, dispatching incrementally
+        // and telling the agent to store under the id field returned eg /users/123
+        agent.addRenderer(({ action }) => {
+            const opts = action.payload
+            return ajaxStreamingGet(opts).pipe(
+                concatMap(responseItem => after(1000, () => ({
+                    type: 'agent/remember',
+                    payload: { id: responseItem.id, name: responseItem.name, full_name: responseItem.full_name },
+                    meta: {
+                        key: [...((action.meta || {}).key || []), responseItem.id]
+                    }
+                }))),
+                take(5)
+            )
+        }, { name: 'httpGet', actionsOfType: /^http.get/, processResults: true })
+
+        // For fun, process some upon startup
+        // 1. A single object, to be stored under /users/id
+        const user = agent.process({
+            type: 'http/get',
+            payload: {
+                url: 'https://jsonplaceholder.typicode.com/users/1'
+            },
+            meta: { key: ['users'] }
+        })
+
+        // A multitude of objects, under the 'items' key,
+        // each to be stored under /repos/id
+        const repos = agent.process({
+            type: 'http/get',
+            payload: {
+                url: 'https://api.github.com/search/repositories?q=antares&sort=stars',
+                pattern: '!items[*]',
+            },
+            meta: { key: ['repos'] }
+        })
+
     </script>
     <script>
         // What are the properties of our hashChange renderer, and what should it be named?
         const config = {
-            actionsOfType: 'hashChange',
+            actionsOfType: 'browser/go',
             concurrency: 'serial' // 'cutoff', 'serial', 'parallel', 'mute'
         }
 
-        antares.addRenderer(({ action }) => {
+        agent.addRenderer(({ action }) => {
             return after(2000, () => document.location.hash = action.payload)
         }, config)
 
-        antares.process({
-            type: 'hashChange',
-            payload: 'WhatWouldYouLikeToKnow?'
-        })
+        // agent.process({
+        //     type: 'browser/go',
+        //     payload: '#WhatWouldYouLikeToKnow?'
+        // })
 
         /*
             Quiz - Match the concurrency mode to the desired outcome when this code is run:
 
-            `antares.process({ type: 'hashChange', payload: 'Funny' }); antares.process({ type: 'hashChange', payload: 'Honey' }); antares.process({ type: 'hashChange', payload: 'Money' })`
+            `agent.process({ type: 'hashChange', payload: 'Funny' }); agent.process({ type: 'hashChange', payload: 'Honey' }); agent.process({ type: 'hashChange', payload: 'Money' })`
 
-            Money, 6000 msec       Money 2000 msec        Funny 2000 msec          
+            Money, 6000 msec       Money 2000 msec        Funny 2000 msec
 
             Answers:
             serial: Money 6000 msec
@@ -97,7 +141,7 @@
             parallel: Money 2000 msec
             mute: Funny 2000 msec
 
-            --- 
+            ---
             Quiz - When would you use cutoff instead of parallel?
 
             a) You want to limit resource usage
@@ -108,6 +152,7 @@
             A: a) and c)
         */
     </script>
+
 </body>
 
 </html>

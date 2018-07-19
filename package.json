@@ -23,13 +23,13 @@
     "lint": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
     "build": "webpack --config webpack.config.js && typedoc --out docs --target es6 --theme minimal --mode file --hideGenerator --excludePrivate src",
-    "start": "npm run demos",
+    "start": "npm run test:client",
     "test": "npm run test:ci",
     "jest": "jest --expand",
     "test:watch": "jest --watch",
-    "test:prod": "npm run lint && jest --expand --no-coverage --no-cache",
-    "test:ci": "npm run test:prod && npm run build && npm run size && npm run demos",
-    "test:client": "serve -t -n",
+    "test:unit": "npm run lint && jest --expand --no-coverage --no-cache",
+    "test:ci": "npm run test:unit && npm run build && npm run size && node demos/index",
+    "test:client": "cd demos/express && npm i && cd ../.. && node demos/express/index",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",
@@ -111,7 +111,6 @@
     "rimraf": "^2.6.1",
     "say": "^0.15.0",
     "semantic-release": "^15.4.1",
-    "serve": "^9.1.2",
     "size-limit": "^0.18.1",
     "travis-deploy-once": "^5.0.0",
     "ts-jest": "^23.0.0",
@@ -125,7 +124,7 @@
     "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8"
   },
-  "peerDependencies": {
-    "rxjs": "^6.1.0"
+  "dependencies": {
+    "oboe": "^2.1.4"
   }
 }
