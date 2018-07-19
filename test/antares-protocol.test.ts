@@ -253,6 +253,9 @@ describe("Agent", () => {
           agent.process(anyAction)
         })
       })
+      describe("context", () => {
+        it("can be any object to be available to renderers", undefined)
+      })
     })
 
     describe("return value", () => {

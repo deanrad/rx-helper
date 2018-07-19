@@ -76,7 +76,7 @@ export class Agent implements ActionProcessor {
    * @throws Throws if a filter errs, but not if a renderer errs.
    *
    */
-  process(action: Action): ProcessResult {
+  process(action: Action, context?: Object): ProcessResult {
     const results = new Map<String, any>()
     const renderBeginnings = new Map<String, Subject<boolean>>()
     const renderEndings = new Map<String, Subject<boolean>>()
@@ -88,7 +88,7 @@ export class Agent implements ActionProcessor {
       renderEndings.set(name, new Subject<boolean>())
       this.activeResults.set(name, empty())
     })
-    const item = { action, results, renderBeginnings, renderEndings }
+    const item = { action, context, results, renderBeginnings, renderEndings }
 
     // Run all filters sync (RxJS as of v6 no longer will sync error)
     for (let filterName of this.allFilters.keys()) {
@@ -218,7 +218,7 @@ export class Agent implements ActionProcessor {
           // If we're set up to do so, send results back through #process
           next: (resultAction: Action) => {
             if (!processResults) return
-            this.process(resultAction)
+            this.process(resultAction, asi.context)
           },
           complete: () => {
             // @ts-ignore

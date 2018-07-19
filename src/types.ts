@@ -13,7 +13,7 @@ export interface AgentConfig {
 }
 
 export interface ActionProcessor {
-  process(action: Action): ProcessResult
+  process(action: Action, context?: Object): ProcessResult
   addFilter(subscriber: Subscriber, config: SubscriberConfig): Subscription
   addRenderer(subscriber: Subscriber, config: SubscriberConfig): Subscription
 }
@@ -31,6 +31,7 @@ export interface Action {
 
 export interface ActionStreamItem {
   action: Action
+  context?: Object
   results: Map<String, any>
   renderBeginnings: Map<String, Subject<boolean>>
   renderEndings: Map<String, Subject<boolean>>
