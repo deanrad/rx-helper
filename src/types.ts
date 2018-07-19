@@ -78,3 +78,13 @@ export interface SubscriberConfig {
 export interface ProcessResult {
   [key: string]: any
 }
+
+export interface StreamingGetOptions {
+  url: string
+  pattern: string
+  method?: "GET" | "POST"
+  headers?: Object
+  body?: string | Object
+  withCredentials?: Boolean
+  timeout?: number
+}

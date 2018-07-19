@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "antares-protocol": "^2.1.0",
+    "antares-protocol": ">=2.1.0",
     "morgan": "^1.9.0",
     "remote-redux-devtools": "^0.5.12"
   },
