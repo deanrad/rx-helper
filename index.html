@@ -79,8 +79,11 @@
 
         // For actions like http/*, do the streaming get, dispatching incrementally
         // and telling the agent to store under the id field returned eg /users/123
-        agent.addRenderer(({ action }) => {
+        const httpRenderer = ({ action }) => {
             const opts = action.payload
+            // Turn the observable of results into commands to remember the results.
+            // Use the key arrays in the actions to prefix the paths in the store, and
+            // the ids that return as the leaf node
             return ajaxStreamingGet(opts).pipe(
                 concatMap(responseItem => after(1000, () => ({
                     type: 'agent/remember',
@@ -95,11 +98,20 @@
                     const { request, status, responseType, response } = e
                     return of({
                         type: 'http/error',
-                        payload: { request, status, responseType, response }
+                        payload: { request, status, responseType, response },
+                        meta: {
+                            parentActionId: (action.meta || {}).actionId
+                        }
                     })
                 })
             )
-        }, { name: 'httpGet', actionsOfType: /^http.get/, processResults: true })
+        }
+        const httpConfig = {
+            name: 'httpGet',
+            actionsOfType: /^http.get/,
+            processResults: true
+        }
+        agent.addRenderer(httpRenderer, httpConfig)
 
         // For fun, process some upon startup
         // 1. A single object, to be stored under /users/id
@@ -122,6 +134,12 @@
             meta: { key: ['repos'] }
         })
 
+        // Errors handled as well. This one 500's by design
+        agent.process({
+            type: 'http/get', payload: {
+                url: 'http://www.mocky.io/v2/5b4ff44a3600007d00dd0c3f'
+            }
+        })
     </script>
     <script>
         // What are the properties of our hashChange renderer, and what should it be named?
@@ -134,10 +152,10 @@
             return after(2000, () => document.location.hash = action.payload)
         }, config)
 
-        // agent.process({
-        //     type: 'browser/go',
-        //     payload: '#WhatWouldYouLikeToKnow?'
-        // })
+        agent.process({
+            type: 'browser/go',
+            payload: '#WhatWouldYouLikeToKnow?'
+        })
 
         /*
             Quiz - Match the concurrency mode to the desired outcome when this code is run:
