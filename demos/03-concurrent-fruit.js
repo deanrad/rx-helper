@@ -1,7 +1,7 @@
 const { Subject, interval } = require("rxjs")
 const { startWith, endWith, map, mapTo, take, tap } = require("rxjs/operators")
 
-const circleCharacter = { 1: "①", 2: "②", 3: "③", 4: "④", 5: "⑤", 6: "⑥", 7: "⑦", 8: "⑧", 9: "⑨" }
+const numChar = { 1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "4️⃣", 5: "5️⃣", 6: "6️⃣", 7: "7️⃣", 8: "8️⃣", 9: "9️⃣" }
 const fruitCharacter = {
   1: "🍓",
   2: "🍌",
@@ -39,11 +39,11 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
     // Add a renderer which returns a process (Observable) that, when
     // Antares subscribes to it, will pull values through the pipe of
     // computation with the specified timing. Example:
-    // > ⑤ 5 5 5 5 5 💥 (over ~1000 msec)
+    // > ⑤ 5 5 5 5 5 ✅ (over ~1000 msec)
     //
     antares.addRenderer(
       ({ action: { payload: digit } }) => {
-        append("  " + circleCharacter[digit] + " ")
+        append("  " + numChar[digit] + " ")
         return repeatTheNumber(digit)
       },
       { name: "repeater", concurrency }
@@ -68,13 +68,13 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
     // with the specified timing.
     // More simply put, given a variable called digit, (example 5)
     // will call log to produce:
-    // > ⑤ 5 5 5 5 5 💥
+    // > ⑤ 5 5 5 5 5 ✅
     // over a duration of ~1000 msec
     function repeatTheNumber(digit) {
       return interval(innerInterval).pipe(
         take(digit),
         map(() => " " + fruitCharacter[digit] + " "),
-        endWith(" 💥\n"),
+        endWith(" ✅\n"),
         tap(digit => {
           append(digit)
         })
@@ -94,7 +94,7 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
   function showPrompt() {
     let prompt = ""
     for (i = 1; i <= 9; i++) {
-      prompt += circleCharacter[i] + " :" + fruitCharacter[i] + "  "
+      prompt += numChar[i] + " :" + fruitCharacter[i] + "  "
     }
     log(
       `Press a number to download a fruit (higher numbers take longer). 'x' to eXit.

@@ -255,9 +255,9 @@ export class Agent implements ActionProcessor {
         // Bug hiding below: if you run the fruit serial demo,
         // two keypresses in close succession will both run
         // after the current inProgress, but not themselves serially
-        // ⑨  🥑   ②  🥑   ①  🥑  🥑  🥑  🥑  🥑  🥑  🥑  💥
-        // 🍌  🍓  💥
-        // 🍌  💥  <-- note the interleaving of banana and strawberry
+        // ⑨  🥑   ②  🥑   ①  🥑  🥑  🥑  🥑  🥑  🥑  🥑  ✅
+        // 🍌  🍓  ✅
+        // 🍌  ✅  <-- note the interleaving of banana and strawberry
         if (concurrency === Concurrency.serial) {
           if (!previousAsi) {
             subAndSave()
