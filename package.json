@@ -42,6 +42,7 @@
     "size": "size-limit",
     "demos": "npm run build && node demos/index",
     "demos:test": "jest --expand --coverage false --testRegex=\"/demos/test\\.(ts|tsx|js)$\"",
+    "demo:concurrency": "clear; DEMO=serialFruit WAIT_FOR=SIGUSR2 outerInterval=1120 innerInterval=200 node demos/index",
     "prereqs:windows": "npm install -g --production node-gyp windows-build-tools"
   },
   "size-limit": [

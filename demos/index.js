@@ -31,12 +31,14 @@ async function sequentiallyRun() {
       }
     }
 
-    log("\n" + `Demo ${key} (${JSON.stringify(config)})` + "\n--------")
+    log(JSON.stringify(config))
     await demoFn({ Agent, config, stdout, log, append, interactive })
     // give some time to flush
     await new Promise(resolve => setTimeout(resolve, 200))
   }
   console.log("\nBye!\n")
+  process.stdin.pause()
+  process.exit(0)
 }
 
 sequentiallyRun()

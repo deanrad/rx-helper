@@ -85,7 +85,7 @@ describe("All Demos", () => {
       expect(output).toMatchSnapshot()
     })
     it("should abort in-flight renders in cutoff mode", async () => {
-      await runDemo(Demos.freshFruit)
+      await runDemo(Demos.cutoffFruit)
       expect(output).toMatchSnapshot()
     })
     it("should mute/drop new renders in mute mode", async () => {

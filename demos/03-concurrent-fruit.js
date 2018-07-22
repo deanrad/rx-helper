@@ -14,13 +14,26 @@ const fruitCharacter = {
   9: "🥑"
 }
 
-module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
+module.exports = async ({ Agent, config = {}, log, append, interactive = false }) => {
   const { outerInterval, innerInterval, concurrency } = config
 
   const numArray = config.numArray ? eval(config.numArray) : [1, 2, 3, 9, 4, 5]
   return runDemo()
 
-  function runDemo() {
+  async function runDemo() {
+    showPrompt()
+
+    // allows us to signal multiple processes to start at once
+    // with pkill -SIGUSR2 node, if started with WAIT_FOR=SIGUSR2
+    const signalToWaitOn = process.env.WAIT_FOR
+    if (signalToWaitOn && signalToWaitOn.startsWith("SIG")) {
+      // console.log("Waiting for you to signal us with pkill -" + signalToWaitOn)
+      process.stdin.resume()
+
+      let gotSignal = new Promise(resolve => process.on(signalToWaitOn, resolve))
+      await gotSignal
+    }
+
     const antares = new Agent()
 
     // Add a renderer which returns a process (Observable) that, when
@@ -78,6 +91,17 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
   }
 
   // Utility functions
+  function showPrompt() {
+    let prompt = ""
+    for (i = 1; i <= 9; i++) {
+      prompt += circleCharacter[i] + " :" + fruitCharacter[i] + "  "
+    }
+    log(
+      `Press a number to download a fruit (higher numbers take longer). 'x' to eXit.
+  ${prompt}
+      `
+    )
+  }
   // get a stream - like a promise that keeps emitting events over time
   // which you get via subscribing
   function getUserInputFromStdin() {
@@ -86,16 +110,6 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
     keypress(process.stdin)
     process.stdin.setRawMode(true)
     process.stdin.resume()
-
-    let prompt = ""
-    for (i = 1; i <= 9; i++) {
-      prompt += circleCharacter[i] + " :" + fruitCharacter[i] + "  "
-    }
-    console.log(
-      `Press a number to download a fruit (higher numbers take longer). Push x to eXit.
-      ${prompt}`
-    )
-    console.log()
 
     // A Subject is something that you can push values at, and
     // it can be subscribed to as an Observable of those values

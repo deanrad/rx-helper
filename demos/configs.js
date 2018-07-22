@@ -7,9 +7,9 @@ let configs = {
   ],
   serialFruit: [
     require("./03-concurrent-fruit"),
-    { concurrency: "serial", numArray: [9, 2, 1, 3, 4], outerInterval: 180, innerInterval: 80 }
+    { concurrency: "serial", outerInterval: 280, innerInterval: 50 }
   ],
-  freshFruit: [
+  cutoffFruit: [
     require("./03-concurrent-fruit"),
     { concurrency: "cutoff", outerInterval: 280, innerInterval: 50 }
   ],
