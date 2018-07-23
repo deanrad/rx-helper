@@ -423,11 +423,28 @@ describe("Utilities", () => {
 
       let counter = 0
       // prettier-ignore
-      let result = after(1, () => {
+      const result = after(1, () => {
         return ++counter
       }).toPromise().then(() => expect(counter).toEqual(1))
 
       return result
+    })
+
+    describe("second argument", () => {
+      it("if a function, should create an Observable of its return value", () => {
+        expect.assertions(1)
+        const result = after(1, () => 1.11)
+        return result.toPromise().then(value => {
+          expect(value).toEqual(1.11)
+        })
+      })
+      it("if a value, should create an Observable of the value", () => {
+        expect.assertions(1)
+        const result = after(1, 1.987)
+        return result.toPromise().then(value => {
+          expect(value).toEqual(1.987)
+        })
+      })
     })
   })
 

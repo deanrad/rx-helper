@@ -10,7 +10,7 @@ import { delay, map, flatMap, tap } from "rxjs/operators"
  */
 export const after = (ms: number, objOrFn: Object | Function): Observable<any> => {
   const [obj, effect] =
-    objOrFn instanceof Function ? [null, objOrFn] : [objOrFn, (value: Object) => null]
+    objOrFn instanceof Function ? [null, objOrFn] : [objOrFn, (value: Object) => value]
 
   return of(obj).pipe(
     delay(ms),
