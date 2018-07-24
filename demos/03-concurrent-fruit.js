@@ -1,5 +1,6 @@
-const { Subject, interval } = require("rxjs")
-const { startWith, endWith, map, mapTo, take, tap } = require("rxjs/operators")
+const { Subject, interval, concat, from } = require("rxjs")
+const { endWith, map, concatMap, take, tap } = require("rxjs/operators")
+const { after } = require("../dist/antares-protocol")
 
 const numChar = { 1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "4️⃣", 5: "5️⃣", 6: "6️⃣", 7: "7️⃣", 8: "8️⃣", 9: "9️⃣" }
 const fruitCharacter = {
@@ -15,9 +16,9 @@ const fruitCharacter = {
 }
 
 module.exports = async ({ Agent, config = {}, log, append, interactive = false }) => {
-  const { outerInterval, innerInterval, concurrency } = config
+  const { outer, inner, pause, concurrency } = config
 
-  const numArray = config.numArray ? eval(config.numArray) : [1, 2, 3, 9, 4, 5]
+  const numArray = config.numArray ? eval(config.numArray) : [1, 2, 3, [9, 4], 5]
   return runDemo()
 
   async function runDemo() {
@@ -49,7 +50,7 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
       { name: "repeater", concurrency }
     )
 
-    const inputStream = interactive ? getUserInputFromStdin() : simulatedUserInput()
+    const inputStream = interactive ? getUserInputFromStdin() : simulatedUserInput(numArray)
     // wait till our subscription has ended (and its last renderer)
     let result
     return new Promise(resolve => {
@@ -71,7 +72,7 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
     // > ⑤ 5 5 5 5 5 ✅
     // over a duration of ~1000 msec
     function repeatTheNumber(digit) {
-      return interval(innerInterval).pipe(
+      return interval(inner).pipe(
         take(digit),
         map(() => " " + fruitCharacter[digit] + " "),
         endWith(" ✅\n"),
@@ -83,11 +84,19 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
   }
 
   // an observable of numbers every second
-  function simulatedUserInput() {
-    return interval(outerInterval).pipe(
-      map(i => numArray[i]),
-      take(numArray.length)
-    )
+  function simulatedUserInput(numArray) {
+    // pause + first one
+    // forEach after the first: outer + inner
+    const rest$ = numOrArray => {
+      if (!numOrArray.length) return after(pause, numOrArray)
+      let rest = after(pause, numOrArray[0])
+      for (let i = 1; i < numOrArray.length; i++) {
+        rest = concat(rest, after(outer, numOrArray[i]))
+      }
+      return rest
+    }
+
+    return from(numArray).pipe(concatMap(rest$))
   }
 
   // Utility functions
@@ -96,8 +105,9 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
     for (i = 1; i <= 9; i++) {
       prompt += numChar[i] + " :" + fruitCharacter[i] + "  "
     }
+    let iprompt = interactive ? `'x' to eXit.` : ""
     log(
-      `Press a number to download a fruit (higher numbers take longer). 'x' to eXit.
+      `Press a number to download a fruit (higher numbers take longer). ${iprompt}
   ${prompt}
       `
     )

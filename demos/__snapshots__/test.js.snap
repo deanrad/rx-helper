@@ -32,7 +32,7 @@ OK Bye!
 `;
 
 exports[`All Demos Fruit Concurrency Demo should abort in-flight renders in cutoff mode 1`] = `
-"Press a number to download a fruit (higher numbers take longer). 'x' to eXit.
+"Press a number to download a fruit (higher numbers take longer). 
   1️⃣ :🍓  2️⃣ :🍌  3️⃣ :🍉  4️⃣ :🍍  5️⃣ :🍏  6️⃣ :🍓  7️⃣ :🥝  8️⃣ :🍒  9️⃣ :🥑  
       
   1️⃣  🍓  ✅
@@ -44,7 +44,7 @@ exports[`All Demos Fruit Concurrency Demo should abort in-flight renders in cuto
 `;
 
 exports[`All Demos Fruit Concurrency Demo should mute/drop new renders in mute mode 1`] = `
-"Press a number to download a fruit (higher numbers take longer). 'x' to eXit.
+"Press a number to download a fruit (higher numbers take longer). 
   1️⃣ :🍓  2️⃣ :🍌  3️⃣ :🍉  4️⃣ :🍍  5️⃣ :🍏  6️⃣ :🍓  7️⃣ :🥝  8️⃣ :🍒  9️⃣ :🥑  
       
   1️⃣  🍓  ✅
@@ -56,7 +56,7 @@ exports[`All Demos Fruit Concurrency Demo should mute/drop new renders in mute m
 `;
 
 exports[`All Demos Fruit Concurrency Demo should run in parallel 1`] = `
-"Press a number to download a fruit (higher numbers take longer). 'x' to eXit.
+"Press a number to download a fruit (higher numbers take longer). 
   1️⃣ :🍓  2️⃣ :🍌  3️⃣ :🍉  4️⃣ :🍍  5️⃣ :🍏  6️⃣ :🍓  7️⃣ :🥝  8️⃣ :🍒  9️⃣ :🥑  
       
   1️⃣  🍓  ✅
@@ -69,7 +69,7 @@ exports[`All Demos Fruit Concurrency Demo should run in parallel 1`] = `
 `;
 
 exports[`All Demos Fruit Concurrency Demo should run in series 1`] = `
-"Press a number to download a fruit (higher numbers take longer). 'x' to eXit.
+"Press a number to download a fruit (higher numbers take longer). 
   1️⃣ :🍓  2️⃣ :🍌  3️⃣ :🍉  4️⃣ :🍍  5️⃣ :🍏  6️⃣ :🍓  7️⃣ :🥝  8️⃣ :🍒  9️⃣ :🥑  
       
   1️⃣  🍓  ✅

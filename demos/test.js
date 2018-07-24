@@ -139,8 +139,8 @@ async function runDemo(demo) {
   const [demoFn, config] = demo
   if (process.env.CI) {
     // CI is flaky on small timings - we should have the same output with a larger timing
-    if (config.innerInterval) config.innerInterval = 2 * (config.innerInterval + 5)
-    if (config.outerInterval) config.outerInterval *= 2
+    if (config.inner) config.inner = 2 * (config.inner + 5)
+    if (config.outer) config.outer *= 2
   }
   return await demoFn({ Agent, config, log, append })
 }

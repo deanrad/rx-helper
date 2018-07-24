@@ -1,5 +1,4 @@
-![Antares](http://www.deanius.com/AntaresLogo.png)
----
+## ![Antares](http://www.deanius.com/AntaresLogo.png)
 
 Antares is an architecture for real-time web apps. <a href="https://s3.amazonaws.com/www.deanius.com/antares-tag.m4a" target="_blank">🔊</a>
 
@@ -32,31 +31,33 @@ Antares has demos whose output is tested in CI on MacOS, Linux, and Windows. Bec
 
 ```
 > git clone https://github.com/deanius/antares-ts antares
-> cd antares; npm i 
+> cd antares; npm i
 > npm run demos                         # run 'em all
 ```
+
 See the output of a run of all demos on [Travis CI](https://travis-ci.org/deanius/antares-ts/jobs/402981544#L681), and if you run them locally, make sure you have sound turned on! (It's a core principle of Antares that not all renders are to a DOM)
 
 Here are some more ways you can run demos, including using [`cross-env`](https://www.npmjs.com/package/cross-env) on windows
 
 ```
 > DEMO=muteFruit INTERACTIVE=1 node demos/index
-> DEMO=muteFruit innerInterval=100 outerInterval=100 node demos/index
-> cross-env DEMO=muteFruit innerInterval= node demos/index
+> DEMO=muteFruit inner=100 outer=100 node demos/index
+> cross-env DEMO=muteFruit inner= node demos/index
 ```
 
 ## Show your love!
 
-* Display a badge on your project: ![I ♥️ Antares](https://img.shields.io/badge/built--with-antares-blue.svg)
-* Donate to the project [![to the project](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/deanius), or somewhere you think you can pay it forward, even if not here!
+- Display a badge on your project: ![I ♥️ Antares](https://img.shields.io/badge/built--with-antares-blue.svg)
+- Donate to the project [![to the project](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/deanius), or somewhere you think you can pay it forward, even if not here!
 
 ## Gratitude, Props, Thanks To
 
-* Dan Abramov - [Redux](https://redux.js.org) ![twitter](https://img.shields.io/badge/twitter-@dan_abramov-55acee.svg)
-* Martin Kleppmann - [Turning the Database Inside Out](https://www.confluent.io/blog/turning-the-database-inside-out-with-apache-samza/) ![twitter](https://img.shields.io/badge/twitter-@martinkl-55acee.svg)
-* Alex Jover Morales - [Typescript Library Starter](https://github.com/alexjoverm/typescript-library-starter) ![twitter](https://img.shields.io/badge/twitter-@alexjoverm-55acee.svg)
-* All who worked on [RxJS](https://github.com/ReactiveX/rxjs), [Redux Observable](https://redux-observable.js.org/)
-* Bob Martin - [Clean Architecture](https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html)<img src="https://8thlight.com/blog/assets/posts/2012-08-13-the-clean-architecture/CleanArchitecture-8d1fe066e8f7fa9c7d8e84c1a6b0e2b74b2c670ff8052828f4a7e73fcbbc698c.jpg"/>
+- Dan Abramov - [Redux](https://redux.js.org) ![twitter](https://img.shields.io/badge/twitter-@dan_abramov-55acee.svg)
+- Martin Kleppmann - [Turning the Database Inside Out](https://www.confluent.io/blog/turning-the-database-inside-out-with-apache-samza/) ![twitter](https://img.shields.io/badge/twitter-@martinkl-55acee.svg)
+- Alex Jover Morales - [Typescript Library Starter](https://github.com/alexjoverm/typescript-library-starter) ![twitter](https://img.shields.io/badge/twitter-@alexjoverm-55acee.svg)
+- All who worked on [RxJS](https://github.com/ReactiveX/rxjs), [Redux Observable](https://redux-observable.js.org/)
+- Bob Martin - [Clean Architecture](https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html)<img src="https://8thlight.com/blog/assets/posts/2012-08-13-the-clean-architecture/CleanArchitecture-8d1fe066e8f7fa9c7d8e84c1a6b0e2b74b2c670ff8052828f4a7e73fcbbc698c.jpg"/>
 
 ---
+
 ![Antares](http://www.deanius.com/AntaresLogo.png)

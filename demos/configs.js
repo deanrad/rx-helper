@@ -3,19 +3,19 @@ let configs = {
   writeFileAsRenderer: [require("./01-write-file"), { processAs: "renderer" }],
   parallelFruit: [
     require("./03-concurrent-fruit"),
-    { concurrency: "parallel", outerInterval: 280, innerInterval: 50 }
+    { concurrency: "parallel", outer: 280, inner: 50, pause: 280 }
   ],
   serialFruit: [
     require("./03-concurrent-fruit"),
-    { concurrency: "serial", outerInterval: 280, innerInterval: 50 }
-  ],
+    { concurrency: "serial", outer: 280, inner: 50, pause: 280 }
+],
   cutoffFruit: [
     require("./03-concurrent-fruit"),
-    { concurrency: "cutoff", outerInterval: 280, innerInterval: 50 }
+    { concurrency: "cutoff", outer: 280, inner: 50, pause: 280 }
   ],
   muteFruit: [
     require("./03-concurrent-fruit"),
-    { concurrency: "mute", outerInterval: 280, innerInterval: 50 }
+    { concurrency: "mute", outer: 280, inner: 50, pause: 280 }
   ],
   batchedWriteFile: [
     require("./04-batched-write"),
