@@ -8,3 +8,31 @@ Object {
   "inc": 1.1,
 }
 `;
+
+exports[`Utilities jsonPatch operator should turn a stream of objects into a stream of RFC6902 patches 1`] = `
+Array [
+  Array [
+    Object {
+      "op": "add",
+      "path": "/name",
+      "value": Object {
+        "first": "Albert",
+      },
+    },
+  ],
+  Array [
+    Object {
+      "op": "add",
+      "path": "/name/last",
+      "value": "Einstein",
+    },
+  ],
+  Array [
+    Object {
+      "op": "replace",
+      "path": "/name",
+      "value": "Banana",
+    },
+  ],
+]
+`;

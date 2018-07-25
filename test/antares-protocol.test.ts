@@ -1,7 +1,7 @@
 import { default as faker } from "faker"
 import fs from "fs"
-import { Subject, of, empty } from "rxjs"
-import { delay, first } from "rxjs/operators"
+import { Subject, of, from, empty } from "rxjs"
+import { delay, first, toArray } from "rxjs/operators"
 import {
   Action,
   ActionStreamItem,
@@ -11,7 +11,8 @@ import {
   reservedSubscriberNames,
   after,
   agentConfigFilter,
-  AgentConfig
+  AgentConfig,
+  jsonPatch
 } from "../src/antares-protocol"
 
 // a mutable variable, reset between tests
@@ -462,6 +463,26 @@ describe("Utilities", () => {
       expect(action.meta.agentId).toEqual(12345)
       // @ts-ignore // again, filters may mutate their actions. Write it, Bart
       expect(action.meta).toMatchObject(config)
+    })
+  })
+
+  describe("jsonPatch operator", () => {
+    it("should turn a stream of objects into a stream of RFC6902 patches", async () => {
+      let sources = [
+        { name: { first: "Albert" } },
+        { name: { first: "Albert" } },
+        { name: { first: "Albert", last: "Einstein" } },
+        { name: "Banana" },
+        { name: "Banana" }
+      ]
+      let result = await from(sources)
+        .pipe(
+          jsonPatch(),
+          toArray()
+        )
+        .toPromise()
+      expect(result).toHaveLength(3)
+      expect(result).toMatchSnapshot()
     })
   })
 })

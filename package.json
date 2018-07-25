@@ -126,6 +126,7 @@
     "webpack-cli": "^3.0.8"
   },
   "dependencies": {
+    "fast-json-patch": "^2.0.6",
     "oboe": "^2.1.4"
   }
 }

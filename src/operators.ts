@@ -1,7 +1,8 @@
 import { Observable, from, of } from "rxjs"
 import { ajax } from "rxjs/ajax"
 import { StreamingGetOptions } from "./types"
-import { delay, map, flatMap, tap } from "rxjs/operators"
+import { delay, map, flatMap } from "rxjs/operators"
+import { compare, Operation } from "fast-json-patch"
 
 /** @description Delays the occurrence of an object, or the
  * invocation of a function, for the number of milliseconds given
@@ -37,3 +38,26 @@ export const ajaxStreamingGet = (opts: StreamingGetOptions): Observable<any> => 
     })
   )
 }
+/** @description Turns a stream of objects into a stream of the patches between them.
+ */
+export const jsonPatch = () => <T>(source: Observable<T>) =>
+  new Observable<Operation[]>(observer => {
+    let lastSeen: any = {}
+
+    return source.subscribe({
+      next(newObj) {
+        const patch = compare(lastSeen, newObj)
+        if (patch.length === 0) return
+
+        // TODO allow for tests to be included in the patches that assert the old values
+        observer.next(patch)
+        lastSeen = newObj
+      },
+      error(err) {
+        observer.error(err)
+      },
+      complete() {
+        observer.complete()
+      }
+    })
+  })
