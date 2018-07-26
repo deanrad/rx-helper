@@ -38,6 +38,7 @@ export const ajaxStreamingGet = (opts: StreamingGetOptions): Observable<any> => 
     })
   )
 }
+
 /** @description Turns a stream of objects into a stream of the patches between them.
  */
 export const jsonPatch = () => <T>(source: Observable<T>) =>

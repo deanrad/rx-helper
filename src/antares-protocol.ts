@@ -1,8 +1,9 @@
 import { Observable, Subject, Subscription, asyncScheduler, from, of, empty } from "rxjs"
-import { observeOn, last, startWith, filter } from "rxjs/operators"
+import { observeOn, last, startWith, filter, map, first } from "rxjs/operators"
 import {
   ActionProcessor,
   Action,
+  ActionFilter,
   ActionStreamItem,
   AgentConfig,
   Concurrency,
@@ -12,12 +13,13 @@ import {
   StreamTransformer
 } from "./types"
 
-import { getActionFilter } from './lib'
+import { getActionFilter } from "./lib"
 
 // Leave this as require not import! https://github.com/webpack/webpack/issues/1019
 const assert = typeof require === "undefined" ? () => null : require("assert")
 export {
   Action,
+  ActionFilter,
   AgentConfig,
   ActionStreamItem,
   Concurrency,
@@ -46,6 +48,13 @@ export class Agent implements ActionProcessor {
   rendererNames: Array<string>
   [key: string]: any
 
+  /** @description Gets a promise for the next action matching the ActionFilter. */
+  // @ts-ignore
+  nextOfType: ((filter: ActionFilter) => Promise<Action>)
+  /** @description Gets an Observable of all actions matching the ActionFilter. */
+  // @ts-ignore
+  allOfType: ((filter: ActionFilter) => Observable<Action>)
+
   private _subscriberCount = 0
   private actionStream: Subject<ActionStreamItem>
   private allFilters: Map<string, Subscriber>
@@ -70,6 +79,33 @@ export class Agent implements ActionProcessor {
           configurable: false
         })
     }
+
+    Object.defineProperty(this, "nextOfType", {
+      get: () => {
+        return (matcher: ActionFilter) => {
+          const predicate = getActionFilter(matcher)
+          return this.action$
+            .pipe(
+              filter(predicate),
+              first(),
+              map(({ action }) => action)
+            )
+            .toPromise()
+        }
+      }
+    })
+
+    Object.defineProperty(this, "allOfType", {
+      get: () => {
+        return (matcher: ActionFilter) => {
+          const predicate = getActionFilter(matcher)
+          return this.action$.pipe(
+            filter(predicate),
+            map(({ action }) => action)
+          )
+        }
+      }
+    })
   }
 
   /** @description Process sends an Action (eg Flux Standard Action), which

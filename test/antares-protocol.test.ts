@@ -1,7 +1,7 @@
 import { default as faker } from "faker"
 import fs from "fs"
-import { Subject, of, empty } from "rxjs"
-import { delay, first } from "rxjs/operators"
+import { Subject, of, from, empty } from "rxjs"
+import { delay, first, toArray } from "rxjs/operators"
 import {
   Action,
   ActionStreamItem,
@@ -47,6 +47,38 @@ describe("Agent", () => {
       expect(() => {
         new Agent({ agentId: 1234 }).agentId = 4321
       }).toThrow()
+    })
+
+    describe("nextOfType", () => {
+      it("should be a promise for the first action matching the type", () => {
+        expect.assertions(1)
+        const agent = new Agent()
+        const { nextOfType } = agent
+        const seenIt = nextOfType("test/foo")
+
+        // fails without calling process
+        const matcher = { type: "test/foo" }
+        agent.process(matcher)
+
+        return seenIt.then(matchingAction => {
+          expect(matchingAction).toMatchObject(matcher)
+        })
+      })
+    })
+
+    describe("allOfType", () => {
+      it.only("should be an Observable of matching actions", () => {
+        const agent = new Agent()
+        const { allOfType } = agent
+        let counter = 0
+        allOfType("test/foo").subscribe(() => counter++)
+
+        agent.process({ type: "test/foo" })
+        agent.process({ type: "notCaught" })
+        agent.process({ type: "test/foo" })
+
+        expect(counter).toEqual(2)
+      })
     })
   })
 
