@@ -12,6 +12,8 @@ import {
   StreamTransformer
 } from "./types"
 
+import { getActionFilter } from './lib'
+
 // Leave this as require not import! https://github.com/webpack/webpack/issues/1019
 const assert = typeof require === "undefined" ? () => null : require("assert")
 export {
@@ -77,9 +79,9 @@ export class Agent implements ActionProcessor {
    *
    */
   process(action: Action, context?: Object): ProcessResult {
-    const results = new Map<String, any>()
-    const renderBeginnings = new Map<String, Subject<boolean>>()
-    const renderEndings = new Map<String, Subject<boolean>>()
+    const results = new Map<string, any>()
+    const renderBeginnings = new Map<string, Subject<boolean>>()
+    const renderEndings = new Map<string, Subject<boolean>>()
 
     // In order to do completion detection, we need to set these
     // locations up synchronously, and let them be read later.
@@ -293,10 +295,7 @@ function streamTransformerFrom(config: SubscriberConfig): StreamTransformer {
   const { actionsOfType } = config
   let predicate
   if (actionsOfType) {
-    const predicate =
-      actionsOfType instanceof RegExp
-        ? ({ action }: ActionStreamItem) => actionsOfType.test(action.type)
-        : ({ action }: ActionStreamItem) => actionsOfType === action.type
+    const predicate = getActionFilter(actionsOfType)
 
     const xform: StreamTransformer = s => {
       return s.pipe(filter(predicate))

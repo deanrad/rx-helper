@@ -217,7 +217,7 @@ describe("Agent", () => {
           it("accepts a function that modifies the Action Stream", undefined)
         })
         describe("actionType", () => {
-          it("should only run the render on matching actions (String)", () => {
+          it("should only run the render on matching actions (string)", () => {
             expect.assertions(1)
             agent.addRenderer(() => of(++counter), { name: "inc", actionsOfType: "Counter.inc" })
             let result1 = agent.process(anyAction)

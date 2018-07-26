@@ -32,9 +32,9 @@ export interface Action {
 export interface ActionStreamItem {
   action: Action
   context?: Object
-  results: Map<String, any>
-  renderBeginnings: Map<String, Subject<boolean>>
-  renderEndings: Map<String, Subject<boolean>>
+  results: Map<string, any>
+  renderBeginnings: Map<string, Subject<boolean>>
+  renderEndings: Map<string, Subject<boolean>>
 }
 
 /**
@@ -66,8 +66,10 @@ export interface SubscriberConfig {
   concurrency?: Concurrency
   xform?: StreamTransformer
   processResults?: Boolean
-  actionsOfType?: String | RegExp
+  actionsOfType?: string | RegExp
 }
+
+export type ActionFilter = string | RegExp | ((asi: ActionStreamItem) => boolean)
 
 /**
  * @description Your contract for what is returned from calling #process.
