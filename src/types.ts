@@ -9,6 +9,11 @@ export interface AgentConfig {
    * the way you'll create this will depend on your environment.
    */
   agentId?: any
+  /** @description If true, indicates that this Agent is willing to
+   * forward actions out, if they have `meta.push` set to true. More
+   * appropriate for a server, than a client.
+   */
+  relayActions?: boolean
   [key: string]: any
 }
 

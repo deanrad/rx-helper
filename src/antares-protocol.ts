@@ -40,7 +40,7 @@ export { startWith, last, filter, delay, map, mapTo } from "rxjs/operators"
  * an Agent is `action$`, its action stream.
  */
 export class Agent implements ActionProcessor {
-  public static configurableProps = ["agentId"]
+  public static configurableProps = ["agentId", "relayActions"]
 
   /** @description The heart and circulatory system of an Agent is `action$`, its action stream. */
   action$: Observable<ActionStreamItem>
