@@ -1,47 +1,115 @@
-import { Agent } from "../src/antares-protocol"
-import { createStore, Reducer } from "redux"
-
+// @ts-nocheck
+import { Agent, agentConfigFilter, randomIdFilter } from "../src/antares-protocol"
+import { init } from "@rematch/core"
+import { triviaStoreConfig } from "../demos/trivia/store"
 describe("Multi-agent Trivia Game", () => {
   let moderator: Agent // the server
   let player1: Agent // a player
   let emcee: Agent // the real-life game operator
-
-  const reducer: Reducer = (state = {}, action) => state
+  const pantsQ = { prompt: "Pants?", choices: ["Yes", "No"] }
+  const pantsA = { answer: "No" }
 
   beforeAll(() => {
-    moderator = new Agent()
-    player1 = new Agent()
-    emcee = new Agent()
+    moderator = new Agent({ agentId: "moderator", relayActions: true })
+    player1 = new Agent({ agentId: "player1" })
+    emcee = new Agent({ agentId: "emcee" })
 
-    // All agents have a store
-    ;[moderator, player1].forEach(agent => {
-      const store = createStore(reducer)
+    // The topology defines who sends actions to whom
+    const topology = {
+      player1: [moderator],
+      emcee: [moderator],
+      moderator: [player1, emcee]
+    }
+
+    // Set up agents' properties and relationships to each other
+    ;[moderator, player1, emcee].forEach(agent => {
+      // All agents have a store
+      const store = init(triviaStoreConfig)
       agent.addFilter(({ action }) => store.dispatch(action))
-    })
+      // Expose for testing only!
+      Object.assign(agent, { store })
 
-    // The moderator (server) renders most actions to all clients
-    moderator.addFilter(({ action }) => {
-      const meta = action.meta || {}
-      if (meta["push"] === false) return
+      // Stamp actions with agentConfig
+      agent.addFilter(agentConfigFilter(agent))
+      agent.addFilter(randomIdFilter())
 
-      player1.process(action)
-      emcee.process(action)
+      // Agents send actions to the others in their topology
+      const others = topology[agent.agentId]
+      agent.addFilter(({ action }) => {
+        const meta = action.meta || {}
+
+        // Actions marked meta.push false are not even sent to the server
+        if (meta["push"] === false) return
+
+        // We send out actions to others but tell them not to push them
+        others.forEach(targetAgent => {
+          // TODO Dont send back the way we came. Requires agentConfigFilter
+          targetAgent.process({
+            ...action,
+            meta: {
+              ...(action.meta || {}),
+              // Except, we can tell the moderator to push to all others
+              // This will change once diffs of the store are filtered and
+              // pushed, instead of the actions that caused them.
+              push: targetAgent.relayActions ? true : false
+            }
+          })
+        })
+      })
     })
   })
 
-  it("should set up agents", () => {
-    expect(moderator).toBeInstanceOf(Agent)
-    expect(player1).toBeInstanceOf(Agent)
-  })
-
-  it("should send actions from the moderator to others", () => {
-    expect.assertions(1)
-    let emceeGotIt = emcee.nextOfType("test/foo")
-
-    moderator.process({ type: "test/foo" })
-
-    return emceeGotIt.then(action => {
-      expect(action).toMatchObject({ type: "test/foo" })
+  it.only("should play the whole game without error", () => {
+    // set up questions
+    player1.process({ type: "game/addQuestion", payload: pantsQ })
+    expect(moderator.store.getState().game).toMatchObject({
+      questions: [pantsQ]
     })
+    // players join
+    player1.process({ type: "game/joinPlayer", payload: { name: "Declan" }, meta: { push: true } })
+    const joinedState = {
+      players: [{ name: "Declan" }]
+    }
+    expect(moderator.store.getState().game).toMatchObject(joinedState)
+    expect(moderator.store.getState().game).toMatchObject(joinedState)
+
+    // begin game
+    emcee.process({ type: "game/nextQuestion", payload: pantsQ, meta: { push: true } })
+    const roundUnanswered = (hideAnswers = false) => ({
+      game: {
+        status: "playing",
+        questions: []
+      },
+      round: {
+        question: Object.assign(pantsQ, hideAnswers ? {} : pantsA)
+      }
+    })
+    expect(moderator.store.getState()).toMatchObject(roundUnanswered())
+    expect(player1.store.getState()).toMatchObject(roundUnanswered())
+    // players answer when the round changes
+
+    const playerAnswer = { from: player1.agentId, choice: "No" }
+    const filteredAction = player1.process({
+      type: "round/respond",
+      payload: playerAnswer
+    })
+    expect(filteredAction.meta).toMatchObject({ agentId: "player1" })
+    expect(player1.store.getState().round.responses).toContain(playerAnswer)
+    expect(moderator.store.getState().round.responses).toContain(playerAnswer)
+    expect(moderator.store.getState().round.summary).toMatchObject({ Yes: 0, No: 1 })
+
+    // Once the next question is chosen by the emcee, saveResponses
+    // will process just prior to nextQuestion
+    const clearedIt = emcee.process({
+      type: "root/saveResponses",
+      payload: playerAnswer
+    })
+    expect(emcee.store.getState().game.responses).toContain(playerAnswer)
+    const nextedIt = emcee.process({
+      type: "game/nextQuestion",
+      payload: pantsQ
+    })
+    expect(emcee.store.getState().round.question).toMatchObject(pantsQ)
+    expect(emcee.store.getState().round.responses).toHaveLength(0)
   })
 })

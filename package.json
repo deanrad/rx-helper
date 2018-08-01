@@ -92,6 +92,7 @@
     "collectCoverage": true
   },
   "devDependencies": {
+    "@rematch/core": "^1.0.0-beta.5",
     "@types/jest": "^23.0.0",
     "@types/node": "^10.0.9",
     "colors": "^1.1.2",

@@ -71,7 +71,7 @@ export interface SubscriberConfig {
   concurrency?: Concurrency
   xform?: StreamTransformer
   processResults?: Boolean
-  actionsOfType?: string | RegExp
+  actionsOfType?: ActionFilter
 }
 
 export type ActionFilter = string | RegExp | ((asi: ActionStreamItem) => boolean)
@@ -87,9 +87,13 @@ export interface ProcessResult {
   [key: string]: any
 }
 
+/**
+ * @description Options are typical from rxjs/ajax, however the expandKey string
+ * is one corresponding to OboeJS node matcher.
+ */
 export interface StreamingGetOptions {
   url: string
-  expandKey: string
+  expandKey?: string
   method?: "GET" | "POST"
   headers?: Object
   body?: string | Object

@@ -359,7 +359,9 @@ export const reservedSubscriberNames = ["completed", "then", "catch"]
 export const agentConfigFilter = (agent: Agent) => ({ action }: ActionStreamItem) => {
   Object.assign(action, { meta: action.meta || {} })
   Agent.configurableProps.forEach(key => {
-    Object.assign(action.meta, { [key]: agent[key] })
+    if (typeof agent[key] !== "undefined") {
+      Object.assign(action.meta, { [key]: agent[key] })
+    }
   })
 }
 
@@ -375,7 +377,7 @@ export const randomId = (length: number = 7) => {
  * action.meta.actionId to uniquely identify an action among its neighbors.
  * @see randomId
  */
-export const randomIdFilter = (length: number, key = "actionId") => ({
+export const randomIdFilter = (length: number = 7, key = "actionId") => ({
   action
 }: ActionStreamItem) => {
   action.meta = action.meta || {}

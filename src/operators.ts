@@ -34,7 +34,7 @@ export const ajaxStreamingGet = (opts: StreamingGetOptions): Observable<any> => 
     // @ts-ignore
     flatMap(ajax => {
       const resultArr = opts.expandKey ? ajax.response[opts.expandKey] : ajax.response
-      return resultArr instanceof Array ? from(resultArr) : of(resultArr)
+      return Array.isArray(resultArr) ? from(resultArr) : of(resultArr)
     })
   )
 }
