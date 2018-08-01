@@ -1,18 +1,15 @@
-import { default as faker } from "faker"
-import fs from "fs"
-import { Subject, of, from, empty } from "rxjs"
+import { of, from, empty } from "rxjs"
 import { delay, first, toArray } from "rxjs/operators"
 import {
   Action,
-  ActionStreamItem,
   Agent,
   Concurrency,
-  Subscriber,
   reservedSubscriberNames,
   after,
   agentConfigFilter,
   AgentConfig,
-  jsonPatch
+  jsonPatch,
+  ajaxStreamingGet
 } from "../src/antares-protocol"
 
 // a mutable variable, reset between tests
@@ -67,7 +64,7 @@ describe("Agent", () => {
     })
 
     describe("allOfType", () => {
-      it.only("should be an Observable of matching actions", () => {
+      it("should be an Observable of matching actions", () => {
         const agent = new Agent()
         const { allOfType } = agent
         let counter = 0
@@ -269,8 +266,25 @@ describe("Agent", () => {
               expect(counter).toEqual(1)
             })
           })
+          it("should only run the action render on matching actions (Function)", () => {
+            expect.assertions(1)
+            agent.addRenderer(() => of(++counter), {
+              name: "inc",
+              actionsOfType: ({ action: { type } }) => type.startsWith("Counter")
+            })
+            let result1 = agent.process(anyAction)
+            let result2 = agent.process({ type: "Counter.inc" }).completed.inc
+
+            return result2.then(() => {
+              expect(counter).toEqual(1)
+            })
+          })
         })
       })
+    })
+    describe("error handling", () => {
+      it("should set the renderResult to be in error", undefined)
+      it("should unsubscribe the offending renderer", undefined)
     })
   })
 
@@ -498,6 +512,26 @@ describe("Utilities", () => {
     })
   })
 
+  describe("ajaxStreamingGet (test requires https://jsonplaceholder.typicode.com)", () => {
+    it("should create an observable of many from an array ajax response", () => {
+      expect.assertions(1)
+      const user$ = ajaxStreamingGet({
+        url: "https://jsonplaceholder.typicode.com/users/"
+      }).pipe(toArray())
+      return user$.toPromise().then(userArray => {
+        expect(userArray).toHaveLength(10)
+      })
+    })
+    it("should create an observable of one from a singular-object ajax response", () => {
+      expect.assertions(1)
+      const user$ = ajaxStreamingGet({
+        url: "https://jsonplaceholder.typicode.com/users/1"
+      })
+      return user$.toPromise().then(user => {
+        expect(user).toHaveProperty("username")
+      })
+    })
+  })
   describe("jsonPatch operator", () => {
     it("should turn a stream of objects into a stream of RFC6902 patches", async () => {
       let sources = [
@@ -516,67 +550,12 @@ describe("Utilities", () => {
       expect(result).toHaveLength(3)
       expect(result).toMatchSnapshot()
     })
+    it("does not swallow errors", undefined)
   })
 })
 
 //#region Util Functions Below
-const justTheAction = ({ action }: ActionStreamItem) => action
-const toAction = (x: any): Action => ({ type: "wrapper", payload: x })
 const nullFn = () => null
-const noSpecialValue = "noSpecialValue"
-const syncReturnValue = "syncReturnValue"
-const observableValue = toAction("observableValue")
-const asyncReturnValue = of(observableValue).pipe(delay(1))
 const anyAction: Action = { type: "any" }
-const consequentialAction: Action = { type: "consequntialAction" }
-const logFileAppender: Subscriber = ({ action: { type, payload } }) => {
-  // Most renderers care about a subset of actions. Return early if you don't care.
-  if (!type.match(/^File\./)) return
 
-  const { fileName, content } = payload
-  fs.appendFileSync(fileName, content + "\n", { encoding: "UTF8" })
-
-  // a synchronous renderer need not provide a return value
-}
-// wraps an it scenario and silences console messages during its test-time executions
-const inSilence = itFn => {
-  const callIt = done => {
-    const _console = global.console
-    Object.assign(global.console, { log: jest.fn(), error: jest.fn() })
-
-    try {
-      itFn(done)
-    } catch (ex) {
-      // tslint:disable-line
-    } finally {
-      global.console = _console
-    }
-  }
-
-  // preserve arity in returned fn
-  return itFn.length === 1 ? done => callIt(done) : () => callIt(undefined)
-}
-
-const slightDelay = [
-  () => {
-    const done = new Subject()
-    setTimeout(() => {
-      counter += 1
-      done.complete()
-    }, 10)
-    return done.asObservable()
-  },
-  { name: "slightDelay" }
-]
-const longerDelay = [
-  () => {
-    const done = new Subject()
-    setTimeout(() => {
-      counter *= 1.1
-      done.complete()
-    }, 40)
-    return done.asObservable()
-  },
-  { name: "longerDelay" }
-]
 //#endregion
