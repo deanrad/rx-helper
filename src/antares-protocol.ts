@@ -193,6 +193,21 @@ export class Agent implements ActionProcessor {
     return resultObject as ProcessResult
   }
 
+  /** @description Calls addRenderer, but uses a more event-handler-like syntax.
+   * @example
+   * agent.on('search/message/success', getMessageBody('message/body/success'))
+   * agent.on('message/body/success', getAttachmentBody('message/attachment/success'), {
+   *   concurrency: 'serial'
+   * })
+   */
+  on(actionFilter: ActionFilter, renderer: Subscriber, config: SubscriberConfig = {}) {
+    const _config = {
+      ...config,
+      actionsOfType: actionFilter
+    }
+    return this.addRenderer(renderer, _config)
+  }
+
   /** @description Filters are synchronous functions that sequentially process
    * each item on `action$`, possibly changing them or creating synchronous
    * state changes. Useful for type-checking, writing to a memory-based store.

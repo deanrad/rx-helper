@@ -102,6 +102,27 @@ describe("Agent", () => {
     })
   })
 
+  describe("#on", () => {
+    it("should alias addRenderer", () => {
+      expect.assertions(3)
+      const seenTypes = []
+      agent.on(/foo/, ({ action: { type } }) => {
+        seenTypes.push(type)
+        return empty() // An Observable which completes, so we know it's completed
+      })
+
+      return agent.process({ type: "foolz" }).completed
+        .then(() => {
+          return agent.process({ type: "fool2" }).completed
+        })
+        .then(() => {
+          expect(seenTypes).toHaveLength(2)
+          expect(seenTypes).toContain("foolz")
+          expect(seenTypes).toContain("fool2")
+        })
+    })
+  })
+
   describe("#addFilter or #addRenderer", () => {
     describe("arguments", () => {
       describe("function argument", () => {
