@@ -29,7 +29,7 @@
     "test:watch": "jest --watch",
     "test:unit": "npm run lint && jest --expand --no-coverage --no-cache",
     "test:ci": "npm run test:unit && npm run build && npm run size && node demos/index",
-    "test:client": "cd demos/express && npm i && cd ../.. && node demos/express/index",
+    "test:client": "cd demos/express && npm i; cd ../.. && node demos/express/index",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",
@@ -41,6 +41,10 @@
     "commitmsg": "validate-commit-msg",
     "size": "size-limit",
     "demos": "npm run build && node demos/index",
+    "demos:live:1": "cd demos/live; code ../scratch/live-actors.yml && nodemon 01-write-file.js",
+    "demos:sessionTimeout:1": "cross-env DEMO=sessionTimeout node demos/index",
+    "demos:sessionTimeout:2": "cross-env inactivityInterval=5000 warningInterval=2000 DEMO=sessionTimeout node demos/index",
+    "demos:sessionTimeout:3": "cross-env inactivityInterval=5000 warningInterval=2000 DEMO=sessionTimeout INTERACTIVE=1 node demos/index",
     "demos:test": "jest --expand --coverage false --testRegex=\"/demos/test\\.(ts|tsx|js)$\"",
     "demo:concurrency": "clear; DEMO=serialFruit WAIT_FOR=SIGUSR2 outer=1120 inner=200 node demos/index",
     "prereqs:windows": "npm install -g --production node-gyp windows-build-tools"
@@ -89,11 +93,15 @@
         "statements": 95
       }
     },
-    "collectCoverage": true
+    "collectCoverage": true,
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    }
   },
   "devDependencies": {
     "@rematch/core": "^1.0.0-beta.5",
-    "@types/jest": "^23.0.0",
     "@types/node": "^10.0.9",
     "colors": "^1.1.2",
     "commitizen": "^2.9.6",
@@ -115,7 +123,7 @@
     "semantic-release": "^15.4.1",
     "size-limit": "^0.18.1",
     "travis-deploy-once": "^5.0.0",
-    "ts-jest": "^23.0.0",
+    "ts-jest": ">=23.10.0",
     "ts-loader": "^4.4.2",
     "tslint": "^5.8.0",
     "tslint-config-prettier": "^1.1.0",
@@ -123,10 +131,11 @@
     "typedoc": "^0.11.1",
     "typescript": "^2.6.2",
     "validate-commit-msg": "^2.12.2",
-    "webpack": "^4.15.1",
+    "webpack": ">=4.20.0",
     "webpack-cli": "^3.0.8"
   },
   "dependencies": {
+    "@types/jest": "^23.3.2",
     "fast-json-patch": "^2.0.6"
   }
 }

@@ -9,8 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="//cdnjs.cloudflare.com/ajax/libs/rxjs/6.2.1/rxjs.umd.min.js"></script>
     <script src="//unpkg.com/redux@4.0.0/dist/redux.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/fast-json-patch/2.0.6/fast-json-patch.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.core.js"></script>
     <script src="./dist/antares-protocol.js"></script>
     <script>
         let agent
@@ -26,161 +24,63 @@
         } else {
             console.log("Antares Loading Error")
         }
+
+        // Welcome, reader of the Source!
+        // This is just a little demo to show how in Antares you
+        // - Define event-handling behavior which
+        //   - matches on type and
+        //   - returns an Observable
+        // - Process some actions or subscribe to a process which does
+        // What it does: We send you to a new browser location (in your Address Bar)
+        // while you read this
+
+        // Define a renderer which changes the browser's address bar (after a delay)
+        agent.on('browser/go', ({ action }) => {
+            return after(2000, () => document.location.hash = action.payload)
+        })
+        const store = Redux.createStore(
+            (state = {}) => state,
+            window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+        )
+
+        // append a random GIT-SHA-like identifier to each action
+        agent.addFilter(randomIdFilter())
+        // Send all actions, including those returned by renderers through the store
+        agent.addFilter(({ action }) => store.dispatch(action))
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Kick off the action - we should expect to see an update in the address bar!
+            agent.process({
+                type: 'browser/go',
+                payload: '#WhatWouldYouLikeToKnow?'
+            })
+        })
     </script>
     <style>
         #c {
-            border: 1px solid black;
+            border: 0.5px solid black;
+            width: 60px;
+            height: 20px;
         }
     </style>
 </head>
 
 <body>
+    <h5>Antares is watching you!</h5>
+    <canvas id="c"></canvas>
     <h1>Links</h1>
     <ul>
         <li>
             <a href="docs/index.html">JSDoc Documentation</a>
         </li>
+        <li>
+            <a href="javascript:window.__REDUX_DEVTOOLS_EXTENSION__.open()">Open DevTools</a>
+        </li>
     </ul>
-    <canvas id="c"></canvas>
 
-    <!-- this little canvas demo doesnt go through the Agent so as
-    not to clutter the logs, but its an Observable so it could -->
-    <script src="demos/home/kitt.js">
-    </script>
-    <script>
-        // TODO write this with jsonpatch
-        const antaresReducer = (state = {}, action) => {
-            let keyPath = (action.meta || {}).key || []
-            let path = "/" + keyPath.join("/")
-            switch (action.type) {
-                case "agent/remember":
-                    let firstLevel = state[keyPath[0]]
-                    return {
-                        ...state,
-                        [keyPath[0]]: {
-                            ...firstLevel,
-                            [keyPath[1]]: action.payload
-                        }
-                    }
-                    break;
-                default:
-                    return state;
-            }
-        }
+    <!-- A use of RxJS (without Antares) to do a fun animation -->
 
-        const store = Redux.createStore(
-            antaresReducer,
-            window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-        )
-
-        // Send all actions, including those returned by renderers through the store
-        agent.addFilter(({ action }) => store.dispatch(action))
-        agent.addFilter(randomIdFilter())
-
-        // For actions like http/*, do the streaming get, dispatching incrementally
-        // and telling the agent to store under the id field returned eg /users/123
-        const httpRenderer = ({ action }) => {
-            const opts = action.payload
-            // Turn the observable of results into commands to remember the results.
-            // Use the key arrays in the actions to prefix the paths in the store, and
-            // the ids that return as the leaf node
-            return ajaxStreamingGet(opts).pipe(
-                concatMap(responseItem => after(1000, () => ({
-                    type: 'agent/remember',
-                    payload: { id: responseItem.id, name: responseItem.name, full_name: responseItem.full_name },
-                    meta: {
-                        key: [...((action.meta || {}).key || []), responseItem.id],
-                        parentActionId: (action.meta || {}).actionId
-                    }
-                }))),
-                take(5),
-                catchError(e => {
-                    const { request, status, responseType, response } = e
-                    return of({
-                        type: 'http/error',
-                        payload: { request, status, responseType, response },
-                        meta: {
-                            parentActionId: (action.meta || {}).actionId
-                        }
-                    })
-                })
-            )
-        }
-        const httpConfig = {
-            name: 'httpGet',
-            actionsOfType: /^http.get/,
-            processResults: true
-        }
-        agent.addRenderer(httpRenderer, httpConfig)
-
-        // For fun, process some upon startup
-        // 1. A single object, to be stored under /users/id
-        const user = agent.process({
-            type: 'http/get',
-            payload: {
-                url: 'https://jsonplaceholder.typicode.com/users/1'
-            },
-            meta: { key: ['users'] }
-        })
-
-        // A multitude of objects, under the 'items' key,
-        // each to be stored under /repos/id
-        const repos = agent.process({
-            type: 'http/get',
-            payload: {
-                url: 'https://api.github.com/search/repositories?q=antares&sort=stars',
-                expandKey: 'items'
-            },
-            meta: { key: ['repos'] }
-        })
-
-        // Errors handled as well. This one 500's by design
-        agent.process({
-            type: 'http/get', payload: {
-                url: 'http://www.mocky.io/v2/5b4ff44a3600007d00dd0c3f'
-            }
-        })
-    </script>
-    <script>
-        // What are the properties of our hashChange renderer, and what should it be named?
-        const config = {
-            actionsOfType: 'browser/go',
-            concurrency: 'serial' // 'cutoff', 'serial', 'parallel', 'mute'
-        }
-
-        agent.addRenderer(({ action }) => {
-            return after(2000, () => document.location.hash = action.payload)
-        }, config)
-
-        agent.process({
-            type: 'browser/go',
-            payload: '#WhatWouldYouLikeToKnow?'
-        })
-
-        /*
-            Quiz - Match the concurrency mode to the desired outcome when this code is run:
-
-            `agent.process({ type: 'hashChange', payload: 'Funny' }); agent.process({ type: 'hashChange', payload: 'Honey' }); agent.process({ type: 'hashChange', payload: 'Money' })`
-
-            Money, 6000 msec       Money 2000 msec        Funny 2000 msec
-
-            Answers:
-            serial: Money 6000 msec
-            cutoff: Money 2000 msec
-            parallel: Money 2000 msec
-            mute: Funny 2000 msec
-
-            ---
-            Quiz - When would you use cutoff instead of parallel?
-
-            a) You want to limit resource usage
-            b) You want every request to run to completion
-            c) You have an issue where renders update the UI with old data
-            d) You want to prevent new renders from being done while one is in progress already
-
-            A: a) and c)
-        */
-    </script>
+    <script src="demos/home/kitt.js"></script>
 
 </body>
 

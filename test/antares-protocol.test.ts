@@ -1,3 +1,4 @@
+/* tslint:disable  */
 import { of, from, empty } from "rxjs"
 import { delay, first, toArray } from "rxjs/operators"
 import {
@@ -9,7 +10,8 @@ import {
   agentConfigFilter,
   AgentConfig,
   jsonPatch,
-  ajaxStreamingGet
+  ajaxStreamingGet,
+  randomId
 } from "../src/antares-protocol"
 
 // a mutable variable, reset between tests
@@ -111,8 +113,9 @@ describe("Agent", () => {
         return empty() // An Observable which completes, so we know it's completed
       })
 
-      return agent.process({ type: "foolz" }).completed
-        .then(() => {
+      return agent
+        .process({ type: "foolz" })
+        .completed.then(() => {
           return agent.process({ type: "fool2" }).completed
         })
         .then(() => {
@@ -572,6 +575,17 @@ describe("Utilities", () => {
       expect(result).toMatchSnapshot()
     })
     it("does not swallow errors", undefined)
+  })
+
+  describe("randomId", () => {
+    it("should be run 1000 times without producing a dupe", () => {
+      const ids = []
+      for (let i = 0; i < 1000; i++) {
+        const newOne = randomId()
+        expect(ids).not.toContain(newOne)
+        ids.push(newOne)
+      }
+    })
   })
 })
 

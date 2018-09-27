@@ -18,7 +18,7 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
 
   // Renderers for those actions
   const warn = ({ action }) => {
-    log("You will be logged out soon..")
+    log("You are being logged out..")
   }
   const logout = ({ action }) => {
     log("You have been logged out.")
@@ -29,10 +29,14 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
   // The setting-up of our renderers
   const agent = new Agent()
 
-  agent.addRenderer(warn, { actionsOfType: "Timeout.warn" })
-  agent.addRenderer(logout, { actionsOfType: "Timeout.logout" })
+  // Using the simple API
+  agent.on("Timeout.warn", warn)
+  agent.on("Timeout.logout", logout)
 
-  // Upon recieiving actions, we return an Observable of the following:
+  // An observable resembling the following is created and started
+  // after every action. 'Cutoff' concurrency mode means it terminates
+  // any preceeding one, thus potentially no warn or logout ever occurs
+  // if actions occur within the specified inactivityInterval
   //                 warn     logout
   // |---------------|--------|----->|
   //    inactivity     warning
@@ -44,10 +48,9 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
       )
     },
     {
-      name: "SessionTimeout",
-      processResults: true, // Render these actions back through agent.process
-      concurrency: "cutoff", // If a timeout exists when we're triggered, kill it
-      actionsOfType: /^(?!Timeout)/ // Don't trigger a timeout on our Timeout.* actions
+      actionsOfType: "keyPress", // Upon every one of these
+      concurrency: "cutoff", // If a timeout exists when we're triggered, replace it with this new one
+      processResults: true // Obviates our need to call agent.process explicitly
     }
   )
 
@@ -62,19 +65,23 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
     agent.process({ type: "keyPress" })
   })
 
+  const dotsTickInterval = setInterval(() => {
+    log("•")
+  }, inactivityInterval / 5.0)
+
   // Return our Subject for when we're done
-  return allDone.toPromise()
+  return allDone.toPromise().then(() => clearInterval(dotsTickInterval))
 
   // If not in interactive mode, we'll use this Observable to drive us.
   function simInput() {
     return concat(
       // two keypresses well within our inactivity interval
-      after(inactivityInterval / 2, " "),
-      after(inactivityInterval / 2, " "),
+      after(inactivityInterval * 0.5, "x"),
+      after(inactivityInterval * 0.5, "x"),
       // then we wait a bit longer to enter the inactivity interval
-      after(inactivityInterval * 1.1, " "),
+      after(inactivityInterval * 1.1, "x"),
       // dont let the warning interval fully elapse yet
-      after(warningInterval / 2, " ")
+      after(warningInterval * 0.5, "x")
       // Finally, let the chips fall as they may
     )
   }

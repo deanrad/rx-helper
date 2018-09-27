@@ -1,59 +1,71 @@
-const { bufferCount, map } = require("rxjs/operators")
 const { Agent, after } = require("antares-protocol")
+const { bufferCount, map } = require("rxjs/operators")
+const fs = require("fs")
+
+// Instantiate this helper object
 const agent = new Agent()
 
-const writeLine = text => ({
-  payload: {
-    text,
-    encoding: "UTF8",
-    path: "./demos/scratch/live-actors.yml"
-  }
-})
+// Create a big array of writeFileRequests, having the agent process each.
+// Then define a function our agent can call once fully configured.
+const names = ["Jake Weary", "ScarJo", "Chris Hemsworth", "Mark Ruffalo"]
+const writeFileRequests = Array.from(Array(100).keys()) // 0..99
+  .map(i => writeFileRequest(names[i % names.length]))
 
-// Returns a single action from a batch
-const consolidator = batch => {
-  let combinedNames = ""
-  for(let item of batch) {
-    const { action } = item
-    combinedNames += `${action.payload.text}\n - `
-  }
-  combinedNames = combinedNames.replace(/\s-\s$/, "")
-    
-  // The returned object should match what a renderer expects
+// Given some text, return an action fully describing whats
+// needed to write it to a file somewhere
+function writeFileRequest(text) {
   return {
-    action: writeLine(combinedNames)
+    type: "writeFile",
+    payload: {
+      text,
+      encoding: "UTF8",
+      path: "../scratch/live-actors.yml"
+    }
   }
 }
 
-const fileRenderer = ({ action }) => {
-  return after(2000, () => {
-    const { path, text, encoding } = action.payload
-    const line = " - " + text + "\n"
+function processAll() {
+  writeFileRequests.forEach(action => {
+    agent.process(action)
+  })
+  console.log("Agent has all our requests! Rendering in progress...")
+}
 
-    const fs = require("fs")
+// Given an action fully describing what and where to write,
+// do the actual writing.
+const writeFileRenderer = ({ action }) => {
+  return after(1000, () => {
+    const { text, encoding, path } = action.payload
+    const line = " - " + text + "\n"
     fs.appendFileSync(path, line, encoding)
   })
 }
-const logger = ({ action }) => {
-  console.log(`Got ${action.payload.text}`)
-}
 
-// Make the fileRenderer responsible for certain actions
-agent.addFilter(logger)
-agent.addRenderer(fileRenderer, {
-  // concurrency: "serial"
-  xform: actionStream => actionStream.pipe(
-    bufferCount(25),
-    map(consolidator)
-  )
+// Still we log before every action
+agent.addFilter(({ action }) => console.log(`Writing ${action.payload.text}`))
+
+// Tell our agent the writeFileRenderer is responsible for actions of type "writeFile"
+agent.addRenderer(writeFileRenderer, {
+  concurrency: "serial",
+  xform: actionStream =>
+    actionStream.pipe(
+      bufferCount(25),
+      map(consolidator)
+    )
 })
 
-const action = writeLine("Jake Weary")
+function consolidator(batch) {
+  // Make modifications to the first action in the batch and return it.
 
-const names = ["Jake Weary", "ScarJo", "Chris Hemsworth", "Mark Ruffalo"]
-// prettier-ignore
-const actions = Array
-  .from(Array(100).keys())
-  .map(i => writeLine(names[i % names.length]))
+  const [first, ...rest] = batch
+  const firstAction = first.action
+  rest.forEach(({ action }) => {
+    firstAction.payload.text += "\n - " + action.payload.text
+  })
+  firstAction.payload.text += "\n"
 
-actions.forEach(action => agent.process(action))
+  return first
+}
+
+// We've set up our agent - now process all actions!
+processAll()

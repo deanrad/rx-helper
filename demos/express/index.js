@@ -15,10 +15,13 @@ agent.addRenderer(
     const { payload } = action
     // we dont have different endpoints yet
     if (payload.path.includes("api")) {
-      res.json({ id: randomId() })
+      res.json({ id: randomId(6) })
+      return
+    } else if (payload.path === "/") {
+      res.sendFile("index.html", { root: "." })
       return
     } else {
-      res.sendFile("index.html", { root: "." })
+      res.sendFile(payload.path, { root: "./demos/express/" })
       return
     }
   },

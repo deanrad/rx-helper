@@ -16,7 +16,7 @@ const log = s => stdout.write(s + "\n")
 const append = s => stdout.write(s)
 const interactive = !!process.env.INTERACTIVE
 const whichDemo = process.env.DEMO
-const { Agent } = require("../dist/antares-protocol")
+const { Agent, after } = require("../dist/antares-protocol")
 
 async function sequentiallyRun() {
   for (let key of Object.keys(Demos)) {
@@ -25,14 +25,14 @@ async function sequentiallyRun() {
     const [demoFn, config] = Demos[key]
 
     // pick up CLI overrides
-    for (let key of Object.keys(config)) {
+    for (let key of ["INTERACTIVE", ...Object.keys(config)]) {
       if (process.env[key]) {
         config[key] = process.env[key]
       }
     }
 
     log(JSON.stringify(config))
-    await demoFn({ Agent, config, stdout, log, append, interactive })
+    await demoFn({ Agent, after, config, stdout, log, append, interactive })
     // give some time to flush
     await new Promise(resolve => setTimeout(resolve, 200))
   }

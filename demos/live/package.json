@@ -9,7 +9,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "antares-protocol": "^2.1.0"
+  "devDependencies": {},
+  "dependencies": {
+    "antares-protocol": "^2.7.0"
   }
 }

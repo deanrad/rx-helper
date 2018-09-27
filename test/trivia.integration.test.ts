@@ -28,6 +28,11 @@ describe("Multi-agent Trivia Game", () => {
       agent.addFilter(({ action }) => store.dispatch(action))
       // Expose for testing only!
       Object.assign(agent, { store })
+      Object.defineProperty(store, "state", {
+        get() {
+          return this.getState()
+        }
+      })
 
       // Stamp actions with agentConfig
       agent.addFilter(agentConfigFilter(agent))
@@ -62,7 +67,7 @@ describe("Multi-agent Trivia Game", () => {
   it.only("should play the whole game without error", () => {
     // set up questions
     player1.process({ type: "game/addQuestion", payload: pantsQ })
-    expect(moderator.store.getState().game).toMatchObject({
+    expect(moderator.store.state.game).toMatchObject({
       questions: [pantsQ]
     })
     // players join
@@ -70,8 +75,8 @@ describe("Multi-agent Trivia Game", () => {
     const joinedState = {
       players: [{ name: "Declan" }]
     }
-    expect(moderator.store.getState().game).toMatchObject(joinedState)
-    expect(moderator.store.getState().game).toMatchObject(joinedState)
+    expect(moderator.store.state.game).toMatchObject(joinedState)
+    expect(moderator.store.state.game).toMatchObject(joinedState)
 
     // begin game
     emcee.process({ type: "game/nextQuestion", payload: pantsQ, meta: { push: true } })
@@ -84,8 +89,8 @@ describe("Multi-agent Trivia Game", () => {
         question: Object.assign(pantsQ, hideAnswers ? {} : pantsA)
       }
     })
-    expect(moderator.store.getState()).toMatchObject(roundUnanswered())
-    expect(player1.store.getState()).toMatchObject(roundUnanswered())
+    expect(moderator.store.state).toMatchObject(roundUnanswered())
+    expect(player1.store.state).toMatchObject(roundUnanswered())
     // players answer when the round changes
 
     const playerAnswer = { from: player1.agentId, choice: "No" }
@@ -94,9 +99,9 @@ describe("Multi-agent Trivia Game", () => {
       payload: playerAnswer
     })
     expect(filteredAction.meta).toMatchObject({ agentId: "player1" })
-    expect(player1.store.getState().round.responses).toContain(playerAnswer)
-    expect(moderator.store.getState().round.responses).toContain(playerAnswer)
-    expect(moderator.store.getState().round.summary).toMatchObject({ Yes: 0, No: 1 })
+    expect(player1.store.state.round.responses).toContain(playerAnswer)
+    expect(moderator.store.state.round.responses).toContain(playerAnswer)
+    expect(moderator.store.state.round.summary).toMatchObject({ Yes: 0, No: 1 })
 
     // Once the next question is chosen by the emcee, saveResponses
     // will process just prior to nextQuestion
@@ -104,12 +109,12 @@ describe("Multi-agent Trivia Game", () => {
       type: "root/saveResponses",
       payload: playerAnswer
     })
-    expect(emcee.store.getState().game.responses).toContain(playerAnswer)
+    expect(emcee.store.state.game.responses).toContain(playerAnswer)
     const nextedIt = emcee.process({
       type: "game/nextQuestion",
       payload: pantsQ
     })
-    expect(emcee.store.getState().round.question).toMatchObject(pantsQ)
-    expect(emcee.store.getState().round.responses).toHaveLength(0)
+    expect(emcee.store.state.round.question).toMatchObject(pantsQ)
+    expect(emcee.store.state.round.responses).toHaveLength(0)
   })
 })

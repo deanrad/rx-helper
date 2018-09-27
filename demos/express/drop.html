@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Antares Freefall Detection Demo</title>
+  <meta charset="utf-8" />
+  <link rel="shortcut icon" type="image/png" href="/www.deanius.com/favicon.png" />
+  <style>
+    .boom {
+      background-color: red;
+      color: white
+    }
+  </style>
+  <!-- Load dependencies -->
+  <script src="https://unpkg.com/rxjs/bundles/rxjs.umd.js"></script>
+  <script src="https://unpkg.com/antares-protocol/dist/antares-protocol.js"></script>
+  <script>
+    const { Subject, Observable, of, timer, from, zip, fromEvent } = rxjs
+    const { toArray, map, tap, pluck, filter, startWith, delay, debounceTime, takeUntil, scan, distinctUntilChanged } = rxjs.operators
+
+    // The stream of summed accelerations we'll be looking for
+    const accel$ = fromEvent(window, "devicemotion", e => {
+      const { x, y, z } = e.accelerationIncludingGravity
+      return Math.abs(x) + Math.abs(y) + Math.abs(z)
+    })
+
+    const threshold = 0.5
+    const zeroDetectorStart = { nearZeroCount: 0, enoughZeroes: false }
+    const zeroDetector = (detect = zeroDetectorStart, n) => {
+      if (detect.enoughZeroes || n >= threshold) {
+        const enoughZeroes = detect.nearZeroCount > 3
+        return Object.assign({}, zeroDetectorStart, { enoughZeroes, a: n })
+      }
+      if (n < threshold) {
+        if (detect.nearZeroCount > 3)
+          return Object.assign({}, zeroDetectorStart, { a: n, enoughZeroes: true })
+
+        return Object.assign({}, detect, {
+          nearZeroCount: detect.nearZeroCount + 1,
+          a: n
+        })
+      }
+    }
+
+  </script>
+</head>
+
+<body>
+
+  <div id="react-root" style="display: none"></div>
+  <pre id="log"></pre>
+  <script>
+    const logDom = document.getElementById("log")
+    const write = text => {
+      logDom.innerText = `${text}\n` + logDom.innerText
+    }
+    accel$.pipe(
+      scan(zeroDetector),
+      tap(d => {
+        if (d.enoughZeroes) {
+          write("BOOM!")
+          logDom.setAttribute('class', 'boom')
+        }
+      }),
+      tap(x => console.log(x)),
+      map(x => x && x.a),
+      takeUntil(timer(5000))
+    ).subscribe(a => write(`Acc: ${a}`))
+  </script>
+</body>
+
+</html>
