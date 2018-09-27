@@ -4,7 +4,7 @@ Antares is an architecture for real-time web apps. <a href="https://s3.amazonaws
 
 ![ES 2015](https://img.shields.io/badge/ES-2015-brightgreen.svg)
 [![npm version](https://badge.fury.io/js/antares-protocol.svg)](https://badge.fury.io/js/antares-protocol)
-[![41.5 kb](https://img.shields.io/badge/gzip%20size-41.5%20kB-brightgreen.svg)](https://www.npmjs.com/package/antares-protocol)
+[![<22 kb](https://img.shields.io/badge/gzip%20size-%3C22%20kB-brightgreen.svg)](https://www.npmjs.com/package/antares-protocol)
 [![Travis](https://img.shields.io/travis/deanius/antares-ts.svg)](https://travis-ci.org/deanius/antares-ts)
 [![Appveyor for Windows](https://ci.appveyor.com/api/projects/status/udjy5549kiy5sk4a/branch/master?svg=true)](https://ci.appveyor.com/project/deanius/antares-ts/branch/master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/deanius/antares-ts.svg)](https://greenkeeper.io/)
