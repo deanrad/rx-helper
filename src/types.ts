@@ -1,15 +1,18 @@
 import { Observable, Subject, Subscription } from "rxjs"
 import { SubscriberConfig } from "./types"
 
-/** @description Options that get mixed into the agent as read-only
+/**
+ * Options that get mixed into the agent as read-only
  * properties upon construction. Whitelisted to: agentId
  */
 export interface AgentConfig {
-  /** @description Any value: One Suggestion is hex digits (a4ad3d) but
+  /**
+   * Any value: One Suggestion is hex digits (a4ad3d) but
    * the way you'll create this will depend on your environment.
    */
   agentId?: any
-  /** @description If true, indicates that this Agent is willing to
+  /**
+   * If true, indicates that this Agent is willing to
    * forward actions out, if they have `meta.push` set to true. More
    * appropriate for a server, than a client.
    */
@@ -17,12 +20,21 @@ export interface AgentConfig {
   [key: string]: any
 }
 
+/**
+ * The core of the Antares Agent API: methods to add subscribers (filters or renderers)
+ * and a single method to 'dispatch' an action (Flux Standard Action) to relevant subscribers.
+ */
 export interface ActionProcessor {
   process(action: Action, context?: Object): ProcessResult
   addFilter(subscriber: Subscriber, config: SubscriberConfig): Subscription
   addRenderer(subscriber: Subscriber, config: SubscriberConfig): Subscription
 }
 
+/**
+ * A subscriber is either a renderer or a filter - a function which
+ * receives as its argument the ActionStreamItem, typically to use
+ * the payload of the `action` property to cause some side-effect.
+ */
 export interface Subscriber {
   (item: ActionStreamItem): any
 }
@@ -43,7 +55,7 @@ export interface ActionStreamItem {
 }
 
 /**
- * @description When a renderer (async usually) returns an Observable, it's possible
+ * When a renderer (async usually) returns an Observable, it's possible
  * that multiple renderings will be active at once (see demo 'speak-up'). The options
  * are:
  * - parallel: Concurrent renders are unlimited, unadjusted
@@ -52,13 +64,17 @@ export interface ActionStreamItem {
  * - mute: Concurrency of 1, existing render prevents new renders
  */
 export enum Concurrency {
-  /** @description Concurrent renders are unlimited, unadjusted */
+  /**
+   * Concurrent renders are unlimited, unadjusted */
   parallel = "parallel",
-  /** @description Concurrency of 1, render starts are queued */
+  /**
+   * Concurrency of 1, render starts are queued */
   serial = "serial",
-  /** @description Concurrency of 1, any existing render is killed */
+  /**
+   * Concurrency of 1, any existing render is killed */
   cutoff = "cutoff",
-  /** @description Concurrency of 1, existing render prevents new renders */
+  /**
+   * Concurrency of 1, existing render prevents new renders */
   mute = "mute"
 }
 
@@ -77,7 +93,7 @@ export interface SubscriberConfig {
 export type ActionFilter = string | RegExp | ((asi: ActionStreamItem) => boolean)
 
 /**
- * @description Your contract for what is returned from calling #process.
+ * Your contract for what is returned from calling #process.
  * Basically this is the Object.assign({}, action, results), and so
  * you can destructure from it your renderer's return values by name,
  * or `type`, `payload`, or `meta`. Meta will often be interesting since
@@ -88,7 +104,7 @@ export interface ProcessResult {
 }
 
 /**
- * @description Options are typical from rxjs/ajax, however the expandKey string
+ * Options are typical from rxjs/ajax, however the expandKey string
  * is one corresponding to an OboeJS node matcher, or a sub-key, depending on whether
  * the `lib` option is set to "oboe" or "rxjs". Oboe is used if present in the global
  * namespace, and lib is not set to `rxjs`.

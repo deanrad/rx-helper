@@ -35,23 +35,28 @@ export { from, of, empty, concat } from "rxjs"
 export { startWith, last, filter, delay, map, mapTo } from "rxjs/operators"
 
 /**
- * @description Represents the instance of an Antares action processor which is
+ * Represents the instance of an Antares action processor which is
  * usually the only one in this JavaScript runtime. The heart and circulatory system of
- * an Agent is `action$`, its action stream.
+ * an Agent is `action$`, its action stream. You put actions on the action stream
+ * by calling `agent.process(action)` and from there filters and renderers respond.
+ * Because renderers may emit more actions, this process can continue indefinitely.
  */
 export class Agent implements ActionProcessor {
   public static configurableProps = ["agentId", "relayActions"]
 
-  /** @description The heart and circulatory system of an Agent is `action$`, its action stream. */
+  /**
+   * The heart and circulatory system of an Agent is `action$`, its action stream. */
   action$: Observable<ActionStreamItem>
   filterNames: Array<string>
   rendererNames: Array<string>
   [key: string]: any
 
-  /** @description Gets a promise for the next action matching the ActionFilter. */
+  /**
+   * Gets a promise for the next action matching the ActionFilter. */
   // @ts-ignore
   nextOfType: ((filter: ActionFilter) => Promise<Action>)
-  /** @description Gets an Observable of all actions matching the ActionFilter. */
+  /**
+   * Gets an Observable of all actions matching the ActionFilter. */
   // @ts-ignore
   allOfType: ((filter: ActionFilter) => Observable<Action>)
 
@@ -108,7 +113,8 @@ export class Agent implements ActionProcessor {
     })
   }
 
-  /** @description Process sends an Action (eg Flux Standard Action), which
+  /**
+   * Process sends an Action (eg Flux Standard Action), which
    * is an object with a payload and type description, through the chain of
    * filters, and then out through any applicable renderers.
    * @throws Throws if a filter errs, but not if a renderer errs.
@@ -193,7 +199,8 @@ export class Agent implements ActionProcessor {
     return resultObject as ProcessResult
   }
 
-  /** @description Calls addRenderer, but uses a more event-handler-like syntax.
+  /**
+   * Calls addRenderer, but uses a more event-handler-like syntax.
    * @example
    * agent.on('search/message/success', getMessageBody('message/body/success'))
    * agent.on('message/body/success', getAttachmentBody('message/attachment/success'), {
@@ -208,7 +215,8 @@ export class Agent implements ActionProcessor {
     return this.addRenderer(renderer, _config)
   }
 
-  /** @description Filters are synchronous functions that sequentially process
+  /**
+   * Filters are synchronous functions that sequentially process
    * each item on `action$`, possibly changing them or creating synchronous
    * state changes. Useful for type-checking, writing to a memory-based store.
    * For creating consequences (aka async side-effects aka renders) outside of
@@ -229,7 +237,8 @@ export class Agent implements ActionProcessor {
     return sub
   }
 
-  /** @description Renderers are functions that exist to create side-effects
+  /**
+   * Renderers are functions that exist to create side-effects
    * outside of the Antares Agent - called Renderings. This can be changes to a
    * DOM, to a database, or communications (eg AJAX) sent on the wire. If its
    * an async behavior, it should be a Renderer not a filter. Renderers run
@@ -368,7 +377,8 @@ function validateConfig(config: SubscriberConfig) {
 
 export const reservedSubscriberNames = ["completed", "then", "catch"]
 
-/** @description Constructs a filter (see agent.addFilter) which mixes AgentConfig properties
+/**
+ * Constructs a filter (see agent.addFilter) which mixes AgentConfig properties
  * into the meta of an action
  */
 export const agentConfigFilter = (agent: Agent) => ({ action }: ActionStreamItem) => {
@@ -380,7 +390,8 @@ export const agentConfigFilter = (agent: Agent) => ({ action }: ActionStreamItem
   })
 }
 
-/** @description A random enough identifier, 1 in a million or so,
+/**
+ * A random enough identifier, 1 in a million or so,
  * to identify actions in a stream. Not globally or cryptographically
  * random, just more random than: https://xkcd.com/221/
  */
@@ -388,7 +399,8 @@ export const randomId = (length: number = 7) => {
   return Math.floor(Math.pow(2, length * 4) * Math.random()).toString(16)
 }
 
-/** @description A filter that adds a string of hex digits to
+/**
+ * A filter that adds a string of hex digits to
  * action.meta.actionId to uniquely identify an action among its neighbors.
  * @see randomId
  */
@@ -401,5 +413,6 @@ export const randomIdFilter = (length: number = 7, key = "actionId") => ({
   action.meta[key] = newId
 }
 
-/** @description Pretty-print an action */
+/**
+ * Pretty-print an action */
 export const pp = (action: Action) => JSON.stringify(action)
