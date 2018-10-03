@@ -22,7 +22,9 @@ export const after = (ms: number, objOrFn: Object | Function): Observable<any> =
 
 /**
  * Gets the resource, returning an Observable of resources referred to by the URL
- * @see https://medium.com/@deaniusaur/how-to-stream-json-data-over-rest-with-observables-80e0571821d3
+ * It is cancelable, and if you have the oboejs library, you'll get full streaming.
+ * Otherwise, you'll get an Observable that batches all its 'next' notifications at
+ * the end - which is no worse than normal AJAX performance.
  */
 export const ajaxStreamingGet = (opts: StreamingGetOptions): Observable<any> => {
   //@ts-ignore
@@ -47,21 +49,25 @@ function rxGet(opts: StreamingGetOptions): Observable<any> {
 
 function oboeGet(opts: StreamingGetOptions): Observable<any> {
   return new Observable(o => {
+    let userCanceled = false
     // @ts-ignore
     oboe(opts.url) // Get items from a url
-      // As an ever-growing array
-      .node(opts.expandKey, (items: any) => {
+      // Matched items could be single or multiple items depending on expandKey
+      .node(opts.expandKey, function(items: any) {
+        if (userCanceled) {
+          o.complete()
+          // @ts-ignore
+          this.abort()
+          return
+        }
         o.next(items)
-        // let c = items.length
-        // let text = items.map(i => i.full_name).join("|")
-        // console.log("1. Received: " + c + " repos\n" + text )
       })
-      // Or one at a time
-      // .node("items[*]", item => {
-      //   o.next(item)
-      //   console.log("1. Got repo: " + item.full_name)
-      // })
       .done(() => o.complete())
+
+    // When a caller unsubscribes, we'll get max one more
+    return () => {
+      userCanceled = true
+    }
   })
 }
 

@@ -26,6 +26,7 @@
             console.log("Antares Loading Error")
         }
 
+
         // Welcome, reader of the Source!
         // This is just a little demo to show how in Antares you
         // - Define event-handling behavior which
@@ -74,7 +75,16 @@
             }
         })
 
+        let canceled = new rxjs.Subject()
+        function clickCancel() {
+            console.log('cancel clicked')
+            canceled.next();
+            canceled.complete()
+            console.log('ajax canceled')
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+
             // Kick off the action - we should expect to see an update in the address bar!
             if (document.location.hash.length === 1) {
                 agent.process({
@@ -88,7 +98,9 @@
                     url: 'https://untitled-yd6fw62bsoo0.runkit.sh/',
                     expandKey: 'items',
                     lib: 'rxjs'
-                }).subscribe({
+                }).pipe(
+                    rxjs.operators.takeUntil(canceled)
+                ).subscribe({
                     next(repo) {
                         agent.process({ type: 'repo', payload: repo.full_name })
                     }, complete() {
@@ -101,7 +113,9 @@
                     url: 'https://untitled-yd6fw62bsoo0.runkit.sh/',
                     expandKey: 'items[*]',
                     lib: 'oboe'
-                }).subscribe({
+                }).pipe(
+                    rxjs.operators.takeUntil(canceled)
+                ).subscribe({
                     next(repo) {
                         agent.process({ type: 'repo', payload: repo.full_name })
                     }, complete() {
@@ -114,7 +128,9 @@
                     url: 'https://untitled-yd6fw62bsoo0.runkit.sh/',
                     expandKey: '$items[*]',
                     lib: 'oboe'
-                }).subscribe({
+                }).pipe(
+                    rxjs.operators.takeUntil(canceled)
+                ).subscribe({
                     next(repos) {
                         agent.process({ type: 'repos', payload: repos.map(r => r.full_name) })
                     }, complete() {
@@ -147,6 +163,8 @@
     </ul>
 
     <h2>Top 12 Projects Named 'antares' on Github</h2>
+    <div style="font-size: smaller;">
+        <a href="#" onclick="clickCancel()">Cancel</a></div>
     <div id="repos" />
 
     <!-- A use of RxJS (without Antares) to do a fun animation -->

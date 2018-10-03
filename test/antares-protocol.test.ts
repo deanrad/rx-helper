@@ -538,6 +538,7 @@ describe("Utilities", () => {
 
   describe("ajaxStreamingGet (test requires https://jsonplaceholder.typicode.com)", () => {
     it("should create an observable of many from an array ajax response", () => {
+      jest.setTimeout(10000)
       expect.assertions(1)
       const user$ = ajaxStreamingGet({
         url: "https://jsonplaceholder.typicode.com/users/"
@@ -547,6 +548,7 @@ describe("Utilities", () => {
       })
     })
     it("should create an observable of one from a singular-object ajax response", () => {
+      jest.setTimeout(10000)
       expect.assertions(1)
       const user$ = ajaxStreamingGet({
         url: "https://jsonplaceholder.typicode.com/users/1"

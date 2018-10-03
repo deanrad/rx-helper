@@ -111,11 +111,13 @@ export interface ProcessResult {
  */
 export interface StreamingGetOptions {
   url: string
+  /** If an RxJS request, you can provide a key of an array field to turn its items into your notifications. If an Oboe request see: http://oboejs.com/api#pattern-matching */
   expandKey?: string
   method?: "GET" | "POST"
   headers?: Object
   body?: string | Object
   withCredentials?: Boolean
   timeout?: number
+  /** Defaults to `oboe` if global `oboe` is present, otherwise uses `rxjs` */
   lib?: "rxjs" | "oboe"
 }
