@@ -24,7 +24,12 @@ export const after = (ms: number, objOrFn: Object | Function): Observable<any> =
  * @see https://medium.com/@deaniusaur/how-to-stream-json-data-over-rest-with-observables-80e0571821d3
  */
 export const ajaxStreamingGet = (opts: StreamingGetOptions): Observable<any> => {
-  // An Observable of the response, expanded to individual results if applicable.
+  //@ts-ignore
+  return typeof oboe === "undefined" || opts.lib === "rxjs" ? rxGet(opts) : oboeGet(opts)
+}
+
+// An Observable of the response, expanded to individual results if applicable.
+function rxGet(opts: StreamingGetOptions): Observable<any> {
   return ajax({
     url: opts.url,
     method: opts.method || "GET",
@@ -37,6 +42,26 @@ export const ajaxStreamingGet = (opts: StreamingGetOptions): Observable<any> => 
       return Array.isArray(resultArr) ? from(resultArr) : of(resultArr)
     })
   )
+}
+
+function oboeGet(opts: StreamingGetOptions): Observable<any> {
+  return new Observable(o => {
+    // @ts-ignore
+    oboe(opts.url) // Get items from a url
+      // As an ever-growing array
+      .node(opts.expandKey, (items: any) => {
+        o.next(items)
+        // let c = items.length
+        // let text = items.map(i => i.full_name).join("|")
+        // console.log("1. Received: " + c + " repos\n" + text )
+      })
+      // Or one at a time
+      // .node("items[*]", item => {
+      //   o.next(item)
+      //   console.log("1. Got repo: " + item.full_name)
+      // })
+      .done(() => o.complete())
+  })
 }
 
 /** @description Turns a stream of objects into a stream of the patches between them.

@@ -89,7 +89,9 @@ export interface ProcessResult {
 
 /**
  * @description Options are typical from rxjs/ajax, however the expandKey string
- * is one corresponding to OboeJS node matcher.
+ * is one corresponding to an OboeJS node matcher, or a sub-key, depending on whether
+ * the `lib` option is set to "oboe" or "rxjs". Oboe is used if present in the global
+ * namespace, and lib is not set to `rxjs`.
  */
 export interface StreamingGetOptions {
   url: string
@@ -99,4 +101,5 @@ export interface StreamingGetOptions {
   body?: string | Object
   withCredentials?: Boolean
   timeout?: number
+  lib?: "rxjs" | "oboe"
 }

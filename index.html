@@ -10,6 +10,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/rxjs/6.2.1/rxjs.umd.min.js"></script>
     <script src="//unpkg.com/redux@4.0.0/dist/redux.js"></script>
     <script src="./dist/antares-protocol.js"></script>
+    <script src="https://unpkg.com/oboe@2.1.4/dist/oboe-browser.js"></script>
     <script>
         let agent
         let after // an RxJS-Observable-based delay utility
@@ -38,8 +39,18 @@
         agent.on('browser/go', ({ action }) => {
             return after(2000, () => document.location.hash = action.payload)
         })
+
+        // Create a store in which to reduce actions.
+        // Note we dont actually bother with a reducer, but allow devtools to instrument us
         const store = Redux.createStore(
-            (state = {}) => state,
+            (state = {}, { type, payload }) => {
+                switch (type) {
+                    case 'repos':
+                        return { repos: payload }
+                    default:
+                        return state
+                }
+            },
             window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
         )
 
@@ -48,12 +59,69 @@
         // Send all actions, including those returned by renderers through the store
         agent.addFilter(({ action }) => store.dispatch(action))
 
+        // And print out repo(s) as we get them
+        agent.on(/repo/, ({ action }) => {
+            const { payload } = action
+            console.log(payload.shift ? payload.join("\n") : payload)
+
+            // if recieved batches (arrays)
+            if (payload.shift) {
+                document.getElementById("repos").innerHTML = payload.map(r => `<div>${(r === 'deanius/antares' ? '➽ ' : '')}${r}</div>`).join("")
+            } else {
+                const child = document.createElement("div")
+                child.innerHTML = (payload === 'deanius/antares' ? '➽ ' : '') + payload
+                document.getElementById("repos").appendChild(child)
+            }
+        })
+
         document.addEventListener('DOMContentLoaded', () => {
             // Kick off the action - we should expect to see an update in the address bar!
-            agent.process({
-                type: 'browser/go',
-                payload: '#WhatWouldYouLikeToKnow?'
-            })
+            if (document.location.hash.length === 1) {
+                agent.process({
+                    type: 'browser/go',
+                    payload: '#WhatWouldYouLikeToKnow?'
+                })
+            }
+            if (document.location.hash === "#slow") {
+                // pseudo streaming - if you don't have oboe installed
+                ajaxStreamingGet({
+                    url: 'https://untitled-yd6fw62bsoo0.runkit.sh/',
+                    expandKey: 'items',
+                    lib: 'rxjs'
+                }).subscribe({
+                    next(repo) {
+                        agent.process({ type: 'repo', payload: repo.full_name })
+                    }, complete() {
+                        console.log('done')
+                    }
+                })
+            } else if (document.location.hash === "#single") {
+                // Streaming singly
+                ajaxStreamingGet({
+                    url: 'https://untitled-yd6fw62bsoo0.runkit.sh/',
+                    expandKey: 'items[*]',
+                    lib: 'oboe'
+                }).subscribe({
+                    next(repo) {
+                        agent.process({ type: 'repo', payload: repo.full_name })
+                    }, complete() {
+                        console.log('done')
+                    }
+                })
+            } else {
+                // Actual streaming - incremental loading style (the initial $ in expandKey)
+                ajaxStreamingGet({
+                    url: 'https://untitled-yd6fw62bsoo0.runkit.sh/',
+                    expandKey: '$items[*]',
+                    lib: 'oboe'
+                }).subscribe({
+                    next(repos) {
+                        agent.process({ type: 'repos', payload: repos.map(r => r.full_name) })
+                    }, complete() {
+                        console.log('done')
+                    }
+                })
+            }
         })
     </script>
     <style>
@@ -78,8 +146,10 @@
         </li>
     </ul>
 
-    <!-- A use of RxJS (without Antares) to do a fun animation -->
+    <h2>Top 12 Projects Named 'antares' on Github</h2>
+    <div id="repos" />
 
+    <!-- A use of RxJS (without Antares) to do a fun animation -->
     <script src="demos/home/kitt.js"></script>
 
 </body>
