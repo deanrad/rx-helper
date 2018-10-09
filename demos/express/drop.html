@@ -4,7 +4,8 @@
 <head>
   <title>Antares Freefall Detection Demo</title>
   <meta charset="utf-8" />
-  <link rel="shortcut icon" type="image/png" href="/www.deanius.com/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/png" href="https://s3.amazonaws.com/www.deanius.com/favicon.png" />
   <style>
     .boom {
       background-color: red;
@@ -15,8 +16,10 @@
   <script src="https://unpkg.com/rxjs/bundles/rxjs.umd.js"></script>
   <script src="https://unpkg.com/antares-protocol/dist/antares-protocol.js"></script>
   <script>
-    const { Subject, Observable, of, timer, from, zip, fromEvent } = rxjs
+    const { Subject, Observable, of, timer, from, zip, fromEvent, merge } = rxjs
     const { toArray, map, tap, pluck, filter, startWith, delay, debounceTime, takeUntil, scan, distinctUntilChanged } = rxjs.operators
+
+    const zeroDetected = new Subject()
 
     // The stream of summed accelerations we'll be looking for
     const accel$ = fromEvent(window, "devicemotion", e => {
@@ -48,24 +51,35 @@
 <body>
 
   <div id="react-root" style="display: none"></div>
+  <button style="width: 10rem; height: 2rem" id="startLog">Start Detection</button>
   <pre id="log"></pre>
   <script>
     const logDom = document.getElementById("log")
+
     const write = text => {
       logDom.innerText = `${text}\n` + logDom.innerText
     }
-    accel$.pipe(
+    const dropDetector = accel$.pipe(
       scan(zeroDetector),
       tap(d => {
         if (d.enoughZeroes) {
           write("BOOM!")
+          zeroDetected.next()
           logDom.setAttribute('class', 'boom')
         }
       }),
       tap(x => console.log(x)),
       map(x => x && x.a),
-      takeUntil(timer(5000))
-    ).subscribe(a => write(`Acc: ${a}`))
+      takeUntil(merge(timer(5000), zeroDetected))
+    )
+    // require some user interaction - will allow audio to play too
+    const logStart = document.getElementById("startLog")
+    logStart.addEventListener('click', () => {
+      logDom.innerText = ''
+      logDom.setAttribute('class', '')
+      dropDetector.subscribe(a => write(`Acc: ${a}`))
+    })
+
   </script>
 </body>
 
