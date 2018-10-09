@@ -1,27 +1,33 @@
 const bodyParser = require("body-parser")
 const express = require("express")
 const morgan = require("morgan")
-const { Agent, randomId, randomIdFilter } = require("antares-protocol")
+const { Agent, randomIdFilter } = require("antares-protocol")
 const app = express()
 const port = process.env.PORT || 3120
 const { storeFilter } = require("./store")
 
 const agent = new Agent({ agentId: `http://localhost:${port}` })
 agent.addFilter(storeFilter)
-agent.addFilter(randomIdFilter)
+agent.addFilter(randomIdFilter())
 agent.addRenderer(
-  ({ action, context = {} }) => {
+  ({ action, context }) => {
+    // Get some fields from the action itself
+    const {
+      payload: { query, path },
+      meta: { actionId } // the randomId filter put this property here for us
+    } = action
+
+    // And get our response object from the context so we can write to it
     const { res } = context
-    const { payload } = action
     // we dont have different endpoints yet
-    if (payload.path.includes("api")) {
-      res.json({ id: randomId(6) })
+    if (path.includes("api")) {
+      res.json({ path, query, actionId })
       return
-    } else if (payload.path === "/") {
+    } else if (path === "/") {
       res.sendFile("index.html", { root: "." })
       return
     } else {
-      res.sendFile(payload.path, { root: "./demos/express/" })
+      res.sendFile(path, { root: "./demos/express/" })
       return
     }
   },
@@ -34,13 +40,14 @@ app.use(morgan("dev"))
 // Unlike a regular express router, our sole job here is to put an action
 // on the stream with sufficient context for a renderer to respond.
 app.get("*", function(req, res) {
-  const { query, body, path } = req
-  const payload = { query, body, path }
+  const { path, query } = req
+  const payload = { path, query }
 
   const type = "http/" + req.method.toLowerCase()
   const action = { type, payload }
 
-  agent.process(action, { req, res })
+  // Provide the response object in the 2nd parameter 'context'
+  agent.process(action, { res })
 
   console.log(payload)
 })
