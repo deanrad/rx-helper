@@ -9,8 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="//cdnjs.cloudflare.com/ajax/libs/rxjs/6.2.1/rxjs.umd.min.js"></script>
     <script src="//unpkg.com/redux@4.0.0/dist/redux.js"></script>
-    <script src="./dist/antares-protocol.js"></script>
-    <script src="https://unpkg.com/oboe@2.1.4/dist/oboe-browser.js"></script>
+    <script src="//unpkg.com/antares-protocol@2.8.1/dist/antares-protocol.js"></script>
+    <script src="//unpkg.com/oboe@2.1.4/dist/oboe-browser.js"></script>
     <script>
         let agent
         let after // an RxJS-Observable-based delay utility
@@ -67,13 +67,18 @@
 
             // if recieved batches (arrays)
             if (payload.shift) {
-                document.getElementById("repos").innerHTML = payload.map(r => `<div>${(r === 'deanius/antares' ? '➽ ' : '')}${r}</div>`).join("")
+                document.getElementById("repos").innerHTML = payload.map(r => `<div>${formatRepo(r)}</div>`).join("")
             } else {
                 const child = document.createElement("div")
-                child.innerHTML = (payload === 'deanius/antares' ? '➽ ' : '') + payload
+                child.innerHTML = formatRepo(payload)
                 document.getElementById("repos").appendChild(child)
             }
         })
+
+        function formatRepo({ name, stars = '?' }) {
+            const mark = (name === 'deanius/antares' ? '➽ ' : '')
+            return `${mark}${name} - <a class="repo" href="//github.com/${name}"><span class="stars">${stars}</span> stars</a>`
+        }
 
         let canceled = new rxjs.Subject()
         function clickCancel() {
@@ -82,6 +87,11 @@
             canceled.complete()
             console.log('ajax canceled')
         }
+
+        document.addEventListener('keypress', e => {
+            e.key === " " && clickCancel()
+        })
+
 
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -102,7 +112,7 @@
                     rxjs.operators.takeUntil(canceled)
                 ).subscribe({
                     next(repo) {
-                        agent.process({ type: 'repo', payload: repo.full_name })
+                        agent.process({ type: 'repo', payload: { name: repo.full_name, stars: repo.stargazers_count } })
                     }, complete() {
                         console.log('done')
                     }
@@ -117,7 +127,7 @@
                     rxjs.operators.takeUntil(canceled)
                 ).subscribe({
                     next(repo) {
-                        agent.process({ type: 'repo', payload: repo.full_name })
+                        agent.process({ type: 'repo', payload: { name: repo.full_name, stars: repo.stargazers_count } })
                     }, complete() {
                         console.log('done')
                     }
@@ -132,7 +142,7 @@
                     rxjs.operators.takeUntil(canceled)
                 ).subscribe({
                     next(repos) {
-                        agent.process({ type: 'repos', payload: repos.map(r => r.full_name) })
+                        agent.process({ type: 'repos', payload: repos.map(r => ({ name: r.full_name, stars: r.stargazers_count })) })
                     }, complete() {
                         console.log('done')
                     }
@@ -146,26 +156,73 @@
             width: 60px;
             height: 20px;
         }
+
+        a {
+            color: black;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: blue;
+        }
+
+        .group {
+            /* border: 1px dashed black; */
+        }
+
+        .antares {
+            background-image: url(https://camo.githubusercontent.com/9f8482592f7a6986240356d850b45d84c3e4e08a/687474703a2f2f7777772e6465616e6975732e636f6d2f416e74617265734c6f676f2e706e67);
+            background-repeat: none;
+        }
     </style>
 </head>
 
 <body>
-    <h5>Antares is watching you!</h5>
-    <canvas id="c"></canvas>
-    <h1>Links</h1>
-    <ul>
-        <li>
-            <a href="docs/index.html">JSDoc Documentation</a>
-        </li>
-        <li>
-            <a href="javascript:window.__REDUX_DEVTOOLS_EXTENSION__.open()">Open DevTools</a>
-        </li>
-    </ul>
+    <div class='antares'>
+        <h1>Antares Architecture <canvas id="c" title="RxJS-Driven animation"></canvas></h1>
 
-    <h2>Top 12 Projects Named 'antares' on Github</h2>
-    <div style="font-size: smaller;">
-        <a href="#" onclick="clickCancel()">Cancel</a></div>
-    <div id="repos" />
+        <div class='group docs-tools'>
+            <h1>Links</h1>
+            <ul>
+                <li>
+                    <a target="_blank" href="https://deanius.github.io/antares-ts/docs/index.html">Antares JSDoc
+                        Documentation</a>
+                </li>
+                <li>
+                    <a target="_blank" href="https://rxjs-dev.firebaseapp.com/">RxJS (V6) Documentation</a>
+                </li>
+                <li>
+                    <a target="_blank" href="https://redux.js.org/introduction/threeprinciples">3 Principles, Redux
+                        Docs</a>
+                    <a target="_blank" href="javascript:window.__REDUX_DEVTOOLS_EXTENSION__.open()">(Open Redux
+                        DevTools)</a>
+                </li>
+                <li>
+                    <a target="_blank" href="https://reactjs.org">React Docs</a>
+                </li>
+                <li>
+                    <a target="_blank" href="https://s3.amazonaws.com/www.deanius.com/antares-livesearch.html#chicago">Antares
+                        auto-complete demo (Desktop only)</a>
+                </li>
+                <li>
+                    <a target="_blank" href="https://github.com/deanius/antares-ts/wiki/Antares-Background">Antares
+                        Background (GitHub Wiki)</a>
+                </li>
+            </ul>
+
+        </div>
+        <div class='group rxjs'>
+            <h2>Streaming HTTP GET Example</h2>
+            <p><b>
+
+                    Top 12 Projects Named 'antares' on Github
+                </b></p>
+            <div style="font-size: smaller;">
+                <a href="#" onclick="clickCancel()">Cancel</a></div>
+            <div id="repos" />
+
+        </div>
+    </div>
 
     <!-- A use of RxJS (without Antares) to do a fun animation -->
     <script src="demos/home/kitt.js"></script>
