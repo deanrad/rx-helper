@@ -5,19 +5,23 @@ Antares is an architecture for real-time web apps. <a href="https://s3.amazonaws
 ![ES 2015](https://img.shields.io/badge/ES-2015-brightgreen.svg)
 [![npm version](https://badge.fury.io/js/antares-protocol.svg)](https://badge.fury.io/js/antares-protocol)
 [![<22 kb](https://img.shields.io/badge/gzip%20size-%3C22%20kB-brightgreen.svg)](https://www.npmjs.com/package/antares-protocol)
-[![Travis](https://img.shields.io/travis/deanius/antares-ts.svg)](https://travis-ci.org/deanius/antares-ts)
-[![Appveyor for Windows](https://ci.appveyor.com/api/projects/status/udjy5549kiy5sk4a/branch/master?svg=true)](https://ci.appveyor.com/project/deanius/antares-ts/branch/master)
+[![Travis](https://img.shields.io/travis/deanius/antares-ts.svg)](https://travis-ci.org/deanius/antares)
+[![Appveyor for Windows](https://ci.appveyor.com/api/projects/status/udjy5549kiy5sk4a/branch/master?svg=true)](https://ci.appveyor.com/project/deanius/antares/branch/master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/deanius/antares-ts.svg)](https://greenkeeper.io/)
 
-[![Dev Dependencies](https://david-dm.org/deanius/antares-ts/dev-status.svg)](https://david-dm.org/deanius/antares-ts?type=dev)
+[![Dev Dependencies](https://david-dm.org/deanius/antares-ts/dev-status.svg)](https://david-dm.org/deanius/antares?type=dev)
 ![npm type definitions](https://img.shields.io/npm/types/chalk.svg)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![try on runkit](https://badge.runkitcdn.com/antares-protocol.svg)](https://npm.runkit.com/antares-protocol)
 ![twitter link](https://img.shields.io/badge/twitter-@deaniusaur-55acee.svg)
 
-## Why Antares?
+## What Exactly Is Antares?
 
-Read up on the kinds of problems Antares solves in [the Wiki](https://github.com/deanius/antares-ts/wiki/Antares-Background).
+An Architecture for assigning Consequences to Events.
+
+## What kinds of apps can I build with it?
+
+Web Browser, Console, Web Socket, REST, Server - you name it.
 
 ## Testing? Yes, please!
 
