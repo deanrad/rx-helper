@@ -22,7 +22,7 @@
   "scripts": {
     "lint": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "build": "webpack --config webpack.config.js && typedoc --out docs --target es6 --theme minimal --mode file --hideGenerator --excludePrivate src",
+    "build": "webpack --config webpack.config.js && typedoc --out docs/docs --target es6 --theme minimal --mode file --hideGenerator --excludePrivate src",
     "start": "npm run test:client",
     "test": "npm run test:ci",
     "jest": "jest --expand",
