@@ -340,6 +340,16 @@ export class Agent implements ActionProcessor {
       })
     return sub
   }
+
+  /**
+   * Subscribes to the Observable of actions (Flux Standard Action), sending
+   * each through agent.process.
+   * @return A subscription handle with which to unsubscribe()
+   *
+   */
+  subscribe(action$: Observable<Action>, context?: Object) {
+    return action$.subscribe(action => this.process(action, context))
+  }
 }
 
 function validateSubscriberName(name: string | undefined) {

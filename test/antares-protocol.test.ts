@@ -1,6 +1,6 @@
 /* tslint:disable  */
-import { of, from, empty } from "rxjs"
-import { delay, first, toArray } from "rxjs/operators"
+import { of, from, empty, interval, throwError } from "rxjs"
+import { delay, map, first, toArray, take, concat } from "rxjs/operators"
 import {
   Action,
   Agent,
@@ -16,6 +16,7 @@ import {
 
 // a mutable variable, reset between tests
 let counter = 0
+let seenActions = []
 
 describe("Agent", () => {
   let agent: Agent
@@ -315,13 +316,32 @@ describe("Agent", () => {
   describe("#process", () => {
     beforeEach(() => {
       counter = 0
+      seenActions = []
+      agent.addFilter(({ action }) => seenActions.push(action))
     })
 
     describe("arguments", () => {
       describe("action", () => {
-        it("should be an action", () => {
+        it("may be an action", () => {
           expect.assertions(0)
           agent.process(anyAction)
+        })
+        describe("Observable<Action>", () => {
+          const makeAction = n => ({ type: "n", payload: n })
+          it("may be an observable", () => {
+            const actions = [1, 2].map(makeAction)
+            agent.subscribe(from(actions))
+            expect(seenActions).toEqual(actions)
+          })
+          it.skip("will continue to process others if it dies", () => {
+            expect.assertions(1)
+            const errorsIn100 = interval(100).pipe(
+              take(2),
+              map(makeAction),
+              concat(throwError("Boom"))
+            )
+            agent.subscribe(errorsIn100)
+          })
         })
       })
       describe("context", () => {

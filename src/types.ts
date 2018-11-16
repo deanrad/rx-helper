@@ -26,6 +26,7 @@ export interface AgentConfig {
  */
 export interface ActionProcessor {
   process(action: Action, context?: Object): ProcessResult
+  subscribe(action$: Observable<Action>, context?: Object): Subscription
   addFilter(subscriber: Subscriber, config: SubscriberConfig): Subscription
   addRenderer(subscriber: Subscriber, config: SubscriberConfig): Subscription
 }
