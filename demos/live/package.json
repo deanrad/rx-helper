@@ -11,6 +11,9 @@
   "license": "ISC",
   "devDependencies": {},
   "dependencies": {
-    "antares-protocol": "^2.7.0"
+    "antares-protocol": "^2.7.0",
+    "rxjs": "^6.3.3",
+    "rxjs-compat": "^6.3.3",
+    "say": "^0.15.0"
   }
 }
