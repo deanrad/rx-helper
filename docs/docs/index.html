@@ -1000,16 +1000,18 @@ img { max-width: 100%; }
 			<p><img src="https://img.shields.io/badge/ES-2015-brightgreen.svg" alt="ES 2015">
 				<a href="https://badge.fury.io/js/antares-protocol"><img src="https://badge.fury.io/js/antares-protocol.svg" alt="npm version"></a>
 				<a href="https://www.npmjs.com/package/antares-protocol"><img src="https://img.shields.io/badge/gzip%20size-%3C22%20kB-brightgreen.svg" alt="&lt;22 kb"></a>
-				<a href="https://travis-ci.org/deanius/antares-ts"><img src="https://img.shields.io/travis/deanius/antares-ts.svg" alt="Travis"></a>
-				<a href="https://ci.appveyor.com/project/deanius/antares-ts/branch/master"><img src="https://ci.appveyor.com/api/projects/status/udjy5549kiy5sk4a/branch/master?svg=true" alt="Appveyor for Windows"></a>
+				<a href="https://travis-ci.org/deanius/antares"><img src="https://img.shields.io/travis/deanius/antares-ts.svg" alt="Travis"></a>
+				<a href="https://ci.appveyor.com/project/deanius/antares/branch/master"><img src="https://ci.appveyor.com/api/projects/status/udjy5549kiy5sk4a/branch/master?svg=true" alt="Appveyor for Windows"></a>
 			<a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/deanius/antares-ts.svg" alt="Greenkeeper badge"></a></p>
-			<p><a href="https://david-dm.org/deanius/antares-ts?type=dev"><img src="https://david-dm.org/deanius/antares-ts/dev-status.svg" alt="Dev Dependencies"></a>
+			<p><a href="https://david-dm.org/deanius/antares?type=dev"><img src="https://david-dm.org/deanius/antares-ts/dev-status.svg" alt="Dev Dependencies"></a>
 				<img src="https://img.shields.io/npm/types/chalk.svg" alt="npm type definitions">
 				<a href="https://github.com/prettier/prettier"><img src="https://img.shields.io/badge/styled_with-prettier-ff69b4.svg" alt="styled with prettier"></a>
 				<a href="https://npm.runkit.com/antares-protocol"><img src="https://badge.runkitcdn.com/antares-protocol.svg" alt="try on runkit"></a>
 			<img src="https://img.shields.io/badge/twitter-@deaniusaur-55acee.svg" alt="twitter link"></p>
-			<h2 id="why-antares-">Why Antares?</h2>
-			<p>Read up on the kinds of problems Antares solves in <a href="https://github.com/deanius/antares-ts/wiki/Antares-Background">the Wiki</a>.</p>
+			<h2 id="what-exactly-is-antares-">What Exactly Is Antares?</h2>
+			<p>An Architecture for assigning Consequences to Events.</p>
+			<h2 id="what-kinds-of-apps-can-i-build-with-it-">What kinds of apps can I build with it?</h2>
+			<p>Web Browser, Console, Web Socket, REST, Server - you name it.</p>
 			<h2 id="testing-yes-please-">Testing? Yes, please!</h2>
 			<p>Antares is highly tested. And since testing async is hard, some integration level tests run a bunch of complex stuff (our <a href="#demos">demos</a>), and simply assert on the console output. The slightest change in behavior can thus be visible in the output of the demo as a large change. This, with Jest Snapshot testing makes asserting on our output a piece of cake.</p>
 			<p>For unit tests, check out <a href="https://travis-ci.org/deanius/antares-ts/jobs/403257425#L139">what the unit test suite looks like</a> on a recent CI build. (Thanks to Dan Abromov for illustrating in his 2015 <code>react-dnd/dnd-core</code> project what a nicely formatted test suite output can be)</p>
@@ -1110,7 +1112,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Action<wbr>Filter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">function</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/types.ts#L93">types.ts:93</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/types.ts#L94">types.ts:94</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1123,7 +1125,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">assert<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;typeof require &#x3D;&#x3D;&#x3D; &quot;undefined&quot; ? () &#x3D;&gt; null : require(&quot;assert&quot;)</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/antares-protocol.ts#L19">antares-protocol.ts:19</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L19">antares-protocol.ts:19</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1133,7 +1135,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;completed&quot;, &quot;then&quot;, &quot;catch&quot;]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/antares-protocol.ts#L378">antares-protocol.ts:378</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L388">antares-protocol.ts:388</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1150,7 +1152,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/operators.ts#L12">operators.ts:12</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L12">operators.ts:12</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1182,7 +1184,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/antares-protocol.ts#L384">antares-protocol.ts:384</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L394">antares-protocol.ts:394</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1211,7 +1213,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/operators.ts#L29">operators.ts:29</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L29">operators.ts:29</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1242,7 +1244,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/lib.ts#L3">lib.ts:3</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/lib.ts#L3">lib.ts:3</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1283,7 +1285,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/operators.ts#L77">operators.ts:77</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L77">operators.ts:77</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1305,7 +1307,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/operators.ts#L50">operators.ts:50</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L50">operators.ts:50</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1328,7 +1330,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/antares-protocol.ts#L418">antares-protocol.ts:418</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L428">antares-protocol.ts:428</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1356,7 +1358,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/antares-protocol.ts#L398">antares-protocol.ts:398</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L408">antares-protocol.ts:408</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1386,7 +1388,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/antares-protocol.ts#L407">antares-protocol.ts:407</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L417">antares-protocol.ts:417</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1418,7 +1420,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/operators.ts#L35">operators.ts:35</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L35">operators.ts:35</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1441,7 +1443,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/antares-protocol.ts#L352">antares-protocol.ts:352</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L362">antares-protocol.ts:362</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1464,7 +1466,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/antares-protocol.ts#L369">antares-protocol.ts:369</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L379">antares-protocol.ts:379</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1487,7 +1489,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares-ts/blob/ff3cfaa/src/antares-protocol.ts#L345">antares-protocol.ts:345</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L355">antares-protocol.ts:355</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
