@@ -1,6 +1,11 @@
 ## ![Antares](http://www.deanius.com/AntaresLogo.png)
 
-Antares is an architecture for real-time web apps. <a href="https://s3.amazonaws.com/www.deanius.com/antares-tag.m4a" target="_blank">🔊</a>
+Antares is a way to construct real-time web apps - web apps that have
+essentially banished the notion of stale data from their repertoire,
+and are configured to share and respond with data at the speed modern
+users expect.
+
+<a href="https://s3.amazonaws.com/www.deanius.com/antares-tag.m4a" target="_blank">🔊</a>
 
 ![ES 2015](https://img.shields.io/badge/ES-2015-brightgreen.svg)
 [![npm version](https://badge.fury.io/js/antares-protocol.svg)](https://badge.fury.io/js/antares-protocol)
@@ -19,9 +24,34 @@ Antares is an architecture for real-time web apps. <a href="https://s3.amazonaws
 
 An Architecture for assigning Consequences to Events.
 
+## What Benefits Can I Get By Using It?
+
+- A Clean architecture of code with a high degree of decoupling and fault-tolerance.
+- A clean, cancelable model of async effects, not dependent on a component toolkit like React
+- Kickstart your apps' development by building abstractions that simulate input or output, allowing you to focus on the core functionality, of your app
+- Understand and use the Observable datatype - a type that is a superset of Promise, and which can stand in for processes that feed your app data, or processes that cause consequences to the outside world.
+- Drive your app during testing with 'simulated user interaction' to see more of its functionality without clicking around.
+- Use snapshot testing to verify your app's behavior, whether or not it uses React or even has a UI.
+
 ## What kinds of apps can I build with it?
 
-Web Browser, Console, Web Socket, REST, Server - you name it.
+Antares, with RxJS, manages consequences, which any app has, so it's not limited to client or server, or even Web Apps.
+
+There are many demo apps included in this project that show what you can build.
+
+- A console app that speaks names and writes to a file
+- A utility that turns all-at-the-end AJAX requests for arrays into streaming Observables (eg `/users/`)
+- A Web Server in [demos/express/index.js](//github.com/deanius/antares/blob/master/demos/express/index.js)
+- A Canvas-based requestAnimationFrame animation.
+- A Console app that detects a cheat-code of 5 clicks in a short interval.
+- A Web Audio app that streams and queues up music from attachments in your Inbox.
+- An IOT application interfacing with Raspberry Pi GPIO _(Coming Soon)_
+
+## OK, but where should I start?
+
+The flagship demo which can be utilized as a course to learn how to fit an Antares Agent with an existing React/Redux/Express app, is located here: [The Hotel California Antares Sample App](//github.com/deanius/hotel-california).
+
+It's becoming part of a workshop - if you're interested in learning more, or updating me on your progress, [tweet it](//twitter.com/deaniusol)!
 
 ## Testing? Yes, please!
 
@@ -29,24 +59,16 @@ Antares is highly tested. And since testing async is hard, some integration leve
 
 For unit tests, check out [what the unit test suite looks like](https://travis-ci.org/deanius/antares-ts/jobs/403257425#L139) on a recent CI build. (Thanks to Dan Abromov for illustrating in his 2015 `react-dnd/dnd-core` project what a nicely formatted test suite output can be)
 
-## Demos!
+Antares has unit tests, and demos whose output is tested in CI on MacOS, Linux, and Windows. Because concurrency must be interacted with to truly be understood, many of the demos support you interacting with them in a console, or at least changing their parameters in config (`demos/config.js`)
 
-Antares has demos whose output is tested in CI on MacOS, Linux, and Windows. Because concurrency must be interacted with to truly be understood, many of the demos support you interacting with them in a console, or at least changing their parameters in config (`demos/config.js`)
+See the output of a run of all demos on [Travis CI](https://travis-ci.org/deanius/antares-ts/jobs/402981544#L681), and if you run them locally, make sure you have sound turned on!
 
-```
-> git clone https://github.com/deanius/antares-ts antares
-> cd antares; npm i
-> npm run demos                         # run 'em all
-```
-
-See the output of a run of all demos on [Travis CI](https://travis-ci.org/deanius/antares-ts/jobs/402981544#L681), and if you run them locally, make sure you have sound turned on! (It's a core principle of Antares that not all renders are to a DOM)
-
-Here are some more ways you can run demos, including using [`cross-env`](https://www.npmjs.com/package/cross-env) on windows
+Here are some more ways you can run demos (use cross-env on windows)
 
 ```
 > DEMO=muteFruit INTERACTIVE=1 node demos/index
 > DEMO=muteFruit inner=100 outer=100 node demos/index
-> cross-env DEMO=muteFruit inner= node demos/index
+> cross-env DEMO=muteFruit inner=100 node demos/index
 ```
 
 ## Show your love!
