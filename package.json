@@ -13,7 +13,7 @@
   "author": "Dean Radcliffe <deanmisc@yahoo.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/deanius/antares-ts"
+    "url": "https://github.com/deanius/antares"
   },
   "license": "MIT",
   "engines": {
