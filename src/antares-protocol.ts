@@ -200,14 +200,26 @@ export class Agent implements ActionProcessor {
   }
 
   /**
-   * Calls addRenderer, but uses a more event-handler-like syntax.
-   * @example
-   * agent.on('search/message/success', getMessageBody('message/body/success'))
-   * agent.on('message/body/success', getAttachmentBody('message/attachment/success'), {
-   *   concurrency: 'serial'
-   * })
-   */
-  on(actionFilter: ActionFilter, renderer: Subscriber, config: SubscriberConfig = {}) {
+   * Renderers are functions that exist to create side-effects
+   * outside of the Antares Agent - called Renderings. This can be changes to a
+   * DOM, to a database, or communications (eg AJAX) sent on the wire. Renderers run
+   * in parallel with respect to other renderers. The way they act with respect
+   * to their own overlap, is per their `concurrency` config parameter.
+   *
+   * Here we attach a renderer to fire on actions of `type: 'kickoff'`.
+   * After 50ms, the agent will process `{ type: 'search', payload: '#go!' }`,
+   * at which point the Promise `result.completed.kickoff` will resolve.
+   *
+   * ```js
+   * //
+   * const { Agent, after } = require('antares-protocol')
+   * const agent = new Agent()
+   * agent.on('kickoff', () => after(50, () => '#go'), { type: 'search' })
+
+   * // Logs Done once 50 ms has elapsed
+   * agent.process({ type: 'kickoff' }).completed.kickoff.then(() => console.log('done'))
+   * ```
+   */  on(actionFilter: ActionFilter, renderer: Subscriber, config: SubscriberConfig = {}) {
     const _config = {
       ...config,
       actionsOfType: actionFilter
@@ -217,8 +229,9 @@ export class Agent implements ActionProcessor {
 
   /**
    * Calls addFilter, but uses a more event-handler-like syntax.
-   * @example
+   * ```js
    * agent.filter('search/message/success', ({ action }) => console.log(action))
+   * ```
    */
   filter(actionFilter: ActionFilter, filter: Subscriber, config: SubscriberConfig = {}) {
     const _config = {
@@ -268,14 +281,7 @@ export class Agent implements ActionProcessor {
     return sub
   }
 
-  /**
-   * Renderers are functions that exist to create side-effects
-   * outside of the Antares Agent - called Renderings. This can be changes to a
-   * DOM, to a database, or communications (eg AJAX) sent on the wire. If its
-   * an async behavior, it should be a Renderer not a filter. Renderers run
-   * in parallel with respect to other renderers. The way they act with respect
-   * to their own overlap, is per their `concurrency` config parameter.
-   */
+
   addRenderer(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
     validateConfig(config)
 
