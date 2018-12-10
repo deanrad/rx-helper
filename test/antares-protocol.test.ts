@@ -153,6 +153,16 @@ describe("Agent", () => {
     })
   })
 
+  describe("#filter", () => {
+    it("should alias addFilter, reversing arguments", () => {
+      let counter = 0
+      agent.filter("foo", () => counter++)
+      agent.process({ type: "foo" })
+      agent.process({ type: "not" })
+      expect(counter).toEqual(1)
+    })
+  })
+
   describe("#addFilter or #addRenderer", () => {
     describe("arguments", () => {
       describe("function argument", () => {

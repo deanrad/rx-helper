@@ -216,6 +216,19 @@ export class Agent implements ActionProcessor {
   }
 
   /**
+   * Calls addFilter, but uses a more event-handler-like syntax.
+   * @example
+   * agent.filter('search/message/success', ({ action }) => console.log(action))
+   */
+  filter(actionFilter: ActionFilter, filter: Subscriber, config: SubscriberConfig = {}) {
+    const _config = {
+      ...config,
+      actionsOfType: actionFilter
+    }
+    return this.addFilter(filter, _config)
+  }
+
+  /**
    * Filters are synchronous functions that sequentially process
    * each item on `action$`, possibly changing them or creating synchronous
    * state changes. Useful for type-checking, writing to a memory-based store.
@@ -224,9 +237,18 @@ export class Agent implements ActionProcessor {
    */
   addFilter(filter: Subscriber, config: SubscriberConfig = {}): Subscription {
     validateSubscriberName(config.name)
+
+    // Pass all actions unless otherwise told
+    const predicate = config.actionsOfType ? getActionFilter(config.actionsOfType) : () => true
+    const _filter: Subscriber = (asi: ActionStreamItem) => {
+      if (predicate(asi)) {
+        return filter(asi)
+      }
+    }
+
     const name = config.name || `filter_${++this._subscriberCount}`
     this.filterNames.push(name)
-    this.allFilters.set(name, filter)
+    this.allFilters.set(name, _filter)
 
     // The subscription does little except give us an object
     // which, when unsubscribed, will remove our filter
