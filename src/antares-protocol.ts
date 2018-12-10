@@ -37,7 +37,7 @@ export { startWith, last, filter, delay, map, mapTo } from "rxjs/operators"
 /**
  * Represents the instance of an Antares action processor which is
  * usually the only one in this JavaScript runtime. The heart and circulatory system of
- * an Agent is `action$`, its action stream. You put actions on the action stream
+ * an Agent is its action stream. You put actions on the action stream
  * by calling `agent.process(action)` and from there filters and renderers respond.
  * Because renderers may emit more actions, this process can continue indefinitely.
  */
