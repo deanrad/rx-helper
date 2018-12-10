@@ -254,7 +254,12 @@ export class Agent implements ActionProcessor {
     this.rendererNames.push(name)
 
     const concurrency = config.concurrency || Concurrency.parallel
-    const { processResults } = config
+    const processResults = !!(config.processResults || config.type)
+
+    // @ts-ignore
+    const [identity, wrapper] = [x => x, type => payload => ({ type, payload })]
+    const resultMapper = config.type ? wrapper(config.type) : identity
+
     let previousAsi: ActionStreamItem
     const sub = xform(this.action$)
       .pipe(observeOn(asyncScheduler))
@@ -267,13 +272,14 @@ export class Agent implements ActionProcessor {
 
         // Renderers return Observables, usually of actions
         const _results = subscriber(asi)
-        const results =
+        const _result$ =
           _results && _results.subscribe // an Observable
             ? _results
             : _results && _results[Symbol.iterator] && !_results.substring
               ? from(_results) // an iterable, such as an array, but not string
               : of(_results)
 
+        const results = _result$.pipe(map(resultMapper))
         this.activeResults.set(name, results)
 
         const completer = {

@@ -331,6 +331,23 @@ describe("Agent", () => {
             })
           })
         })
+
+        describe("result mappers", () => {
+          it("providing type should wrap the renderer's Observable output as payloads", () => {
+            expect.assertions(1)
+            let seenActions = []
+            agent = new Agent()
+            // filter to remember
+            agent.addFilter(({ action }) => (seenActions = [...seenActions, action]))
+            // renderer to wrap
+
+            agent.on("wrap", () => of(2.1), { type: "mapped" }) // implies processResults: true
+
+            return agent.process({ type: "wrap" }).completed.then(() => {
+              expect(seenActions).toContainEqual({ type: "mapped", payload: 2.1 })
+            })
+          })
+        })
       })
     })
     describe("error handling", () => {

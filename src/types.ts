@@ -94,6 +94,8 @@ export interface SubscriberConfig {
   processResults?: Boolean
   /** A string, regex, or boolean function controlling which actions this renderer is configured to run upon. */
   actionsOfType?: ActionFilter
+  /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
+  type?: string
 }
 
 export type ActionFilter = string | RegExp | ((asi: ActionStreamItem) => boolean)

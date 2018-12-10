@@ -955,6 +955,9 @@ img { max-width: 100%; }
 					<a href="subscriberconfig.html#processresults" class="tsd-kind-icon">process<wbr>Results</a>
 				</li>
 				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="subscriberconfig.html#type" class="tsd-kind-icon">type</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
 					<a href="subscriberconfig.html#xform" class="tsd-kind-icon">xform</a>
 				</li>
 			</ul>
@@ -1030,6 +1033,7 @@ img { max-width: 100%; }
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#concurrency" class="tsd-kind-icon">concurrency</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#name" class="tsd-kind-icon">name</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#processresults" class="tsd-kind-icon">process<wbr>Results</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#type" class="tsd-kind-icon">type</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#xform" class="tsd-kind-icon">xform</a></li>
 						</ul>
 					</section>
@@ -1044,9 +1048,14 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">actions<wbr>OfType<span class="tsd-signature-symbol">:</span> <a href="../globals.html#actionfilter" class="tsd-signature-type">ActionFilter</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/types.ts#L91">types.ts:91</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/types.ts#L96">types.ts:96</a></li>
 					</ul>
 				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A string, regex, or boolean function controlling which actions this renderer is configured to run upon.</p>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 				<a name="concurrency" class="tsd-anchor"></a>
@@ -1054,9 +1063,14 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">concurrency<span class="tsd-signature-symbol">:</span> <a href="../enums/concurrency.html" class="tsd-signature-type">Concurrency</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/types.ts#L88">types.ts:88</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/types.ts#L90">types.ts:90</a></li>
 					</ul>
 				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The concurrency mode to use. Governs what happens when renderings from this renderer overlap.</p>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 				<a name="name" class="tsd-anchor"></a>
@@ -1064,9 +1078,14 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/types.ts#L87">types.ts:87</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/types.ts#L88">types.ts:88</a></li>
 					</ul>
 				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A name by which the results will be keyed. Example: <code>agent.process(action).completed.NAME.then(() =&gt; ...)</code></p>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 				<a name="processresults" class="tsd-anchor"></a>
@@ -1074,9 +1093,29 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">process<wbr>Results<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Boolean</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/types.ts#L90">types.ts:90</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/types.ts#L94">types.ts:94</a></li>
 					</ul>
 				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>If true, the Observable returned by the renderer will be fed to <code>agent.subscribe</code>, so its actions are <code>process</code>ed.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="type" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> type</h3>
+				<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/types.ts#L98">types.ts:98</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>If provided, this renderers&#39; Observables values will be wrapped in FSAs with this type.</p>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 				<a name="xform" class="tsd-anchor"></a>
@@ -1084,9 +1123,14 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">xform<span class="tsd-signature-symbol">:</span> <a href="streamtransformer.html" class="tsd-signature-type">StreamTransformer</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/types.ts#L89">types.ts:89</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/types.ts#L92">types.ts:92</a></li>
 					</ul>
 				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Advanced feature - a function allowing you to render on a stream derived from the ActionStream, such as a batched one.</p>
+					</div>
+				</div>
 			</section>
 		</section>
 		<footer>

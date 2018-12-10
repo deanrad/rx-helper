@@ -996,7 +996,11 @@ img { max-width: 100%; }
 	<div class="content-wrap">
 		<div class="tsd-panel tsd-typography">
 			<h2 id="antares"><img src="http://www.deanius.com/AntaresLogo.png" alt="Antares"></h2>
-			<p>Antares is an architecture for real-time web apps. <a href="https://s3.amazonaws.com/www.deanius.com/antares-tag.m4a" target="_blank">🔊</a></p>
+			<p>Antares is a way to construct real-time web apps - web apps that have
+				essentially banished the notion of stale data from their repertoire,
+				and are configured to share and respond with data at the speed modern
+			users expect.</p>
+			<p><a href="https://s3.amazonaws.com/www.deanius.com/antares-tag.m4a" target="_blank">🔊</a></p>
 			<p><img src="https://img.shields.io/badge/ES-2015-brightgreen.svg" alt="ES 2015">
 				<a href="https://badge.fury.io/js/antares-protocol"><img src="https://badge.fury.io/js/antares-protocol.svg" alt="npm version"></a>
 				<a href="https://www.npmjs.com/package/antares-protocol"><img src="https://img.shields.io/badge/gzip%20size-%3C22%20kB-brightgreen.svg" alt="&lt;22 kb"></a>
@@ -1010,20 +1014,39 @@ img { max-width: 100%; }
 			<img src="https://img.shields.io/badge/twitter-@deaniusaur-55acee.svg" alt="twitter link"></p>
 			<h2 id="what-exactly-is-antares-">What Exactly Is Antares?</h2>
 			<p>An Architecture for assigning Consequences to Events.</p>
+			<h2 id="what-benefits-can-i-get-by-using-it-">What Benefits Can I Get By Using It?</h2>
+			<ul>
+				<li>A Clean architecture of code with a high degree of decoupling and fault-tolerance.</li>
+				<li>A clean, cancelable model of async effects, not dependent on a component toolkit like React</li>
+				<li>Kickstart your apps&#39; development by building abstractions that simulate input or output, allowing you to focus on the core functionality, of your app</li>
+				<li>Understand and use the Observable datatype - a type that is a superset of Promise, and which can stand in for processes that feed your app data, or processes that cause consequences to the outside world.</li>
+				<li>Drive your app during testing with &#39;simulated user interaction&#39; to see more of its functionality without clicking around.</li>
+				<li>Use snapshot testing to verify your app&#39;s behavior, whether or not it uses React or even has a UI.</li>
+			</ul>
 			<h2 id="what-kinds-of-apps-can-i-build-with-it-">What kinds of apps can I build with it?</h2>
-			<p>Web Browser, Console, Web Socket, REST, Server - you name it.</p>
+			<p>Antares, with RxJS, manages consequences, which any app has, so it&#39;s not limited to client or server, or even Web Apps.</p>
+			<p>There are many demo apps included in this project that show what you can build.</p>
+			<ul>
+				<li>A console app that speaks names and writes to a file</li>
+				<li>A utility that turns all-at-the-end AJAX requests for arrays into streaming Observables (eg <code>/users/</code>)</li>
+				<li>A Web Server in <a href="//github.com/deanius/antares/blob/master/demos/express/index.js">demos/express/index.js</a></li>
+				<li>A Canvas-based requestAnimationFrame animation.</li>
+				<li>A Console app that detects a cheat-code of 5 clicks in a short interval.</li>
+				<li>A Web Audio app that streams and queues up music from attachments in your Inbox.</li>
+				<li>An IOT application interfacing with Raspberry Pi GPIO <em>(Coming Soon)</em></li>
+			</ul>
+			<h2 id="ok-but-where-should-i-start-">OK, but where should I start?</h2>
+			<p>The flagship demo which can be utilized as a course to learn how to fit an Antares Agent with an existing React/Redux/Express app, is located here: <a href="//github.com/deanius/hotel-california">The Hotel California Antares Sample App</a>.</p>
+			<p>It&#39;s becoming part of a workshop - if you&#39;re interested in learning more, or updating me on your progress, <a href="//twitter.com/deaniusol">tweet it</a>!</p>
 			<h2 id="testing-yes-please-">Testing? Yes, please!</h2>
 			<p>Antares is highly tested. And since testing async is hard, some integration level tests run a bunch of complex stuff (our <a href="#demos">demos</a>), and simply assert on the console output. The slightest change in behavior can thus be visible in the output of the demo as a large change. This, with Jest Snapshot testing makes asserting on our output a piece of cake.</p>
 			<p>For unit tests, check out <a href="https://travis-ci.org/deanius/antares-ts/jobs/403257425#L139">what the unit test suite looks like</a> on a recent CI build. (Thanks to Dan Abromov for illustrating in his 2015 <code>react-dnd/dnd-core</code> project what a nicely formatted test suite output can be)</p>
-			<h2 id="demos-">Demos!</h2>
-			<p>Antares has demos whose output is tested in CI on MacOS, Linux, and Windows. Because concurrency must be interacted with to truly be understood, many of the demos support you interacting with them in a console, or at least changing their parameters in config (<code>demos/config.js</code>)</p>
-			<pre><code><span class="hljs-meta">&gt;</span><span class="bash"> git <span class="hljs-built_in">clone</span> https://github.com/deanius/antares-ts antares</span>
-<span class="hljs-meta">&gt;</span><span class="bash"> <span class="hljs-built_in">cd</span> antares; npm i</span>
-<span class="hljs-meta">&gt;</span><span class="bash"> npm run demos                         <span class="hljs-comment"># run 'em all</span></span></code></pre><p>See the output of a run of all demos on <a href="https://travis-ci.org/deanius/antares-ts/jobs/402981544#L681">Travis CI</a>, and if you run them locally, make sure you have sound turned on! (It&#39;s a core principle of Antares that not all renders are to a DOM)</p>
-			<p>Here are some more ways you can run demos, including using <a href="https://www.npmjs.com/package/cross-env"><code>cross-env</code></a> on windows</p>
-			<pre><code>&gt; <span class="hljs-attr">DEMO=</span>muteFruit <span class="hljs-attr">INTERACTIVE=</span><span class="hljs-number">1</span> <span class="hljs-keyword">node</span> <span class="hljs-title">demos</span>/index
-&gt; <span class="hljs-attr">DEMO=</span>muteFruit <span class="hljs-attr">inner=</span><span class="hljs-number">100</span> <span class="hljs-attr">outer=</span><span class="hljs-number">100</span> <span class="hljs-keyword">node</span> <span class="hljs-title">demos</span>/index
-&gt; cross-env <span class="hljs-attr">DEMO=</span>muteFruit <span class="hljs-attr">inner=</span> <span class="hljs-keyword">node</span> <span class="hljs-title">demos</span>/index</code></pre><h2 id="show-your-love-">Show your love!</h2>
+			<p>Antares has unit tests, and demos whose output is tested in CI on MacOS, Linux, and Windows. Because concurrency must be interacted with to truly be understood, many of the demos support you interacting with them in a console, or at least changing their parameters in config (<code>demos/config.js</code>)</p>
+			<p>See the output of a run of all demos on <a href="https://travis-ci.org/deanius/antares-ts/jobs/402981544#L681">Travis CI</a>, and if you run them locally, make sure you have sound turned on!</p>
+			<p>Here are some more ways you can run demos (use cross-env on windows)</p>
+			<pre><code>&gt; <span class="hljs-attribute">DEMO</span>=muteFruit <span class="hljs-attribute">INTERACTIVE</span>=1 node demos/index
+&gt; <span class="hljs-attribute">DEMO</span>=muteFruit <span class="hljs-attribute">inner</span>=100 <span class="hljs-attribute">outer</span>=100 node demos/index
+&gt; cross-env <span class="hljs-attribute">DEMO</span>=muteFruit <span class="hljs-attribute">inner</span>=100 node demos/index</code></pre><h2 id="show-your-love-">Show your love!</h2>
 			<ul>
 				<li>Display a badge on your project: <img src="https://img.shields.io/badge/built--with-antares-blue.svg" alt="I ♥️ Antares"></li>
 				<li>Donate to the project <a href="https://paypal.me/deanius"><img src="https://img.shields.io/badge/donate-paypal-blue.svg" alt="to the project"></a>, or somewhere you think you can pay it forward, even if not here!</li>
@@ -1112,7 +1135,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Action<wbr>Filter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">function</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/types.ts#L94">types.ts:94</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/types.ts#L101">types.ts:101</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1125,7 +1148,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">assert<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;typeof require &#x3D;&#x3D;&#x3D; &quot;undefined&quot; ? () &#x3D;&gt; null : require(&quot;assert&quot;)</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L19">antares-protocol.ts:19</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/antares-protocol.ts#L19">antares-protocol.ts:19</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1135,7 +1158,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;completed&quot;, &quot;then&quot;, &quot;catch&quot;]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L388">antares-protocol.ts:388</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/antares-protocol.ts#L394">antares-protocol.ts:394</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1152,7 +1175,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L12">operators.ts:12</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/operators.ts#L12">operators.ts:12</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1184,7 +1207,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L394">antares-protocol.ts:394</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/antares-protocol.ts#L400">antares-protocol.ts:400</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1213,7 +1236,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L29">operators.ts:29</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/operators.ts#L29">operators.ts:29</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1244,7 +1267,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/lib.ts#L3">lib.ts:3</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/lib.ts#L3">lib.ts:3</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1285,7 +1308,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L77">operators.ts:77</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/operators.ts#L77">operators.ts:77</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1307,7 +1330,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L50">operators.ts:50</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/operators.ts#L50">operators.ts:50</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1330,7 +1353,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L428">antares-protocol.ts:428</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/antares-protocol.ts#L434">antares-protocol.ts:434</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1358,7 +1381,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L408">antares-protocol.ts:408</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/antares-protocol.ts#L414">antares-protocol.ts:414</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1388,7 +1411,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L417">antares-protocol.ts:417</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/antares-protocol.ts#L423">antares-protocol.ts:423</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1420,7 +1443,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/operators.ts#L35">operators.ts:35</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/operators.ts#L35">operators.ts:35</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1443,7 +1466,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L362">antares-protocol.ts:362</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/antares-protocol.ts#L368">antares-protocol.ts:368</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1466,7 +1489,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L379">antares-protocol.ts:379</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/antares-protocol.ts#L385">antares-protocol.ts:385</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1489,7 +1512,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/8e41701/src/antares-protocol.ts#L355">antares-protocol.ts:355</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/e3101a9/src/antares-protocol.ts#L361">antares-protocol.ts:361</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
