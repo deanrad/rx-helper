@@ -492,15 +492,16 @@ describe("Agent", () => {
       })
     })
     describe("behavior", () => {
-      it("should emit the action on the action$ Observable", () => {
+      it("should emit the action on the allOfType Observable", () => {
         expect.assertions(1)
 
         // Build up our assertion
-        const assertion = agent.action$
+        const assertion = agent
+          .allOfType(() => true)
           .pipe(first())
           .toPromise()
-          .then(asi => {
-            expect(asi.action).toEqual(anyAction)
+          .then(action => {
+            expect(action).toEqual(anyAction)
           })
 
         // Then process an action

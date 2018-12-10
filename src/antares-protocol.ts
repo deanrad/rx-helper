@@ -31,8 +31,8 @@ export {
 
 // Export utility rxjs operators and our own custom
 export * from "./operators"
-export { from, of, empty, concat } from "rxjs"
-export { startWith, last, filter, delay, map, mapTo } from "rxjs/operators"
+export { from, of, empty, concat, merge, interval } from "rxjs"
+export { startWith, last, filter, delay, map, mapTo, scan } from "rxjs/operators"
 
 /**
  * Represents the instance of an Antares action processor which is
@@ -46,7 +46,7 @@ export class Agent implements ActionProcessor {
 
   /**
    * The heart and circulatory system of an Agent is `action$`, its action stream. */
-  action$: Observable<ActionStreamItem>
+  private action$: Observable<ActionStreamItem>
   filterNames: Array<string>
   rendererNames: Array<string>
   [key: string]: any
