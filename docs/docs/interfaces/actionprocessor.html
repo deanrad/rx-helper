@@ -928,6 +928,12 @@ img { max-width: 100%; }
 					<a href="actionprocessor.html#addrenderer" class="tsd-kind-icon">add<wbr>Renderer</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-interface">
+					<a href="actionprocessor.html#filter" class="tsd-kind-icon">filter</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-interface">
+					<a href="actionprocessor.html#on" class="tsd-kind-icon">on</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-interface">
 					<a href="actionprocessor.html#process" class="tsd-kind-icon">process</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-interface">
@@ -1039,6 +1045,8 @@ img { max-width: 100%; }
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="actionprocessor.html#addfilter" class="tsd-kind-icon">add<wbr>Filter</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="actionprocessor.html#addrenderer" class="tsd-kind-icon">add<wbr>Renderer</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="actionprocessor.html#filter" class="tsd-kind-icon">filter</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="actionprocessor.html#on" class="tsd-kind-icon">on</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="actionprocessor.html#process" class="tsd-kind-icon">process</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="actionprocessor.html#subscribe" class="tsd-kind-icon">subscribe</a></li>
 						</ul>
@@ -1058,7 +1066,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/3d36d1d/src/types.ts#L30">types.ts:30</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/a609cc9/src/types.ts#L32">types.ts:32</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1084,7 +1092,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/3d36d1d/src/types.ts#L31">types.ts:31</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/a609cc9/src/types.ts#L33">types.ts:33</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1101,6 +1109,64 @@ img { max-width: 100%; }
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<a name="filter" class="tsd-anchor"></a>
+				<h3>filter</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<li class="tsd-signature tsd-kind-icon">filter<span class="tsd-signature-symbol">(</span>actionFilter<span class="tsd-signature-symbol">: </span><a href="../globals.html#actionfilter" class="tsd-signature-type">ActionFilter</a>, renderer<span class="tsd-signature-symbol">: </span><a href="subscriber.html" class="tsd-signature-type">Subscriber</a>, config<span class="tsd-signature-symbol">?: </span><a href="subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/a609cc9/src/types.ts#L30">types.ts:30</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>actionFilter: <a href="../globals.html#actionfilter" class="tsd-signature-type">ActionFilter</a></h5>
+							</li>
+							<li>
+								<h5>renderer: <a href="subscriber.html" class="tsd-signature-type">Subscriber</a></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<a name="on" class="tsd-anchor"></a>
+				<h3>on</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>actionFilter<span class="tsd-signature-symbol">: </span><a href="../globals.html#actionfilter" class="tsd-signature-type">ActionFilter</a>, renderer<span class="tsd-signature-symbol">: </span><a href="subscriber.html" class="tsd-signature-type">Subscriber</a>, config<span class="tsd-signature-symbol">?: </span><a href="subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/a609cc9/src/types.ts#L31">types.ts:31</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>actionFilter: <a href="../globals.html#actionfilter" class="tsd-signature-type">ActionFilter</a></h5>
+							</li>
+							<li>
+								<h5>renderer: <a href="subscriber.html" class="tsd-signature-type">Subscriber</a></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 				<a name="process" class="tsd-anchor"></a>
 				<h3>process</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -1110,7 +1176,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/3d36d1d/src/types.ts#L28">types.ts:28</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/a609cc9/src/types.ts#L28">types.ts:28</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1136,7 +1202,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/3d36d1d/src/types.ts#L29">types.ts:29</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/a609cc9/src/types.ts#L29">types.ts:29</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
