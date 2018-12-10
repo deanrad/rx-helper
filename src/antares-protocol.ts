@@ -381,7 +381,7 @@ function validateConfig(config: SubscriberConfig) {
 
   assert(
     !config.xform || !config.actionsOfType,
-    "For simple control of renderer trigers, use config.actionType; use xform for more complicated ones. Never both."
+    "For simple control of renderer trigers, use config.actionsOfType; use xform for more complicated ones. Never both."
   )
 }
 

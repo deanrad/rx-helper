@@ -84,10 +84,15 @@ export interface StreamTransformer {
 }
 
 export interface SubscriberConfig {
+  /** A name by which the results will be keyed. Example: `agent.process(action).completed.NAME.then(() => ...)` */
   name?: string
+  /** The concurrency mode to use. Governs what happens when renderings from this renderer overlap. */
   concurrency?: Concurrency
+  /** Advanced feature - a function allowing you to render on a stream derived from the ActionStream, such as a batched one. */
   xform?: StreamTransformer
+  /** If true, the Observable returned by the renderer will be fed to `agent.subscribe`, so its actions are `process`ed. */
   processResults?: Boolean
+  /** A string, regex, or boolean function controlling which actions this renderer is configured to run upon. */
   actionsOfType?: ActionFilter
 }
 
