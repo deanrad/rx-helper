@@ -179,6 +179,16 @@ describe("Agent", () => {
             expect(agent.filterNames).toContain("filter_1")
           })
 
+          it("will be the actionType filter if given", () => {
+            expect(agent.rendererNames).not.toContain("autonamer")
+            agent.on("autonamer", () => null)
+            expect(agent.rendererNames).toContain("autonamer")
+
+            expect(agent.filterNames).not.toContain("autonamer")
+            agent.filter("autonamer", () => null)
+            expect(agent.filterNames).toContain("autonamer")
+          })
+
           it("will be renderer_N if not given for a renderer", () => {
             expect(agent.rendererNames).not.toContain("renderer_1")
             agent.addRenderer(() => 3.141)
@@ -192,6 +202,20 @@ describe("Agent", () => {
                 agent.addFilter(nullFn, { name: badName })
               }).toThrow()
             })
+          })
+
+          it("can use a string from actionsOfType", () => {
+            // no autonumbering occurs for the first one of a string ActionFilter
+            // successive ones get numbers appended eg helloEcho_1
+            agent.filter("helloEcho", () => "echo 1")
+            agent.filter("helloEcho", () => "echo 2")
+
+            // run through both filters
+            const result = agent.process({ type: "helloEcho" })
+
+            // its not enumerable, currently, but its there
+            expect(result.helloEcho).toEqual("echo 1")
+            expect(result["helloEcho_1"]).toEqual("echo 2")
           })
         })
       })

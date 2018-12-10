@@ -246,7 +246,16 @@ export class Agent implements ActionProcessor {
       }
     }
 
-    const name = config.name || `filter_${++this._subscriberCount}`
+    const nameBase: string =
+      //@ts-ignore
+      config.actionsOfType && config.actionsOfType.substring
+        ? config.actionsOfType.toString()
+        : "filter"
+    const name =
+      config.name ||
+      (this.filterNames.includes(nameBase) || nameBase === "filter"
+        ? `${nameBase}_${++this._subscriberCount}`
+        : nameBase)
     this.filterNames.push(name)
     this.allFilters.set(name, _filter)
 
@@ -270,7 +279,16 @@ export class Agent implements ActionProcessor {
   addRenderer(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
     validateConfig(config)
 
-    const name = config.name || `renderer_${++this._subscriberCount}`
+    const nameBase: string =
+      //@ts-ignore
+      config.actionsOfType && config.actionsOfType.substring
+        ? config.actionsOfType.toString()
+        : "renderer"
+    const name =
+      config.name ||
+      (this.filterNames.includes(nameBase) || nameBase === "renderer"
+        ? `${nameBase}_${++this._subscriberCount}`
+        : nameBase)
 
     const xform = streamTransformerFrom(config)
     this.rendererNames.push(name)
