@@ -1,6 +1,6 @@
 /* tslint:disable  */
 import { of, from, empty, interval, throwError } from "rxjs"
-import { delay, map, first, toArray, take, concat } from "rxjs/operators"
+import { delay, map, first, toArray, take, concat, scan, tap } from "rxjs/operators"
 import {
   Action,
   Agent,
@@ -78,6 +78,32 @@ describe("Agent", () => {
         agent.process({ type: "test/foo" })
 
         expect(counter).toEqual(2)
+      })
+
+      it("should be able to replace Redux with a single line", () => {
+        expect.assertions(1)
+        let state = []
+        // define an aggregator function which appends to an array (same signature as reducer)
+        const builder = (state, action) => {
+          return [...state, action.payload]
+        }
+
+        // set it up to scan over the action stream, storing payloads
+        agent
+          .allOfType(() => true)
+          .pipe(
+            scan(builder, []),
+            tap(newState => {
+              state = newState
+            })
+          )
+          .subscribe()
+
+        // assert that the aggregation got the payloads
+        agent.process({ type: "foo", payload: 1.1 })
+        return agent.process({ type: "foo", payload: 1.2 }).completed.then(() => {
+          expect(state).toEqual([1.1, 1.2])
+        })
       })
     })
   })
@@ -270,7 +296,7 @@ describe("Agent", () => {
         describe("xform", () => {
           it("accepts a function that modifies the Action Stream", undefined)
         })
-        describe("actionType", () => {
+        describe("actionsOfType", () => {
           it("should only run the render on matching actions (string)", () => {
             expect.assertions(1)
             agent.addRenderer(() => of(++counter), { name: "inc", actionsOfType: "Counter.inc" })
