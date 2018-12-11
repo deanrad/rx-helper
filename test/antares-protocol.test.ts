@@ -236,12 +236,12 @@ describe("Agent", () => {
   describe("#addRenderer", () => {
     describe("arguments", () => {
       describe("first argument", () => {
-        it("should return an Observable", undefined)
-        it("may return null or an object to be cast to Observable", undefined)
+        it.skip("should return an Observable", () => {})
+        it.skip("may return null or an object to be cast to Observable", () => {})
       })
       describe("config argument", () => {
         describe("concurrency", () => {
-          it("should run in parallel mode (shown in demo)", undefined)
+          it.skip("should run in parallel mode (shown in demo)", () => {})
           it("should run in series mode", () => {
             expect.assertions(2)
             // This renderer takes 10msec to complete, and adds increment to counter
@@ -325,10 +325,10 @@ describe("Agent", () => {
           })
         })
         describe("validation", () => {
-          it("should not accept xform and actionType argument", undefined)
+          it.skip("should not accept xform and actionType argument", () => {})
         })
         describe("xform", () => {
-          it("accepts a function that modifies the Action Stream", undefined)
+          it.skip("accepts a function that modifies the Action Stream", () => {})
         })
         describe("actionsOfType", () => {
           it("should only run the render on matching actions (string)", () => {
@@ -385,8 +385,8 @@ describe("Agent", () => {
       })
     })
     describe("error handling", () => {
-      it("should set the renderResult to be in error", undefined)
-      it("should unsubscribe the offending renderer", undefined)
+      it.skip("should set the renderResult to be in error", () => {})
+      it.skip("should unsubscribe the offending renderer", () => {})
     })
   })
 
@@ -422,7 +422,7 @@ describe("Agent", () => {
         })
       })
       describe("context", () => {
-        it("can be any object to be available to renderers", undefined)
+        it.skip("can be any object to be available to renderers", () => {})
       })
     })
 
@@ -547,8 +547,8 @@ describe("Agent", () => {
           return result.completed
         })
 
-        it("resolves even if you have a time-delayed renderer", undefined)
-        it("resolves even if a renderer is cutoff by itself", undefined)
+        it.skip("resolves even if you have a time-delayed renderer", () => {})
+        it.skip("resolves even if a renderer is cutoff by itself", () => {})
       })
     })
 
@@ -605,8 +605,8 @@ describe("Agent", () => {
       })
 
       describe("errors in async renderers", () => {
-        it("should not propogate up to the caller of #process, but surface somewhere", undefined)
-        it("should unsubscribe the renderer", undefined)
+        it.skip("should not propogate up to the caller of #process, but surface somewhere", () => {})
+        it.skip("should unsubscribe the renderer", () => {})
       })
     })
   })
@@ -701,7 +701,7 @@ describe("Utilities", () => {
       expect(result).toHaveLength(3)
       expect(result).toMatchSnapshot()
     })
-    it("does not swallow errors", undefined)
+    it.skip("does not swallow errors", () => {})
   })
 
   describe("randomId", () => {
