@@ -72,6 +72,7 @@
       "helpMessage": "Use \"npm run commit\" instead, we use conventional-changelog format :) (https://github.com/commitizen/cz-cli)"
     }
   },
+  "runkitExampleFilename": "runkitExample.js",
   "jest": {
     "transform": {
       ".(ts|tsx)": "ts-jest"
