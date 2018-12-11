@@ -467,6 +467,7 @@ describe("Agent", () => {
 
       describe("#completed: (all triggered renderers are done)", () => {
         it("is a Promise for all async renderers' results to have completed", () => {
+          expect.assertions(0)
           agent.addRenderer(() => of("🐌").pipe(delay(100)), {
             name: "snail",
             concurrency: Concurrency.serial
@@ -476,6 +477,31 @@ describe("Agent", () => {
           })
 
           return agent.process(anyAction).completed
+        })
+
+        it.skip("is cached, not causing renderers to rerun", () => {
+          expect.assertions(3)
+
+          let timesCalled = 0
+          agent.on("inc", () =>
+            after(0, () => {
+              ++timesCalled
+            })
+          )
+          const result = agent.process({ type: "inc" })
+
+          // expect same object is returned each time property is referenced
+          expect(result.completed === result.completed).toBeTruthy()
+
+          return result.completed.then(() => {
+            return result.completed.then(() => {
+              expect(timesCalled).toEqual(1)
+            }).then(() => {
+              // LEFTOFF this nested call to .inc reruns the renderer
+              return result.completed.inc.then(() => {
+                expect(timesCalled).toEqual(1)
+              })
+          })
         })
 
         it("can get a promise for a renderers final value via completed.rendererName", () => {
@@ -525,6 +551,7 @@ describe("Agent", () => {
         it("resolves even if a renderer is cutoff by itself", undefined)
       })
     })
+
     describe("behavior", () => {
       it("should emit the action on the allOfType Observable", () => {
         expect.assertions(1)

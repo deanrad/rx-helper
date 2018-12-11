@@ -166,8 +166,11 @@ export class Agent implements ActionProcessor {
     }
 
     // Allow hooking the completion of async renders
+    let _completedObject: Promise<boolean[]>
     Object.defineProperty(resultObject, "completed", {
       get: () => {
+        if (_completedObject) return _completedObject
+
         const completedObject = Promise.all(
           Array.from(renderEndings.values()).map(s => s.asObservable().toPromise())
         )
@@ -191,6 +194,7 @@ export class Agent implements ActionProcessor {
             }
           })
         }
+        _completedObject = completedObject
         return completedObject
       }
     })
@@ -219,7 +223,8 @@ export class Agent implements ActionProcessor {
    * // Logs Done once 50 ms has elapsed
    * agent.process({ type: 'kickoff' }).completed.kickoff.then(() => console.log('done'))
    * ```
-   */  on(actionFilter: ActionFilter, renderer: Subscriber, config: SubscriberConfig = {}) {
+   */
+  on(actionFilter: ActionFilter, renderer: Subscriber, config: SubscriberConfig = {}) {
     const _config = {
       ...config,
       actionsOfType: actionFilter
@@ -280,7 +285,6 @@ export class Agent implements ActionProcessor {
     })
     return sub
   }
-
 
   addRenderer(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
     validateConfig(config)

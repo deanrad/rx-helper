@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Agent #process behavior errors in filters should propogate up to the caller of #process 1`] = `"whoops!"`;
+exports[`Agent #process return value behavior errors in filters should propogate up to the caller of #process 1`] = `"whoops!"`;
 
-exports[`Agent #process behavior should run filters in order 1`] = `
+exports[`Agent #process return value behavior should run filters in order 1`] = `
 Object {
   "double": 2.2,
   "inc": 1.1,
 }
 `;
 
-exports[`Utilities jsonPatch operator should turn a stream of objects into a stream of RFC6902 patches 1`] = `
+exports[`Agent Utilities jsonPatch operator should turn a stream of objects into a stream of RFC6902 patches 1`] = `
 Array [
   Array [
     Object {
