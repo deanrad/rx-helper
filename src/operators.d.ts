@@ -18,3 +18,10 @@ export declare const ajaxStreamingGet: (opts: StreamingGetOptions) => Observable
  * Turns a stream of objects into a stream of the patches between them.
  */
 export declare const jsonPatch: () => <T>(source: Observable<T>) => Observable<Operation[]>;
+/**
+ * Turns an Observable into a stream of Apollo Query-style props {data, loading, error}
+ * Takes an optional reducer (requires an initial value) with which to aggregate multiple
+ * next notifications, otherwise defaults to replacing the `data` property.
+ * Will work nicely with hooks using `react-observable-hook`
+ */
+export declare const toProps: (reducer?: Function) => <T>(source: Observable<T>) => Observable<Object>;
