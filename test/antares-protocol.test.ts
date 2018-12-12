@@ -1,5 +1,5 @@
 /* tslint:disable  */
-import { of, from, empty, interval, throwError } from "rxjs"
+import { of, from, empty, interval, throwError, concat as rxConcat } from "rxjs"
 import { delay, map, first, toArray, take, concat, scan, tap } from "rxjs/operators"
 import {
   Action,
@@ -10,6 +10,7 @@ import {
   agentConfigFilter,
   AgentConfig,
   jsonPatch,
+  toProps,
   ajaxStreamingGet,
   randomId
 } from "../src/antares-protocol"
@@ -704,6 +705,43 @@ describe("Utilities", () => {
     it.skip("does not swallow errors", () => {})
   })
 
+  describe('toProps', () => {
+    describe('with no reducer', () => {
+      it("should handle an observable of 1 value", async () => {
+        expect.assertions(1)
+        const o = from(Promise.resolve(1.1))
+        const propObjects = await o.pipe(toProps(), toArray()).toPromise()
+        expect(propObjects).toMatchSnapshot()
+      })
+      it("should handle an observable of >1 value", async () => {
+        expect.assertions(1)
+        const o = of(1.1, 2.2)
+        const propObjects = await o.pipe(toProps(), toArray()).toPromise()
+        expect(propObjects).toMatchSnapshot()
+      })
+      it("should handle a 1 value observable that errors", async () => {
+        expect.assertions(1)
+        const o = from(Promise.reject('foozle'))
+        const propObjects = await o.pipe(toProps(), toArray()).toPromise()
+        expect(propObjects).toMatchSnapshot()
+      })
+    it("should handle a multi-value observable that errors", async () => {
+        expect.assertions(1)
+        const o = rxConcat(of(1), throwError('foo'))
+        const propObjects = await o.pipe(toProps(), toArray()).toPromise()
+        expect(propObjects).toMatchSnapshot()
+      })
+    })
+    describe('with a reducer', () => {
+      it("should handle an observable of >1 value", async () => {
+        const o = of(11, 22, 0)
+        const propObjects = await o.pipe(toProps((acc=0, obj) => acc+obj), toArray()).toPromise()
+        expect(propObjects).toHaveLength(4) // begin, middle, end, no dupe objects
+        expect(propObjects).toMatchSnapshot()
+      })
+
+    })
+  })
   describe("randomId", () => {
     it("should be run 1000 times without producing a dupe", () => {
       const ids = []

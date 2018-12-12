@@ -36,3 +36,92 @@ Array [
   ],
 ]
 `;
+
+exports[`Agent Utilities toProps with a reducer should handle an observable of >1 value 1`] = `
+Array [
+  Object {
+    "loading": true,
+  },
+  Object {
+    "data": 11,
+    "loading": true,
+  },
+  Object {
+    "data": 33,
+    "loading": true,
+  },
+  Object {
+    "data": 33,
+    "error": null,
+    "loading": false,
+  },
+]
+`;
+
+exports[`Agent Utilities toProps with no reducer should handle a 1 value observable that errors 1`] = `
+Array [
+  Object {
+    "loading": true,
+  },
+  Object {
+    "data": null,
+    "error": "foozle",
+    "loading": false,
+  },
+]
+`;
+
+exports[`Agent Utilities toProps with no reducer should handle a multi-value observable that errors 1`] = `
+Array [
+  Object {
+    "loading": true,
+  },
+  Object {
+    "data": 1,
+    "loading": true,
+  },
+  Object {
+    "data": null,
+    "error": "foo",
+    "loading": false,
+  },
+]
+`;
+
+exports[`Agent Utilities toProps with no reducer should handle an observable of >1 value 1`] = `
+Array [
+  Object {
+    "loading": true,
+  },
+  Object {
+    "data": 1.1,
+    "loading": true,
+  },
+  Object {
+    "data": 2.2,
+    "loading": true,
+  },
+  Object {
+    "data": 2.2,
+    "error": null,
+    "loading": false,
+  },
+]
+`;
+
+exports[`Agent Utilities toProps with no reducer should handle an observable of 1 value 1`] = `
+Array [
+  Object {
+    "loading": true,
+  },
+  Object {
+    "data": 1.1,
+    "loading": true,
+  },
+  Object {
+    "data": 1.1,
+    "error": null,
+    "loading": false,
+  },
+]
+`;

@@ -95,3 +95,35 @@ export const jsonPatch = () => <T>(source: Observable<T>) =>
       }
     })
   })
+
+/**
+ * Turns an Observable into a stream of Apollo Query-style props {data, loading, error}
+ * Takes an optional reducer (requires an initial value) with which to aggregate multiple
+ * next notifications, otherwise defaults to replacing the `data` property.
+ * Will work nicely with hooks using `react-observable-hook`
+ */
+export const toProps = (reducer: Function = (acc: any, item: any): any => item) => <T>(
+  source: Observable<T>
+) => {
+  return new Observable<Object>(notify => {
+    let lastAccumulated: any
+
+    notify.next({ loading: true })
+    return source.subscribe(
+      (newObj: any) => {
+        const newAccumulation = reducer(lastAccumulated, newObj)
+        if (newAccumulation === lastAccumulated) return
+        lastAccumulated = newAccumulation
+        notify.next({ loading: true, data: lastAccumulated })
+      },
+      e => {
+        notify.next({ loading: false, data: null, error: e })
+        notify.complete()
+      },
+      () => {
+        notify.next({ loading: false, data: lastAccumulated, error: null })
+        notify.complete()
+      }
+    )
+  })
+}
