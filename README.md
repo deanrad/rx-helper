@@ -53,6 +53,15 @@ The flagship demo which can be utilized as a course to learn how to fit an Antar
 
 It's becoming part of a workshop - if you're interested in learning more, or updating me on your progress, [tweet it](//twitter.com/deaniusol)!
 
+## What's the TL;DR?
+
+The 4 Principles:
+
+1.  An `agent` processes Flux Standard Actions given it through either `agent.process` or `agent.subscribe`
+1.  Actions are synchronously processed through functions given to `agent.filter`...
+1.  ...and asynchronously processed through functions known as renderers, configured via `agent.on`.
+1.  Renderer functions may produce consequences (i.e. effects, or side-effects) return [Observables](https://github.com/tc39/proposal-observable) of new actions to be processed, specify a concurrency mode and be run with other [options](https://deanius.github.io/antares/docs/interfaces/subscriberconfig.html)
+
 ## Testing? Yes, please!
 
 Antares is highly tested. And since testing async is hard, some integration level tests run a bunch of complex stuff (our [demos](#demos)), and simply assert on the console output. The slightest change in behavior can thus be visible in the output of the demo as a large change. This, with Jest Snapshot testing makes asserting on our output a piece of cake.
