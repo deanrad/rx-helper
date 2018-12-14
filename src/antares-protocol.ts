@@ -482,3 +482,6 @@ export const randomIdFilter = (length: number = 7, key = "actionId") => ({
 /**
  * Pretty-print an action */
 export const pp = (action: Action) => JSON.stringify(action)
+
+/** An agent instance with no special options - good enough for most purposes */
+export const agent = new Agent()
