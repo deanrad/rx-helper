@@ -106,3 +106,5 @@ export declare const randomIdFilter: (length?: number, key?: string) => ({ actio
 /**
  * Pretty-print an action */
 export declare const pp: (action: Action) => string;
+/** An agent instance with no special options - good enough for most purposes */
+export declare const agent: Agent;
