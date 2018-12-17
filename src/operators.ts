@@ -44,10 +44,14 @@ function rxGet(opts: StreamingGetOptions): Observable<any> {
 function oboeGet(opts: StreamingGetOptions): Observable<any> {
   return new Observable(o => {
     let userCanceled = false
+    // For compatibility with Rx, we'll treat `items` same as `items[*]`
+    // To prevent this, provide the full path to the JSON node you want to singly select
+    // `$.item` or `order.total` will not be expanded, but `items` will.
+    let expandKey = opts.expandKey + (opts.expandKey && opts.expandKey.match(/\w+s/i) ? "[*]" : "")
     // @ts-ignore
     oboe(opts.url) // Get items from a url
       // Matched items could be single or multiple items depending on expandKey
-      .node(opts.expandKey, function(items: any) {
+      .node(expandKey, function(items: any) {
         if (userCanceled) {
           o.complete()
           // @ts-ignore
