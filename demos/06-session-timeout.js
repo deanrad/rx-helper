@@ -4,7 +4,7 @@ const { after, getUserInputFromStdin } = require("./utils")
 // A flag we will set when we've processed our final action (for testing)
 const allDone = new Subject()
 
-module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
+module.exports = ({ agent, config = {}, log, append, interactive = false }) => {
   const { inactivityInterval, warningInterval } = config
 
   // The stream of keypresses we'll send through the program
@@ -16,22 +16,17 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
     logout: () => ({ type: "Timeout.logout" })
   }
 
-  // Renderers for those actions
-  const warn = ({ action }) => {
+  // The setting-up of our renderers
+  agent.on("Timeout.warn", warn)
+  agent.on("Timeout.logout", logout)
+  function warn() {
     log("You are being logged out..")
   }
-  const logout = ({ action }) => {
+  function logout() {
     log("You have been logged out.")
     allDone.complete() // set that flag
     process.stdin.pause() // release our grip on stdin
   }
-
-  // The setting-up of our renderers
-  const agent = new Agent()
-
-  // Using the simple API
-  agent.on("Timeout.warn", warn)
-  agent.on("Timeout.logout", logout)
 
   // An observable resembling the following is created and started
   // after every action. 'Cutoff' concurrency mode means it terminates
@@ -40,15 +35,14 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
   //                 warn     logout
   // |---------------|--------|----->|
   //    inactivity     warning
-  agent.addRenderer(
-    ({ action }) => {
+  //prettier-ignore
+  agent.on("keyPress", ({ action }) => {
       return concat(
-        after(inactivityInterval, Actions.warn()),
-        after(warningInterval, Actions.logout())
+        after(inactivityInterval, {type: 'Timeout.warn'}),
+        after(warningInterval, {type: 'Timeout.logout'})
       )
     },
     {
-      actionsOfType: "keyPress", // Upon every one of these
       concurrency: "cutoff", // If a timeout exists when we're triggered, replace it with this new one
       processResults: true // Obviates our need to call agent.process explicitly
     }
@@ -76,12 +70,12 @@ module.exports = ({ Agent, config = {}, log, append, interactive = false }) => {
   function simInput() {
     return concat(
       // two keypresses well within our inactivity interval
-      after(inactivityInterval * 0.5, "x"),
-      after(inactivityInterval * 0.5, "x"),
+      after(inactivityInterval * 0.5, () => "x"),
+      after(inactivityInterval * 0.5, () => "x"),
       // then we wait a bit longer to enter the inactivity interval
-      after(inactivityInterval * 1.1, "x"),
+      after(inactivityInterval * 1.1, () => "x"),
       // dont let the warning interval fully elapse yet
-      after(warningInterval * 0.5, "x")
+      after(warningInterval * 0.5, () => "x")
       // Finally, let the chips fall as they may
     )
   }

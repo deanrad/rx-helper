@@ -1,5 +1,5 @@
 /* tslint:disable  */
-import { of, from, empty, interval, throwError, concat as rxConcat } from "rxjs"
+import { of, from, empty, interval, timer, throwError, concat as rxConcat } from "rxjs"
 import { delay, map, first, toArray, take, concat, scan, tap } from "rxjs/operators"
 import {
   Action,
@@ -628,19 +628,52 @@ describe("Utilities", () => {
     })
 
     describe("second argument", () => {
-      it("if a function, should create an Observable of its return value", () => {
+      let c
+      // a function incrementing c
+      const incrementVar = () => { return ++c }
+
+      beforeEach(() => {
+        c = 0
+      })
+
+      it("should create an Observable of its return value", () => {
         expect.assertions(1)
         const result = after(1, () => 1.11)
         return result.toPromise().then(value => {
           expect(value).toEqual(1.11)
         })
       })
-      it("if a value, should create an Observable of the value", () => {
-        expect.assertions(1)
-        const result = after(1, 1.987)
-        return result.toPromise().then(value => {
-          expect(value).toEqual(1.987)
-        })
+      it('does nothing unless subscribed to', async () => {
+        // An Observable of the incrementVar being called in 100msec
+        // and its subscription. If we dont subscribe, the
+        // 100msec will never start tic
+        let o = after(40, incrementVar)
+
+        await timer(50).toPromise()
+        expect(c).toEqual(0)
+      })
+      it('does work if subscribed to', async () => {
+        let o = after(40, incrementVar)
+
+        o.subscribe()
+
+        await timer(50).toPromise()
+        expect(c).toEqual(1)
+      })
+      it('Will not be called and after will not notify of a value', async () => {
+        let o = after(40, incrementVar)
+        jest.setTimeout(100)
+
+        let sub = o.subscribe()
+
+        // begin a cancellation before the end
+        after(20, () => sub.unsubscribe()).subscribe()
+
+        // await the value of c 50 msec from now
+        let result = await after(50, () => c).toPromise()
+
+        expect(c).toEqual(0)
+        expect(result).toEqual(0)
       })
     })
   })

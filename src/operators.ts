@@ -1,23 +1,17 @@
 import { Observable, from, of } from "rxjs"
 import { ajax } from "rxjs/ajax"
 import { StreamingGetOptions } from "./types"
-import { delay, map, flatMap } from "rxjs/operators"
+import { timer } from "rxjs"
+import { map, delay, flatMap } from "rxjs/operators"
 import { compare, Operation } from "fast-json-patch"
 
 /**
  * Delays the occurrence of an object, or the invocation of a function, for the number of milliseconds given
  * @returns An Observable of the desired effect/object
- * @example after(100, {type: 'Timedout'}).subscribe(action => ...)
+ * @example after(100, ()=>({type: 'Timedout'})).subscribe(action => ...)
  */
-export const after = (ms: number, objOrFn: Object | Function): Observable<any> => {
-  const [obj, effect] =
-    objOrFn instanceof Function ? [null, objOrFn] : [objOrFn, (value: Object) => value]
-
-  return of(obj).pipe(
-    delay(ms),
-    // @ts-ignore
-    map(effect)
-  )
+export const after = (ms: number, thunk: Function, name?: string): Observable<any> => {
+  return timer(ms).pipe(map(() => thunk(name)))
 }
 
 /**
