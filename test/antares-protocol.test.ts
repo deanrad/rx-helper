@@ -1,6 +1,6 @@
 /* tslint:disable  */
 import { of, from, empty, interval, timer, throwError, concat as rxConcat } from "rxjs"
-import { delay, map, first, toArray, take, concat, scan, tap } from "rxjs/operators"
+import { delay, map, first, toArray, take, concat, concatMap, scan, tap } from "rxjs/operators"
 import {
   Action,
   Agent,
@@ -716,7 +716,63 @@ describe("Utilities", () => {
         expect(user).toHaveProperty("username")
       })
     })
+
+    describe("expandKey", () => {
+      afterEach(() => {
+        global.oboe = null
+      })
+      describe("oboe", () => {
+        it("should expand an array at a given key: items", () => {
+          expect.assertions(1)
+          global.oboe = require('oboe')
+
+          const volume$ = ajaxStreamingGet({
+            url: "https://www.googleapis.com/books/v1/volumes?q=quilting",
+            lib: 'oboe',
+            expandKey: 'items' // or '!items', or 'items[*]'
+          })
+
+          return volume$.pipe(
+            toArray()
+          ).toPromise().then(volumes => {
+            expect(volumes.length).toEqual(10)
+          })
+        })
+        it("should find a singular item at a given key: items[0].title", () => {
+          expect.assertions(1)
+          global.oboe = require('oboe')
+
+          const title$ = ajaxStreamingGet({
+            url: "https://www.googleapis.com/books/v1/volumes?q=quilting",
+            lib: 'oboe',
+            expandKey: 'items[0].volumeInfo.title'
+          })
+
+          return title$.toPromise().then(t => {
+            expect(t).toMatch(/quilt/i)
+          })
+        })
+      })
+      describe("rxjs", () => {
+        it("should expand an array at a given key: items", () => {
+          expect.assertions(1)
+
+          const volume$ = ajaxStreamingGet({
+            url: "https://www.googleapis.com/books/v1/volumes?q=quilting",
+            lib: 'rxjs',
+            expandKey: 'items'
+          })
+
+          return volume$.pipe(
+            toArray()
+          ).toPromise().then(volumes => {
+            expect(volumes.length).toEqual(10)
+          })
+        })
+      })
+    })
   })
+
   describe("jsonPatch operator", () => {
     it("should turn a stream of objects into a stream of RFC6902 patches", async () => {
       let sources = [
