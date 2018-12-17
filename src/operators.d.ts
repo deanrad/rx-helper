@@ -4,9 +4,9 @@ import { Operation } from "fast-json-patch";
 /**
  * Delays the occurrence of an object, or the invocation of a function, for the number of milliseconds given
  * @returns An Observable of the desired effect/object
- * @example after(100, {type: 'Timedout'}).subscribe(action => ...)
+ * @example after(100, ()=>({type: 'Timedout'})).subscribe(action => ...)
  */
-export declare const after: (ms: number, objOrFn: Object | Function) => Observable<any>;
+export declare const after: (ms: number, thunk: Function, name?: string | undefined) => Observable<any>;
 /**
  * Gets the resource, returning an Observable of resources referred to by the URL
  * It is cancelable, and if you have the oboejs library, you'll get full streaming.

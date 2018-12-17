@@ -88,10 +88,10 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
     // pause + first one
     // forEach after the first: outer + inner
     const rest$ = numOrArray => {
-      if (!numOrArray.length) return after(pause, numOrArray)
-      let rest = after(pause, numOrArray[0])
+      if (!numOrArray.length) return after(pause, () => numOrArray)
+      let rest = after(pause, () => numOrArray[0])
       for (let i = 1; i < numOrArray.length; i++) {
-        rest = concat(rest, after(outer, numOrArray[i]))
+        rest = concat(rest, after(outer, () => numOrArray[i]))
       }
       return rest
     }
