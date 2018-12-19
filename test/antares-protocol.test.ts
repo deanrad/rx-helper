@@ -719,11 +719,13 @@ describe("Utilities", () => {
 
     describe("expandKey", () => {
       afterEach(() => {
+        // @ts-ignore
         global.oboe = null
       })
       describe("oboe", () => {
         it("should expand an array at a given key: items", () => {
           expect.assertions(1)
+          // @ts-ignore
           global.oboe = require('oboe')
 
           const volume$ = ajaxStreamingGet({
@@ -740,6 +742,7 @@ describe("Utilities", () => {
         })
         it("should find a singular item at a given key: items[0].title", () => {
           expect.assertions(1)
+          // @ts-ignore
           global.oboe = require('oboe')
 
           const title$ = ajaxStreamingGet({
