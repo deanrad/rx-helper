@@ -6,9 +6,11 @@ import { map, delay, flatMap } from "rxjs/operators"
 import { compare, Operation } from "fast-json-patch"
 
 /**
- * Delays the occurrence of an object, or the invocation of a function, for the number of milliseconds given
- * @returns An Observable of the desired effect/object
- * @example after(100, ()=>({type: 'Timedout'})).subscribe(action => ...)
+ * Delays the invocation of a function, for the number of milliseconds given.
+ * Produces an Observable of the thunk's invocation and subsequent return value.
+ * The optional 3rd argument can be a name string which will be passed to the thunk.
+ * @returns An Observable of what the thunk returns.
+ * @example after(100, name => ({type: `Timeout-${name}`}), 'session_expired').subscribe(action => ...)
  */
 export const after = (ms: number, thunk: Function, name?: string): Observable<any> => {
   return timer(ms).pipe(map(() => thunk(name)))

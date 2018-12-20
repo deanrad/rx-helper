@@ -13,6 +13,7 @@ export { startWith, last, filter, delay, map, mapTo, scan } from "rxjs/operators
  */
 export declare class Agent implements ActionProcessor {
     static configurableProps: string[];
+    static VERSION: string;
     /**
      * The heart and circulatory system of an Agent is `action$`, its action stream. */
     private action$;

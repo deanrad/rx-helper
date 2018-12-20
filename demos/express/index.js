@@ -26,6 +26,8 @@ agent.addRenderer(
     } else if (path === "/") {
       res.sendFile("index.html", { root: "." })
       return
+    } else if (path === "/demos/home/kitt.js") {
+      res.sendFile("kitt.js", { root: "./docs/" })
     } else {
       res.sendFile(path, { root: "./demos/express/" })
       return
