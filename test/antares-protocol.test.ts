@@ -110,9 +110,12 @@ describe("Agent", () => {
   })
 
   it("has instance methods", () => {
-    const antares = new Agent()
-    expect(antares).toMatchObject({
+    const agent = new Agent()
+    expect(agent).toMatchObject({
       process: expect.any(Function),
+      on: expect.any(Function),
+      filter: expect.any(Function),
+      subscribe: expect.any(Function),
       addFilter: expect.any(Function),
       addRenderer: expect.any(Function)
     })
@@ -217,6 +220,20 @@ describe("Agent", () => {
             // its not enumerable, currently, but its there
             expect(result.helloEcho).toEqual("echo 1")
             expect(result["helloEcho_1"]).toEqual("echo 2")
+          })
+        })
+        describe("type", async () => {
+          it("will wrap the renderers return Observable in FSAs of this type if provided", () => {
+            expect.assertions(1)
+            const seenNums = []
+            agent.filter("num", ({ action: { payload } }) => seenNums.push(payload))
+            agent.on("start", () => from([1,2,3]), {type: 'num'})
+            agent.on("start", () => from([7,8,9]), {name: 'notseen'})
+
+            const result = agent.process({type: "start"})
+            return result.completed.then(() => {
+              expect(seenNums).toEqual([1,2,3])
+            })
           })
         })
       })

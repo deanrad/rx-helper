@@ -30,7 +30,7 @@
 // It's best if tests are forgiving at least to 40ms, though
 // ideally this should come down to 15ms or less.
 const Demos = require("./configs")
-const { Agent } = require("../src/antares-protocol")
+const { Agent } = require("../dist/antares-protocol")
 
 let output = ""
 const appendLine = s => {
@@ -142,5 +142,6 @@ async function runDemo(demo) {
     if (config.inner) config.inner = 2 * (config.inner + 5)
     if (config.outer) config.outer *= 2
   }
-  return await demoFn({ Agent, config, log, append })
+  const agent = new Agent()
+  return await demoFn({ Agent, agent, config, log, append })
 }

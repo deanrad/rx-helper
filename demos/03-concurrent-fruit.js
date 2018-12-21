@@ -17,13 +17,12 @@ const fruitCharacter = {
 
 module.exports = async ({ Agent, config = {}, log, append, interactive = false }) => {
   const { outer, inner, pause, concurrency } = config
-
   const numArray = config.numArray ? eval(config.numArray) : [1, 2, 3, [9, 4], 5]
   return runDemo()
 
   async function runDemo() {
     showPrompt()
-
+    const agent = new Agent()
     // allows us to signal multiple processes to start at once
     // with pkill -SIGUSR2 node, if started with WAIT_FOR=SIGUSR2
     const signalToWaitOn = process.env.WAIT_FOR
@@ -31,23 +30,20 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
       // console.log("Waiting for you to signal us with pkill -" + signalToWaitOn)
       process.stdin.resume()
 
-      let gotSignal = new Promise(resolve => process.on(signalToWaitOn, resolve))
-      await gotSignal
+      await new Promise(resolve => process.on(signalToWaitOn, resolve))
     }
-
-    const antares = new Agent()
 
     // Add a renderer which returns a process (Observable) that, when
     // Antares subscribes to it, will pull values through the pipe of
     // computation with the specified timing. Example:
     // > ⑤ 5 5 5 5 5 ✅ (over ~1000 msec)
     //
-    antares.addRenderer(
-      ({ action: { payload: digit } }) => {
+    // prettier-ignore
+    agent.addRenderer(({ action: { payload: digit } }) => {
         append("  " + numChar[digit] + " ")
         return repeatTheNumber(digit)
       },
-      { name: "repeater", concurrency }
+      { name: "repeater", actionsOfType: "digit", concurrency }
     )
 
     const inputStream = interactive ? getUserInputFromStdin() : simulatedUserInput(numArray)
@@ -57,7 +53,7 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
       // for each keypress, process it
       inputStream.subscribe(
         n => {
-          result = antares.process({ type: "digit", payload: n })
+          result = agent.process({ type: "digit", payload: n })
         },
         undefined,
         () => result && result.completed.then(resolve)
