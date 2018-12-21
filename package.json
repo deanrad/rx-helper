@@ -1,6 +1,6 @@
 {
   "name": "antares-protocol",
-  "version": "2.13.1",
+  "version": "2.14.0",
   "description": "Antares is an architecture and protocol for real-time web apps.",
   "keywords": [],
   "sideEffects": false,
