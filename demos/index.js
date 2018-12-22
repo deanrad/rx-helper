@@ -7,7 +7,7 @@
 //
 //          # Substitutes an Observable taken from user input for a hard-coded one
 //          cross-env DEMO=Speak INTERACTIVE=1 npm run demos
-// See also: npm run demos:test (uses jest)
+// See also: npm run test:demos
 // See alse: ./configs.js
 const Demos = require("./configs")
 const process = require("process")

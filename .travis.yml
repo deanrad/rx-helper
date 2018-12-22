@@ -16,7 +16,7 @@ os:
   - linux
   - osx
 script:
-  - npm run build && echo "just once bypass CI test"
+  - npm run test:ci
 after_success:
   - npm run report-coverage
   - npm run semantic-release

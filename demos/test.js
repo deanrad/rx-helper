@@ -42,7 +42,7 @@ const append = s => {
 const log = appendLine
 
 jest.setTimeout(30000)
-describe("All Demos", () => {
+describe.skip("All Demos", () => {
   beforeEach(() => {
     output = ""
   })
