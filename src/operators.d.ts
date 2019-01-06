@@ -1,6 +1,5 @@
 import { Observable } from "rxjs";
 import { StreamingGetOptions } from "./types";
-import { Operation } from "fast-json-patch";
 /**
  * Delays the invocation of a function, for the number of milliseconds given.
  * Produces an Observable of the thunk's invocation and subsequent return value.
@@ -16,10 +15,6 @@ export declare const after: (ms: number, thunk: Function, name?: string | undefi
  * the end - which is no worse than normal AJAX performance.
  */
 export declare const ajaxStreamingGet: (opts: StreamingGetOptions) => Observable<any>;
-/**
- * Turns a stream of objects into a stream of the patches between them.
- */
-export declare const jsonPatch: () => <T>(source: Observable<T>) => Observable<Operation[]>;
 /**
  * Turns an Observable into a stream of Apollo Query-style props {data, loading, error}
  * Takes an optional reducer (requires an initial value) with which to aggregate multiple
