@@ -1,43 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Agent #process return value behavior errors in filters should propogate up to the caller of #process 1`] = `"whoops!"`;
+exports[`Agent #process behavior errors in filters should propogate up to the caller of #process 1`] = `"whoops!"`;
 
-exports[`Agent #process return value behavior should run filters in order 1`] = `
+exports[`Agent #process behavior should run filters in order 1`] = `
 Object {
   "double": 2.2,
   "inc": 1.1,
 }
 `;
 
-exports[`Agent Utilities jsonPatch operator should turn a stream of objects into a stream of RFC6902 patches 1`] = `
-Array [
-  Array [
-    Object {
-      "op": "add",
-      "path": "/name",
-      "value": Object {
-        "first": "Albert",
-      },
-    },
-  ],
-  Array [
-    Object {
-      "op": "add",
-      "path": "/name/last",
-      "value": "Einstein",
-    },
-  ],
-  Array [
-    Object {
-      "op": "replace",
-      "path": "/name",
-      "value": "Banana",
-    },
-  ],
-]
-`;
-
-exports[`Agent Utilities toProps with a reducer should handle an observable of >1 value 1`] = `
+exports[`Utilities toProps with a reducer should handle an observable of >1 value 1`] = `
 Array [
   Object {
     "loading": true,
@@ -58,7 +30,7 @@ Array [
 ]
 `;
 
-exports[`Agent Utilities toProps with no reducer should handle a 1 value observable that errors 1`] = `
+exports[`Utilities toProps with no reducer should handle a 1 value observable that errors 1`] = `
 Array [
   Object {
     "loading": true,
@@ -71,7 +43,7 @@ Array [
 ]
 `;
 
-exports[`Agent Utilities toProps with no reducer should handle a multi-value observable that errors 1`] = `
+exports[`Utilities toProps with no reducer should handle a multi-value observable that errors 1`] = `
 Array [
   Object {
     "loading": true,
@@ -88,7 +60,7 @@ Array [
 ]
 `;
 
-exports[`Agent Utilities toProps with no reducer should handle an observable of >1 value 1`] = `
+exports[`Utilities toProps with no reducer should handle an observable of >1 value 1`] = `
 Array [
   Object {
     "loading": true,
@@ -109,7 +81,7 @@ Array [
 ]
 `;
 
-exports[`Agent Utilities toProps with no reducer should handle an observable of 1 value 1`] = `
+exports[`Utilities toProps with no reducer should handle an observable of 1 value 1`] = `
 Array [
   Object {
     "loading": true,

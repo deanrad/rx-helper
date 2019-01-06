@@ -72,31 +72,6 @@ function oboeGet(opts: StreamingGetOptions): Observable<any> {
 }
 
 /**
- * Turns a stream of objects into a stream of the patches between them.
- */
-export const jsonPatch = () => <T>(source: Observable<T>) =>
-  new Observable<Operation[]>(observer => {
-    let lastSeen: any = {}
-
-    return source.subscribe({
-      next(newObj) {
-        const patch = compare(lastSeen, newObj)
-        if (patch.length === 0) return
-
-        // TODO allow for tests to be included in the patches that assert the old values
-        observer.next(patch)
-        lastSeen = newObj
-      },
-      error(err) {
-        observer.error(err)
-      },
-      complete() {
-        observer.complete()
-      }
-    })
-  })
-
-/**
  * Turns an Observable into a stream of Apollo Query-style props {data, loading, error}
  * Takes an optional reducer (requires an initial value) with which to aggregate multiple
  * next notifications, otherwise defaults to replacing the `data` property.

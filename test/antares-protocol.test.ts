@@ -9,7 +9,6 @@ import {
   after,
   agentConfigFilter,
   AgentConfig,
-  jsonPatch,
   toProps,
   ajaxStreamingGet,
   randomId
@@ -227,12 +226,12 @@ describe("Agent", () => {
             expect.assertions(1)
             const seenNums = []
             agent.filter("num", ({ action: { payload } }) => seenNums.push(payload))
-            agent.on("start", () => from([1,2,3]), {type: 'num'})
-            agent.on("start", () => from([7,8,9]), {name: 'notseen'})
+            agent.on("start", () => from([1, 2, 3]), { type: "num" })
+            agent.on("start", () => from([7, 8, 9]), { name: "notseen" })
 
-            const result = agent.process({type: "start"})
+            const result = agent.process({ type: "start" })
             return result.completed.then(() => {
-              expect(seenNums).toEqual([1,2,3])
+              expect(seenNums).toEqual([1, 2, 3])
             })
           })
         })
@@ -512,12 +511,15 @@ describe("Agent", () => {
           expect(result.completed === result.completed).toBeTruthy()
 
           return result.completed.then(() => {
-            return result.completed.then(() => {
-              expect(timesCalled).toEqual(1)
-            }).then(() => {
-              // LEFTOFF this nested call to .inc reruns the renderer
-              return result.completed.inc.then(() => {
+            return result.completed
+              .then(() => {
                 expect(timesCalled).toEqual(1)
+              })
+              .then(() => {
+                // LEFTOFF this nested call to .inc reruns the renderer
+                return result.completed.inc.then(() => {
+                  expect(timesCalled).toEqual(1)
+                })
               })
           })
         })
@@ -647,7 +649,9 @@ describe("Utilities", () => {
     describe("second argument", () => {
       let c
       // a function incrementing c
-      const incrementVar = () => { return ++c }
+      const incrementVar = () => {
+        return ++c
+      }
 
       beforeEach(() => {
         c = 0
@@ -660,7 +664,7 @@ describe("Utilities", () => {
           expect(value).toEqual(1.11)
         })
       })
-      it('does nothing unless subscribed to', async () => {
+      it("does nothing unless subscribed to", async () => {
         // An Observable of the incrementVar being called in 100msec
         // and its subscription. If we dont subscribe, the
         // 100msec will never start tic
@@ -669,7 +673,7 @@ describe("Utilities", () => {
         await timer(50).toPromise()
         expect(c).toEqual(0)
       })
-      it('does work if subscribed to', async () => {
+      it("does work if subscribed to", async () => {
         let o = after(40, incrementVar)
 
         o.subscribe()
@@ -677,7 +681,7 @@ describe("Utilities", () => {
         await timer(50).toPromise()
         expect(c).toEqual(1)
       })
-      it('Will not be called and after will not notify of a value', async () => {
+      it("Will not be called and after will not notify of a value", async () => {
         let o = after(40, incrementVar)
         jest.setTimeout(100)
 
@@ -743,29 +747,30 @@ describe("Utilities", () => {
         it("should expand an array at a given key: items", () => {
           expect.assertions(1)
           // @ts-ignore
-          global.oboe = require('oboe')
+          global.oboe = require("oboe")
 
           const volume$ = ajaxStreamingGet({
             url: "https://www.googleapis.com/books/v1/volumes?q=quilting",
-            lib: 'oboe',
-            expandKey: 'items' // or '!items', or 'items[*]'
+            lib: "oboe",
+            expandKey: "items" // or '!items', or 'items[*]'
           })
 
-          return volume$.pipe(
-            toArray()
-          ).toPromise().then(volumes => {
-            expect(volumes.length).toEqual(10)
-          })
+          return volume$
+            .pipe(toArray())
+            .toPromise()
+            .then(volumes => {
+              expect(volumes.length).toEqual(10)
+            })
         })
         it("should find a singular item at a given key: items[0].title", () => {
           expect.assertions(1)
           // @ts-ignore
-          global.oboe = require('oboe')
+          global.oboe = require("oboe")
 
           const title$ = ajaxStreamingGet({
             url: "https://www.googleapis.com/books/v1/volumes?q=quilting",
-            lib: 'oboe',
-            expandKey: 'items[0].volumeInfo.title'
+            lib: "oboe",
+            expandKey: "items[0].volumeInfo.title"
           })
 
           return title$.toPromise().then(t => {
@@ -779,76 +784,80 @@ describe("Utilities", () => {
 
           const volume$ = ajaxStreamingGet({
             url: "https://www.googleapis.com/books/v1/volumes?q=quilting",
-            lib: 'rxjs',
-            expandKey: 'items'
+            lib: "rxjs",
+            expandKey: "items"
           })
 
-          return volume$.pipe(
-            toArray()
-          ).toPromise().then(volumes => {
-            expect(volumes.length).toEqual(10)
-          })
+          return volume$
+            .pipe(toArray())
+            .toPromise()
+            .then(volumes => {
+              expect(volumes.length).toEqual(10)
+            })
         })
       })
     })
   })
 
-  describe("jsonPatch operator", () => {
-    it("should turn a stream of objects into a stream of RFC6902 patches", async () => {
-      let sources = [
-        { name: { first: "Albert" } },
-        { name: { first: "Albert" } },
-        { name: { first: "Albert", last: "Einstein" } },
-        { name: "Banana" },
-        { name: "Banana" }
-      ]
-      let result = await from(sources)
-        .pipe(
-          jsonPatch(),
-          toArray()
-        )
-        .toPromise()
-      expect(result).toHaveLength(3)
-      expect(result).toMatchSnapshot()
-    })
-    it.skip("does not swallow errors", () => {})
-  })
-
-  describe('toProps', () => {
-    describe('with no reducer', () => {
+  describe("toProps", () => {
+    describe("with no reducer", () => {
       it("should handle an observable of 1 value", async () => {
         expect.assertions(1)
         const o = from(Promise.resolve(1.1))
-        const propObjects = await o.pipe(toProps(), toArray()).toPromise()
+        const propObjects = await o
+          .pipe(
+            toProps(),
+            toArray()
+          )
+          .toPromise()
         expect(propObjects).toMatchSnapshot()
       })
       it("should handle an observable of >1 value", async () => {
         expect.assertions(1)
         const o = of(1.1, 2.2)
-        const propObjects = await o.pipe(toProps(), toArray()).toPromise()
+        const propObjects = await o
+          .pipe(
+            toProps(),
+            toArray()
+          )
+          .toPromise()
         expect(propObjects).toMatchSnapshot()
       })
       it("should handle a 1 value observable that errors", async () => {
         expect.assertions(1)
-        const o = from(Promise.reject('foozle'))
-        const propObjects = await o.pipe(toProps(), toArray()).toPromise()
+        const o = from(Promise.reject("foozle"))
+        const propObjects = await o
+          .pipe(
+            toProps(),
+            toArray()
+          )
+          .toPromise()
         expect(propObjects).toMatchSnapshot()
       })
-    it("should handle a multi-value observable that errors", async () => {
+      it("should handle a multi-value observable that errors", async () => {
         expect.assertions(1)
-        const o = rxConcat(of(1), throwError('foo'))
-        const propObjects = await o.pipe(toProps(), toArray()).toPromise()
+        const o = rxConcat(of(1), throwError("foo"))
+        const propObjects = await o
+          .pipe(
+            toProps(),
+            toArray()
+          )
+          .toPromise()
         expect(propObjects).toMatchSnapshot()
       })
     })
-    describe('with a reducer', () => {
+    describe("with a reducer", () => {
       it("should handle an observable of >1 value", async () => {
         const o = of(11, 22, 0)
-        const propObjects = await o.pipe(toProps((acc=0, obj) => acc+obj), toArray()).toPromise()
+        const propObjects = await o
+          .pipe(
+            toProps((acc = 0, obj) => acc + obj),
+            toArray()
+          )
+          .toPromise()
         expect(propObjects).toHaveLength(4) // begin, middle, end, no dupe objects
         expect(propObjects).toMatchSnapshot()
       })
-
     })
   })
   describe("randomId", () => {
