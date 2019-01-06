@@ -198,6 +198,15 @@ describe("Agent", () => {
             expect(agent.rendererNames).toContain("renderer_1")
           })
 
+          it("will assign new name for existing renderer", () => {
+            expect(agent.rendererNames).not.toContain("foo")
+            expect(agent.rendererNames).not.toContain("foo_1")
+            agent.on('foo', () => 3.141)
+            agent.on('foo', () => 2.718)
+            expect(agent.rendererNames).toContain("foo")
+            expect(agent.rendererNames).toContain("foo_1")
+          })
+
           it("cannot be a reserved name", () => {
             expect.assertions(reservedSubscriberNames.length)
             reservedSubscriberNames.forEach(badName => {

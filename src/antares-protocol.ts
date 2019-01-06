@@ -265,16 +265,7 @@ export class Agent implements ActionProcessor {
       }
     }
 
-    const nameBase: string =
-      //@ts-ignore
-      config.actionsOfType && config.actionsOfType.substring
-        ? config.actionsOfType.toString()
-        : "filter"
-    const name =
-      config.name ||
-      (this.filterNames.includes(nameBase) || nameBase === "filter"
-        ? `${nameBase}_${++this._subscriberCount}`
-        : nameBase)
+    const name = this.uniquifyName(config, "filter")
     this.filterNames.push(name)
     this.allFilters.set(name, _filter)
 
@@ -290,16 +281,7 @@ export class Agent implements ActionProcessor {
   addRenderer(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
     validateConfig(config)
 
-    const nameBase: string =
-      //@ts-ignore
-      config.actionsOfType && config.actionsOfType.substring
-        ? config.actionsOfType.toString()
-        : "renderer"
-    const name =
-      config.name ||
-      (this.filterNames.includes(nameBase) || nameBase === "renderer"
-        ? `${nameBase}_${++this._subscriberCount}`
-        : nameBase)
+    const name = this.uniquifyName(config, "renderer")
 
     const xform = streamTransformerFrom(config)
     this.rendererNames.push(name)
@@ -401,6 +383,21 @@ export class Agent implements ActionProcessor {
    */
   subscribe(action$: Observable<Action>, context?: Object) {
     return action$.subscribe(action => this.process(action, context))
+  }
+
+  private uniquifyName(config: SubscriberConfig, type: "renderer" | "filter") {
+    const nameBase =
+      config.name ||
+      //@ts-ignore
+      (config.actionsOfType && config.actionsOfType.substring
+        ? config.actionsOfType.toString()
+        : type)
+    const name =
+      this[type + "Names"].includes(nameBase) || nameBase === type
+        ? `${nameBase}_${++this._subscriberCount}`
+        : nameBase
+
+    return name
   }
 }
 
