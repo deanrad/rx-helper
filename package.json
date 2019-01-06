@@ -104,7 +104,6 @@
     }
   },
   "dependencies": {
-    "fast-json-patch": "^2.0.6"
   },
   "peerDependencies": {
     "rxjs": ">=6.1.0"

@@ -2,8 +2,7 @@ import { Observable, from, of } from "rxjs"
 import { ajax } from "rxjs/ajax"
 import { StreamingGetOptions } from "./types"
 import { timer } from "rxjs"
-import { map, delay, flatMap } from "rxjs/operators"
-import { compare, Operation } from "fast-json-patch"
+import { map, flatMap } from "rxjs/operators"
 
 /**
  * Delays the invocation of a function, for the number of milliseconds given.
