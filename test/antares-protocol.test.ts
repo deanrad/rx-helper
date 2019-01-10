@@ -498,6 +498,33 @@ describe("Agent", () => {
         // didn't change
         expect(await result.completed.later).toEqual(2)
       })
+      it("Does not cause rerenders when accessing #completed multiple times", () => {
+        expect.assertions(3)
+
+        let timesCalled = 0
+        agent.on("inc", () =>
+          after(0, () => {
+            ++timesCalled
+          })
+        )
+        const result = agent.process({ type: "inc" })
+
+        // expect same object is returned each time property is referenced
+        expect(result.completed === result.completed).toBeTruthy()
+
+        return result.completed.then(() => {
+          return result.completed
+            .then(() => {
+              expect(timesCalled).toEqual(1)
+            })
+            .then(() => {
+              // LEFTOFF this nested call to .inc reruns the renderer
+              return result.completed.inc.then(() => {
+                expect(timesCalled).toEqual(1)
+              })
+            })
+        })
+      })
     })
 
     describe("Behavior", () => {
