@@ -1,6 +1,4 @@
 let configs = {
-  writeFileAsFilter: [require("./01-write-file"), { processAs: "filter" }],
-  writeFileAsRenderer: [require("./01-write-file"), { processAs: "renderer" }],
   parallelFruit: [
     require("./03-concurrent-fruit"),
     { concurrency: "parallel", outer: 280, inner: 50, pause: 280 }
@@ -8,7 +6,7 @@ let configs = {
   serialFruit: [
     require("./03-concurrent-fruit"),
     { concurrency: "serial", outer: 280, inner: 50, pause: 280 }
-],
+  ],
   cutoffFruit: [
     require("./03-concurrent-fruit"),
     { concurrency: "cutoff", outer: 280, inner: 50, pause: 280 }
@@ -17,19 +15,7 @@ let configs = {
     require("./03-concurrent-fruit"),
     { concurrency: "mute", outer: 280, inner: 50, pause: 280 }
   ],
-  batchedWriteFile: [
-    require("./04-batched-write"),
-    {
-      count: 3000,
-      file: "./demos/scratch/04-batched.yml",
-      xform: "s => s.pipe(bufferCount(1000), map(consolidateWriteActions))"
-    }
-  ],
-  unBatchedWriteFile: [
-    require("./04-batched-write"),
-    { count: 3000, file: "./demos/scratch/04-unbatched.yml", xform: "s => s" }
-  ],
-  cheatCode: [require("./05-cheat-code"), { xform: "s => s /* TODO test timing */" }],
+  cheatCode: [require("./05-cheat-code"), {}],
   sessionTimeout: [
     require("./06-session-timeout"),
     { inactivityInterval: 300, warningInterval: 100 }

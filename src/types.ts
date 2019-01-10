@@ -12,9 +12,7 @@ export interface AgentConfig {
    */
   agentId?: any
   /**
-   * If true, indicates that this Agent is willing to
-   * forward actions out, if they have `meta.push` set to true. More
-   * appropriate for a server, than a client.
+   * If true, indicates that this Agent is willing to forward actions to others.
    */
   relayActions?: boolean
   [key: string]: any
@@ -29,8 +27,6 @@ export interface ActionProcessor {
   subscribe(action$: Observable<Action>, context?: Object): Subscription
   filter(actionFilter: ActionFilter, renderer: Subscriber, config?: SubscriberConfig): Subscription
   on(actionFilter: ActionFilter, renderer: Subscriber, config?: SubscriberConfig): Subscription
-  addFilter(subscriber: Subscriber, config: SubscriberConfig): Subscription
-  addRenderer(subscriber: Subscriber, config: SubscriberConfig): Subscription
 }
 
 /**
@@ -38,9 +34,7 @@ export interface ActionProcessor {
  * receives as its argument the ActionStreamItem, typically to use
  * the payload of the `action` property to cause some side-effect.
  */
-export interface Subscriber {
-  (item: ActionStreamItem): any
-}
+export type Subscriber = Filter | Renderer
 
 export interface Action {
   type: string
@@ -52,9 +46,7 @@ export interface Action {
 export interface ActionStreamItem {
   action: Action
   context?: Object
-  results: Map<string, any>
-  renderBeginnings: Map<string, Subject<boolean>>
-  renderEndings: Map<string, Subject<boolean>>
+  results?: Map<string, any>
 }
 
 /**
@@ -81,8 +73,15 @@ export enum Concurrency {
   mute = "mute"
 }
 
-export interface StreamTransformer {
-  (stream: Observable<ActionStreamItem>): Observable<ActionStreamItem>
+export interface Renderer {
+  (item: ActionStreamItem): any
+}
+export interface Filter {
+  (item: ActionStreamItem): any
+}
+
+export interface RendererPromiser {
+  (action: Action, context?: any): Promise<any>
 }
 
 export interface SubscriberConfig {
@@ -90,8 +89,6 @@ export interface SubscriberConfig {
   name?: string
   /** The concurrency mode to use. Governs what happens when renderings from this renderer overlap. */
   concurrency?: Concurrency
-  /** Advanced feature - a function allowing you to render on a stream derived from the ActionStream, such as a batched one. */
-  xform?: StreamTransformer
   /** If true, the Observable returned by the renderer will be fed to `agent.subscribe`, so its actions are `process`ed. */
   processResults?: Boolean
   /** A string, regex, or boolean function controlling which actions this renderer is configured to run upon. */
@@ -100,7 +97,11 @@ export interface SubscriberConfig {
   type?: string
 }
 
-export type ActionFilter = string | RegExp | ((asi: ActionStreamItem) => boolean)
+export type ActionFilter = string | RegExp | Predicate
+
+export interface Predicate {
+  (asi: ActionStreamItem): boolean
+}
 
 /**
  * Your contract for what is returned from calling #process.

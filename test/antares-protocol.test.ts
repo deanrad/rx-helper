@@ -1,10 +1,11 @@
 /* tslint:disable  */
-import { of, from, empty, interval, timer, throwError, concat as rxConcat } from "rxjs"
-import { delay, map, first, toArray, take, concat, concatMap, scan, tap } from "rxjs/operators"
+import { Observable, Subscription, of, from, empty, timer, throwError, concat } from "rxjs"
+import { map, first, toArray, scan, tap } from "rxjs/operators"
 import {
   Action,
   Agent,
   Concurrency,
+  Subscriber,
   reservedSubscriberNames,
   after,
   agentConfigFilter,
@@ -14,16 +15,82 @@ import {
   randomId
 } from "../src/antares-protocol"
 
-// a mutable variable, reset between tests
+let seen: Array<Action> = []
+let callCount = 0
+let blowupCount = 0
 let counter = 0
-let seenActions = []
+
+// Synchronously uppdates our resettable counter.
+// Returns immediately completed observable
+const callCounter: Subscriber = ({ action }) => {
+  ++callCount
+  return empty()
+}
+
+// Returns next-callstack completed observable
+const deferredCallCounter: Subscriber = ({ action }) => {
+  return new Observable(notify => {
+    setTimeout(() => {
+      callCount++
+      // The combo of next and complete will cause the Promise for its
+      // completion to resolve/await to the callCount
+      notify.next(callCount)
+      notify.complete()
+    }, 0)
+  })
+}
+
+// @ts-ignore
+const delayedCall = (msec: number) => ({ action: Action }) => {
+  callCount++
+  return timer(msec).pipe(map(() => callCount))
+}
+
+const peekOnly = () => {
+  return of(callCount)
+}
+
+const seenFilter: Subscriber = ({ action }) => {
+  seen.push(action)
+  return action
+}
+
+// Updates our resettable array, and returns the action just seen
+const seenAdder: Subscriber = ({ action }) => {
+  seen.push(action)
+  return of(action)
+}
+
+// Dies in a fire upon invocation
+const blowUpOnRender: Subscriber = ({ action }) => {
+  blowupCount++
+  throw new Error("Cant render this")
+}
+
+// Dies in a fire upon subscription
+const blowUpOnSubscribe: Subscriber = ({ action }) =>
+  new Observable(notify => {
+    blowupCount++
+    throw "Recipe threw when subscribed"
+  })
+
+const returnsObsErr: Subscriber = ({ action }) => throwError("Notified of Error")
+
+const handleError = (obj: Promise<any>, field: any, handler: Function) => {
+  // obj.catch(handler)
+  // @ts-ignore
+  obj[field] && obj[field].catch(handler)
+}
 
 describe("Agent", () => {
   let agent: Agent
 
   beforeEach(() => {
-    counter = 0
     agent = new Agent()
+    seen = []
+    counter = 0
+    callCount = 0
+    blowupCount = 0
   })
 
   // Sanity check
@@ -49,12 +116,12 @@ describe("Agent", () => {
       }).toThrow()
     })
 
-    describe("nextOfType", () => {
+    describe("nextActionOfType", () => {
       it("should be a promise for the first action matching the type", () => {
         expect.assertions(1)
         const agent = new Agent()
-        const { nextOfType } = agent
-        const seenIt = nextOfType("test/foo")
+        const { nextActionOfType } = agent
+        const seenIt = nextActionOfType("test/foo")
 
         // fails without calling process
         const matcher = { type: "test/foo" }
@@ -66,12 +133,12 @@ describe("Agent", () => {
       })
     })
 
-    describe("allOfType", () => {
+    describe("actionsOfType", () => {
       it("should be an Observable of matching actions", () => {
         const agent = new Agent()
-        const { allOfType } = agent
+        const { actionsOfType } = agent
         let counter = 0
-        allOfType("test/foo").subscribe(() => counter++)
+        actionsOfType("test/foo").subscribe(() => counter++)
 
         agent.process({ type: "test/foo" })
         agent.process({ type: "notCaught" })
@@ -90,7 +157,7 @@ describe("Agent", () => {
 
         // set it up to scan over the action stream, storing payloads
         agent
-          .allOfType(() => true)
+          .actionsOfType(() => true)
           .pipe(
             scan(builder, []),
             tap(newState => {
@@ -120,17 +187,13 @@ describe("Agent", () => {
     })
   })
 
-  describe("#addFilter", () => {
-    describe("arguments", () => {
-      describe("function argument", () => {
-        it("will be called synchronously when an action is processed", () => {
-          const spy = jest.fn()
-          agent.addFilter(spy)
-          expect(spy).not.toHaveBeenCalled()
-          agent.process(anyAction)
-          expect(spy).toHaveBeenCalled()
-        })
-      })
+  describe("#filter", () => {
+    it("should alias addFilter, reversing arguments", () => {
+      let counter = 0
+      agent.filter("foo", () => counter++)
+      agent.process({ type: "foo" })
+      agent.process({ type: "not" })
+      expect(counter).toEqual(1)
     })
   })
 
@@ -156,16 +219,6 @@ describe("Agent", () => {
     })
   })
 
-  describe("#filter", () => {
-    it("should alias addFilter, reversing arguments", () => {
-      let counter = 0
-      agent.filter("foo", () => counter++)
-      agent.process({ type: "foo" })
-      agent.process({ type: "not" })
-      expect(counter).toEqual(1)
-    })
-  })
-
   describe("#addFilter or #addRenderer", () => {
     describe("arguments", () => {
       describe("function argument", () => {
@@ -177,34 +230,34 @@ describe("Agent", () => {
       describe("config argument", () => {
         describe("name", () => {
           it("will be filter_N if not given for a filter", () => {
-            expect(agent.filterNames).not.toContain("filter_1")
+            expect(agent.filterNames()).not.toContain("filter_1")
             agent.addFilter(() => 3.141)
-            expect(agent.filterNames).toContain("filter_1")
+            expect(agent.filterNames()).toContain("filter_1")
           })
 
           it("will be the actionType filter if given", () => {
-            expect(agent.rendererNames).not.toContain("autonamer")
+            expect(agent.rendererNames()).not.toContain("autonamer")
             agent.on("autonamer", () => null)
-            expect(agent.rendererNames).toContain("autonamer")
+            expect(agent.rendererNames()).toContain("autonamer")
 
-            expect(agent.filterNames).not.toContain("autonamer")
+            expect(agent.filterNames()).not.toContain("autonamer")
             agent.filter("autonamer", () => null)
-            expect(agent.filterNames).toContain("autonamer")
+            expect(agent.filterNames()).toContain("autonamer")
           })
 
           it("will be renderer_N if not given for a renderer", () => {
-            expect(agent.rendererNames).not.toContain("renderer_1")
+            expect(agent.rendererNames()).not.toContain("renderer_1")
             agent.addRenderer(() => 3.141)
-            expect(agent.rendererNames).toContain("renderer_1")
+            expect(agent.rendererNames()).toContain("renderer_1")
           })
 
           it("will assign new name for existing renderer", () => {
-            expect(agent.rendererNames).not.toContain("foo")
-            expect(agent.rendererNames).not.toContain("foo_1")
-            agent.on('foo', () => 3.141)
-            agent.on('foo', () => 2.718)
-            expect(agent.rendererNames).toContain("foo")
-            expect(agent.rendererNames).toContain("foo_1")
+            expect(agent.rendererNames()).not.toContain("foo")
+            expect(agent.rendererNames()).not.toContain("foo_1")
+            agent.on("foo", () => 3.141)
+            agent.on("foo", () => 2.718)
+            expect(agent.rendererNames()).toContain("foo")
+            expect(agent.rendererNames()).toContain("foo_1")
           })
 
           it("cannot be a reserved name", () => {
@@ -225,7 +278,6 @@ describe("Agent", () => {
             // run through both filters
             const result = agent.process({ type: "helloEcho" })
 
-            // its not enumerable, currently, but its there
             expect(result.helloEcho).toEqual("echo 1")
             expect(result["helloEcho_1"]).toEqual("echo 2")
           })
@@ -259,74 +311,30 @@ describe("Agent", () => {
     })
   })
 
+  describe("#addFilter", () => {
+    describe("arguments", () => {
+      describe("function argument", () => {
+        it("will be called synchronously when an action is processed", () => {
+          const spy = jest.fn()
+          agent.addFilter(spy)
+          expect(spy).not.toHaveBeenCalled()
+          agent.process(anyAction)
+          expect(spy).toHaveBeenCalled()
+        })
+      })
+    })
+  })
+
   describe("#addRenderer", () => {
     describe("arguments", () => {
       describe("first argument", () => {
         it.skip("should return an Observable", () => {})
         it.skip("may return null or an object to be cast to Observable", () => {})
       })
+
       describe("config argument", () => {
-        describe("concurrency", () => {
-          it.skip("should run in parallel mode (shown in demo)", () => {})
-          it("should run in series mode", () => {
-            expect.assertions(2)
-            // This renderer takes 10msec to complete, and adds increment to counter
-            agent.addRenderer(() => after(10, () => (counter += 1)), {
-              concurrency: Concurrency.serial,
-              name: "inc"
-            })
-
-            let result1 = agent.process(anyAction)
-            let result2 = agent.process(anyAction)
-            return result1.completed
-              .then(() => {
-                expect(counter).toEqual(1)
-              })
-              .then(() => result2.completed)
-              .then(() => {
-                expect(counter).toEqual(2)
-              })
-          })
-
-          it("should run in cutoff mode", () => {
-            let increment = 0
-            // each action raises the increment
-            agent.addFilter(() => ++increment)
-
-            // This renderer takes time to complete, and adds increment to counter
-            agent.addRenderer(() => after(40, () => (counter += increment)), {
-              concurrency: Concurrency.cutoff
-            })
-
-            // If we process 2 actions fast enough, we should cutoff the first
-            let result = agent.process(anyAction) // filter makes increment 1
-            result = agent.process(anyAction) // filter makes increment 2
-
-            return result.completed.then(() => {
-              expect(counter).toEqual(0 + 2)
-            })
-          })
-
-          it("should run in mute mode", () => {
-            let increment = 0
-            // each action raises the increment
-            agent.addFilter(() => ++increment)
-
-            // This renderer takes time to complete, and adds increment to counter
-            agent.addRenderer(() => after(40, () => (counter += increment)), {
-              concurrency: Concurrency.mute
-            })
-
-            // If we process 2 actions fast enough, we should cutoff the first
-            let result1 = agent.process(anyAction) // filter makes increment 1
-
-            return result1.completed.then(() => {
-              expect(counter).toEqual(0 + 1)
-            })
-          })
-        })
         describe("processResults", () => {
-          it("should enable returned actions from renderer to go through antares.process", () => {
+          it("should enable returned actions from renderer to go through agent.process", () => {
             expect.assertions(1)
             agent.addRenderer(
               ({ action }) => {
@@ -351,10 +359,7 @@ describe("Agent", () => {
           })
         })
         describe("validation", () => {
-          it.skip("should not accept xform and actionType argument", () => {})
-        })
-        describe("xform", () => {
-          it.skip("accepts a function that modifies the Action Stream", () => {})
+          it.skip("should not allow bad configs", () => {})
         })
         describe("actionsOfType", () => {
           it("should only run the render on matching actions (string)", () => {
@@ -417,177 +422,300 @@ describe("Agent", () => {
   })
 
   describe("#process", () => {
-    beforeEach(() => {
-      counter = 0
-      seenActions = []
-      agent.addFilter(({ action }) => seenActions.push(action))
-    })
-
-    describe("arguments", () => {
-      describe("action", () => {
-        it("may be an action", () => {
-          expect.assertions(0)
-          agent.process(anyAction)
-        })
-        describe("Observable<Action>", () => {
-          const makeAction = n => ({ type: "n", payload: n })
-          it("may be an observable", () => {
-            const actions = [1, 2].map(makeAction)
-            agent.subscribe(from(actions))
-            expect(seenActions).toEqual(actions)
-          })
-          it.skip("will continue to process others if it dies", () => {
-            expect.assertions(1)
-            const errorsIn100 = interval(100).pipe(
-              take(2),
-              map(makeAction),
-              concat(throwError("Boom"))
-            )
-            agent.subscribe(errorsIn100)
-          })
-        })
+    describe("First argument", () => {
+      it("Should be a Flux Standard Action", () => {
+        expect.assertions(0)
+        agent.process(anyAction)
       })
-      describe("context", () => {
-        it.skip("can be any object to be available to renderers", () => {})
+    })
+    describe("Second argument", () => {
+      it("May be an object ", () => {
+        expect.assertions(0)
+        const context = {} // such as an express request
+        agent.process(anyAction, context)
       })
     })
 
-    describe("return value", () => {
-      it("should be a superset of the action", () => {
-        expect.assertions(1)
+    describe("Return Value", () => {
+      it("Has the properties of the action", () => {
         const result = agent.process(anyAction)
         expect(result).toMatchObject(anyAction)
       })
+      it("Has each filters result under its name", () => {
+        agent.addFilter(seenFilter, { name: "seen" })
+        const results = agent.process(anyAction)
+        expect(results.seen).toMatchObject(anyAction)
+      })
+      it("Has render results as properties under #completed", async () => {
+        // Run on every action
+        agent.on(() => true, peekOnly, { name: "peek" })
+        agent.on(() => true, ({ action }) => action, { name: "seen" })
+        agent.on(() => true, deferredCallCounter, { name: "later" })
+        agent.on(() => true, delayedCall(100), { name: "molater" })
+        agent.on(() => true, () => Promise.resolve(5), { name: "promise" })
+        agent.on(() => true, () => "the0ry", { name: "string" })
+        agent.on(() => true, () => 2.71828, { name: "num" })
+        agent.on(() => true, () => [3, 1, "2!"], { name: "ary" })
+        agent.on(() => false, () => of(undefined), { name: "notrun" })
 
-      it("should have a field for each filter", () => {
-        expect.assertions(8)
-
-        const firstRetVal = 1
-        const secondRetVal = "abc123"
-        agent.addFilter(() => firstRetVal)
-        agent.addFilter(() => secondRetVal, { name: "_id" })
-
+        const anyAction = { type: "oOo" }
+        // Call #process. Result Duck types the action
         const result = agent.process(anyAction)
+        expect(result).toMatchObject(anyAction)
 
-        // Any way u want, u got it
-        const { filter_1, _id } = result
+        // Duck types a Promise for all renderer's completion
+        expect(result.completed).toHaveProperty("then")
+        expect(result.completed).toHaveProperty("catch")
 
-        expect(filter_1).toEqual(firstRetVal)
-        expect(result["filter_1"]).toEqual(firstRetVal)
-        expect(result.filter_1).toEqual(firstRetVal)
-        expect(result).toHaveProperty("filter_1", firstRetVal)
+        // All results accessible via await result.completed
+        let completedResult = await result.completed
 
-        expect(_id).toEqual(secondRetVal)
-        expect(result["_id"]).toEqual(secondRetVal)
-        expect(result._id).toEqual(secondRetVal)
-        expect(result).toHaveProperty("_id", secondRetVal)
+        // the successful ones
+        expect(completedResult).toMatchObject({
+          peek: 0,
+          seen: anyAction,
+          later: 2,
+          molater: 2, // same binding
+          promise: 5,
+          string: "the0ry",
+          num: 2.71828,
+          ary: [3, 1, "2!"]
+        })
+
+        // the unrun ones
+        expect(completedResult).toHaveProperty("notrun", undefined)
+        // TODO and the unsuccessful ones
+
+        // The individual ones exist as Promises too
+        expect(result.completed.num).toHaveProperty("then")
+        expect(result.completed.promise).toHaveProperty("then")
+        expect(await result.completed.promise).toEqual(5)
+
+        // Safe to ask/await multiple times
+        expect(result.completed.later).toBe(result.completed.later)
+        expect(await result.completed.later).toEqual(2)
+
+        // didn't change
+        expect(await result.completed.later).toEqual(2)
       })
+    })
 
-      it("should not serialize result properties, allowing them to be complex", () => {
-        expect.assertions(1)
-        const retVal = "abc123"
-        agent.addFilter(() => retVal)
-        const serailizedResult = JSON.stringify(agent.process(anyAction))
-        expect(serailizedResult).not.toContain(retVal)
+    describe("Behavior", () => {
+      describe("Filters", () => {
+        it("Will raise exceptions synchronously (without unsubscribing)", () => {
+          agent.addFilter(blowUpOnRender)
+          expect(() => {
+            agent.process(anyAction)
+          }).toThrow()
+          expect(() => {
+            agent.process(anyAction)
+          }).toThrow()
+        })
+        it("may return values", () => {
+          agent.addFilter(seenFilter, { name: "seen" })
+          const results = agent.process(anyAction)
+          expect(results.seen).toMatchObject(anyAction)
+        })
+        it.skip("Will be run in order of their addition", () => {})
+        it.skip("Will not be awaited if they return a promise", () => {})
+        it.skip("May modify the actions", () => {})
       })
+      describe("Renderers", () => {
+        let goodSub1: Subscription
+        let goodSub2: Subscription
+        let badSubRender: Subscription
 
-      describe("#completed: (all triggered renderers are done)", () => {
-        it("is a Promise for all async renderers' results to have completed", () => {
-          expect.assertions(0)
-          agent.addRenderer(() => of("🐌").pipe(delay(100)), {
-            name: "snail",
-            concurrency: Concurrency.serial
-          })
-          agent.addRenderer(() => of("⚡").pipe(delay(20)), {
-            name: "quickie"
-          })
-
-          return agent.process(anyAction).completed
+        beforeEach(() => {
+          agent.addFilter(seenAdder, { name: "seenAdder" })
+          goodSub1 = agent.on(() => true, () => 3.14159, { name: "pi" })
+          goodSub2 = agent.on(() => true, () => after(0, () => 2.71828), { name: "e" })
         })
 
-        it.skip("is cached, not causing renderers to rerun", () => {
-          expect.assertions(3)
+        describe("Errors: Render/Subscribe-time", () => {
+          it("Errors appear as rejected completed properties, not synchronously", () => {
+            badSubRender = agent.on(() => true, blowUpOnRender, { name: "blowUpOnRender" })
 
-          let timesCalled = 0
-          agent.on("inc", () =>
-            after(0, () => {
-              ++timesCalled
+            const result = agent.process(anyAction)
+
+            // Available on the Promises
+            expect(result.completed.blowUpOnRender).rejects.toEqual(new Error("Cant render this"))
+            expect(result.completed).rejects.toEqual(new Error("Cant render this"))
+
+            // Prevents unhandled rejection error on completed and completed.blowUpOnRender
+            handleError(result.completed, "blowUpOnRender", () => {})
+
+            // Doesn't prevent filters from running
+            expect(seen).toContain(anyAction)
+            // Doesn't prevent renderers added before or after
+            expect(result.completed.pi).resolves.toEqual(3.14159)
+            expect(result.completed.e).resolves.toEqual(2.71828)
+          })
+
+          it("Will unsubscribe the renderer, processing no more actions through it", () => {
+            badSubRender = agent.on(() => true, blowUpOnRender, { name: "blowUpOnRender" })
+
+            const result = agent.process(anyAction)
+            expect(result.completed.blowUpOnRender).rejects.toEqual(new Error("Cant render this"))
+            expect(result.completed).rejects.toEqual(new Error("Cant render this"))
+
+            // Prevents unhandled rejection error on completed and completed.blowUpOnRender
+            handleError(result.completed, "blowUpOnRender", () => {})
+
+            expect(goodSub1).toHaveProperty("closed", false)
+            expect(goodSub2).toHaveProperty("closed", false)
+            expect(badSubRender).toHaveProperty("closed", true)
+
+            // no sign of renderer - next action will work
+            expect(agent.process(anyAction).completed).resolves.toEqual({ e: 2.71828, pi: 3.14159 })
+          })
+        })
+
+        describe("Errors: Returning an erroring Observable", () => {
+          it("Should return a rejected Promise, but keep the subscription", () => {
+            const sub = agent.on(() => true, returnsObsErr, { name: "returnsObsErr" })
+
+            const result = agent.process(anyAction)
+            expect(result.completed).rejects.toEqual("Notified of Error")
+            expect(sub).toHaveProperty("closed", false)
+            expect(agent.process(anyAction).completed).rejects.toEqual("Notified of Error")
+          })
+        })
+
+        describe("Return Value", () => {
+          it("Should return an Observable", () => {})
+          it("Will be handled if it throws an exception", () => {})
+          it("Can return a Promise", () => {})
+          it("Can return a single value - string", () => {})
+          it("Will send results back through the agent if processResults: true", async () => {
+            agent.on("sound", ({ action }) => ({ type: "echo", payload: action.payload }), {
+              processResults: true
             })
-          )
-          const result = agent.process({ type: "inc" })
 
-          // expect same object is returned each time property is referenced
-          expect(result.completed === result.completed).toBeTruthy()
+            const result = agent.process({ type: "sound", payload: "Hello" })
+            await result.completed
+            expect(seen.map(a => a.type)).toEqual(["sound", "echo"])
+          })
+          it("Will send results back through the agent if type given a value", async () => {
+            agent.on("sound", ({ action }) => of(action.payload), {
+              type: "echo"
+            })
 
-          return result.completed.then(() => {
-            return result.completed
-              .then(() => {
-                expect(timesCalled).toEqual(1)
-              })
-              .then(() => {
-                // LEFTOFF this nested call to .inc reruns the renderer
-                return result.completed.inc.then(() => {
-                  expect(timesCalled).toEqual(1)
-                })
-              })
+            const result = agent.process({ type: "sound", payload: "Hello" })
+            await result.completed
+            expect(seen.map(a => a.type)).toEqual(["sound", "echo"])
           })
         })
 
-        it("can get a promise for a renderers final value via completed.rendererName", () => {
-          expect.assertions(4)
+        describe("Concurrency Modes", () => {
+          const concurTester: Subscriber = ({ action }) =>
+            concat(
+              // a sync result (will never be cutoff)
+              of(`now: ${action.payload}`),
+              // a next-stack result
+              after(0, `start: ${action.payload}`),
+              // a delayed result
+              after(20, `end: ${action.payload}`)
+            )
 
-          // This 'renderer' returns an Observable which yields 3.14 after 20msec
-          agent.addRenderer(() => of(2.71828, 3.14).pipe(delay(20)), { name: "thing1" })
+          describe("Parallel", () => {
+            it("Should start renderings up asap", async () => {
+              agent.on("concur", concurTester, {
+                type: "result",
+                concurrency: Concurrency.parallel
+              })
 
-          // Renderer can return simple object
-          agent.addRenderer(() => 7, { name: "thing2" })
+              agent.process({ type: "concur", payload: 1 })
+              agent.process({ type: "concur", payload: 2 })
 
-          // Can return null or undefined
-          agent.addRenderer(() => null, { name: "nully" })
-
-          // Renderer returns an array
-          agent.addRenderer(() => ["---", "=--", "==-", "==="], { name: "progressBars" })
-
-          const result = agent.process(anyAction)
-          return result.completed.thing1
-            .then(r => {
-              expect(r).toEqual(3.14)
+              await after(50, null).toPromise()
+              expect(seen.map(a => a.payload)).toEqual([
+                1,
+                "now: 1",
+                2,
+                "now: 2",
+                "start: 1",
+                "start: 2",
+                "end: 1",
+                "end: 2"
+              ])
             })
-            .then(() =>
-              result.completed.thing2.then(r => {
-                expect(r).toEqual(7)
+          })
+          describe("Serial", () => {
+            it("Should enqueue renderings", async () => {
+              agent.on("concur", concurTester, {
+                type: "result",
+                concurrency: Concurrency.serial
               })
-            )
-            .then(() =>
-              result.completed.nully.then(r => {
-                expect(r).toEqual(null)
-              })
-            )
-            .then(() =>
-              result.completed.progressBars.then(r => {
-                expect(r).toEqual("===")
-              })
-            )
-        })
 
-        it("resolves if you have no renderers", () => {
-          expect.assertions(0)
-          const result = agent.process(anyAction)
-          return result.completed
-        })
+              agent.process({ type: "concur", payload: 1 })
+              agent.process({ type: "concur", payload: 2 })
 
-        it.skip("resolves even if you have a time-delayed renderer", () => {})
-        it.skip("resolves even if a renderer is cutoff by itself", () => {})
+              await after(50, null).toPromise()
+              expect(seen.map(a => a.payload)).toEqual([
+                1,
+                2,
+                "now: 1",
+                "start: 1",
+                "end: 1",
+                "now: 2",
+                "start: 2",
+                "end: 2"
+              ])
+            })
+          })
+          describe("Mute", () => {
+            it("Should prevent concurrent renderings", async () => {
+              agent.on("concur", concurTester, {
+                type: "result",
+                concurrency: Concurrency.mute
+              })
+
+              agent.process({ type: "concur", payload: 1 })
+              agent.process({ type: "concur", payload: 2 })
+
+              await after(50, null).toPromise()
+              expect(seen.map(a => a.payload)).toEqual([1, "now: 1", 2, "start: 1", "end: 1"])
+            })
+          })
+          describe("Cutoff", () => {
+            it("Should kill old renderings", async () => {
+              agent.on("concur", concurTester, {
+                type: "result",
+                concurrency: Concurrency.cutoff
+              })
+
+              agent.process({ type: "concur", payload: 1 })
+              agent.process({ type: "concur", payload: 2 })
+              after(10, () => {
+                agent.process({ type: "concur", payload: 3 })
+              }).subscribe()
+
+              await after(50, null).toPromise()
+
+              expect(seen.map(a => a.payload)).toEqual([
+                1,
+                "now: 1",
+                2,
+                "now: 2",
+                "start: 2",
+                3,
+                "now: 3",
+                "start: 3",
+                "end: 3"
+              ])
+            })
+          })
+        })
       })
     })
 
     describe("behavior", () => {
-      it("should emit the action on the allOfType Observable", () => {
+      it("should emit the action on the actionsOfType Observable", () => {
         expect.assertions(1)
 
         // Build up our assertion
         const assertion = agent
-          .allOfType(() => true)
+          .actionsOfType(() => true)
           .pipe(first())
           .toPromise()
           .then(action => {
@@ -642,68 +770,49 @@ describe("Agent", () => {
 })
 
 describe("Utilities", () => {
-  describe("after", () => {
-    it("should schedule the execution of a function later", () => {
-      expect.assertions(1)
+  describe.only("after", () => {
+    let c = 0
+    // a function incrementing c
+    const incrementVar = () => {
+      return ++c
+    }
 
-      let counter = 0
-      // prettier-ignore
-      const result = after(1, () => {
-        return ++counter
-      }).toPromise().then(() => expect(counter).toEqual(1))
-
-      return result
+    describe("First argument", () => {
+      it("should be the delay in msec", () => {})
     })
-
-    describe("second argument", () => {
-      let c
-      // a function incrementing c
-      const incrementVar = () => {
-        return ++c
-      }
-
-      beforeEach(() => {
-        c = 0
-      })
-
-      it("should create an Observable of its return value", () => {
-        expect.assertions(1)
-        const result = after(1, () => 1.11)
-        return result.toPromise().then(value => {
-          expect(value).toEqual(1.11)
+    describe("Second argument", () => {
+      describe("If an object", () => {
+        it("Becomes the value of the Observable", async () => {
+          const result = await after(1, () => 2.718).toPromise()
+          expect(result).toEqual(2.718)
         })
       })
-      it("does nothing unless subscribed to", async () => {
-        // An Observable of the incrementVar being called in 100msec
-        // and its subscription. If we dont subscribe, the
-        // 100msec will never start tic
-        let o = after(40, incrementVar)
+      describe("If a function", () => {
+        it("should schedule its execution later", async () => {
+          expect.assertions(1)
 
-        await timer(50).toPromise()
-        expect(c).toEqual(0)
+          let counter = 0
+          await after(1, () => counter++).toPromise()
+          expect(counter).toEqual(1)
+        })
+        describe("Optional name argument", () => {
+          it("Should be passed to the 2nd argument", async () => {
+            const namer = name => `Got ${name}`
+            const result1 = await after(1, namer, "foo").toPromise()
+            const result2 = await after(1, namer, "boo").toPromise()
+            expect(result1).toEqual("Got foo")
+            expect(result2).toEqual("Got boo")
+          })
+        })
       })
-      it("does work if subscribed to", async () => {
-        let o = after(40, incrementVar)
+    })
+    describe("Behavior", () => {
+      it("Does nothing unless subscribed to", async () => {
+        let o = after(1, incrementVar)
 
-        o.subscribe()
-
-        await timer(50).toPromise()
-        expect(c).toEqual(1)
-      })
-      it("Will not be called and after will not notify of a value", async () => {
-        let o = after(40, incrementVar)
-        jest.setTimeout(100)
-
-        let sub = o.subscribe()
-
-        // begin a cancellation before the end
-        after(20, () => sub.unsubscribe()).subscribe()
-
-        // await the value of c 50 msec from now
-        let result = await after(50, () => c).toPromise()
-
+        // didnt call subscribe or toPromise
+        await timer(10).toPromise()
         expect(c).toEqual(0)
-        expect(result).toEqual(0)
       })
     })
   })
@@ -845,7 +954,7 @@ describe("Utilities", () => {
       })
       it("should handle a multi-value observable that errors", async () => {
         expect.assertions(1)
-        const o = rxConcat(of(1), throwError("foo"))
+        const o = concat(of(1), throwError("foo"))
         const propObjects = await o
           .pipe(
             toProps(),

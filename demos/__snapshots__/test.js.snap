@@ -12,25 +12,6 @@ exports[`All Demos Cheat-Code Demo should run the test 1`] = `
 🕖 "
 `;
 
-exports[`All Demos File-rendering Demo should work asynchronously 1`] = `
-"> Got some data for file ./demos/scratch/actors.md: Jake Weary
-> Processing action Actor.save
-< Done processing - No more to do?
-OK Bye!
-"
-`;
-
-exports[`All Demos File-rendering Demo should work synchronously 1`] = `
-"> Got some data for file ./demos/scratch/actors.md: Jake Weary
-> Processing action Actor.save
-
-File now contains: - Jake Weary
-
-< Done processing - No more to do?
-OK Bye!
-"
-`;
-
 exports[`All Demos Fruit Concurrency Demo should abort in-flight renders in cutoff mode 1`] = `
 "Press a number to download a fruit (higher numbers take longer). 
   1️⃣ :🍓  2️⃣ :🍌  3️⃣ :🍉  4️⃣ :🍍  5️⃣ :🍏  6️⃣ :🍓  7️⃣ :🥝  8️⃣ :🍒  9️⃣ :🥑  

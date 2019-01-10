@@ -39,12 +39,18 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
     // > ⑤ 5 5 5 5 5 ✅ (over ~1000 msec)
     //
     // prettier-ignore
-    agent.addRenderer(({ action: { payload: digit } }) => {
-        append("  " + numChar[digit] + " ")
-        return repeatTheNumber(digit)
-      },
-      { name: "repeater", actionsOfType: "digit", concurrency }
-    )
+
+    // LEFTOFF we get a message that we called unsubscribe(), but is someone else subscribed; it doesn't truly cancel
+    agent.on("digit", ({ action }) => {
+      const digit = action.payload
+      // Show the digit pressed right away
+      append("  " + numChar[digit] + " ")
+
+      // Return the (cancelable) Observable
+      return repeatTheNumber(digit)
+    },
+    { name: "repeater", concurrency }
+  )
 
     const inputStream = interactive ? getUserInputFromStdin() : simulatedUserInput(numArray)
     // wait till our subscription has ended (and its last renderer)

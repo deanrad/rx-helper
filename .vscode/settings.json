@@ -2,5 +2,6 @@
   "files.insertFinalNewline": true,
   "files.autoSave": "afterDelay",
   "editor.formatOnSave": true,
-  "extensions.showRecommendationsOnlyOnDemand": true
+  "extensions.showRecommendationsOnlyOnDemand": true,
+  "debug.node.autoAttach": "off"
 }

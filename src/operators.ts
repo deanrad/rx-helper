@@ -2,7 +2,7 @@ import { Observable, from, of } from "rxjs"
 import { ajax } from "rxjs/ajax"
 import { StreamingGetOptions } from "./types"
 import { timer } from "rxjs"
-import { map, flatMap } from "rxjs/operators"
+import { map, mapTo, flatMap } from "rxjs/operators"
 
 /**
  * Delays the invocation of a function, for the number of milliseconds given.
@@ -11,8 +11,12 @@ import { map, flatMap } from "rxjs/operators"
  * @returns An Observable of what the thunk returns.
  * @example after(100, name => ({type: `Timeout-${name}`}), 'session_expired').subscribe(action => ...)
  */
-export const after = (ms: number, thunk: Function, name?: string): Observable<any> => {
-  return timer(ms).pipe(map(() => thunk(name)))
+export const after = (ms: number, objOrFn: any, name = "") => {
+  if (objOrFn instanceof Function) {
+    return timer(ms).pipe(map(() => objOrFn(name)))
+  }
+
+  return timer(ms).pipe(mapTo(objOrFn))
 }
 
 /**

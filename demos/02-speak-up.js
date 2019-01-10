@@ -24,10 +24,10 @@ module.exports = ({ Agent, log, config }) => {
   return doIt()
 
   async function doIt() {
-    let antares = new Agent()
+    let agent = new Agent()
 
     // This one speaks things
-    antares.addRenderer(speakIt, { concurrency })
+    agent.addRenderer(speakIt, { concurrency })
 
     // We don't await the processing of each action, but we
     // return a promise for the completion of all renderings
@@ -37,7 +37,7 @@ module.exports = ({ Agent, log, config }) => {
       .pipe(
         flatMap(action => {
           log(`> Processing action: Say.speak("${action.payload.toSpeak}")`)
-          let result = antares.process(action)
+          let result = agent.process(action)
           log("< Done Processing")
           return result.completed.then(() => log("< Done speaking"))
         })
@@ -110,12 +110,12 @@ module.exports = ({ Agent, log, config }) => {
             }
           ]
         })
-      ).pipe(
-        // expand these into their individual actions
-        flatMap(arr => from(arr)),
-        // space them out: zip 'waits' on its argument
-        //zip(interval(tickInterval * 2), action => action)
-      )
+    ).pipe(
+      // expand these into their individual actions
+      flatMap(arr => from(arr))
+      // space them out: zip 'waits' on its argument
+      //zip(interval(tickInterval * 2), action => action)
+    )
   }
 
   function startTick(log, interval) {

@@ -27,7 +27,7 @@
     "start": "npm run express",
     "test": "npm run test:ci",
     "jest": "jest --expand",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --no-coverage --watch",
     "test:unit": "npm run lint && jest --expand --no-coverage --no-cache",
     "test:ci": "npm run test:unit && npm run build && npm run size && npm run test:demos",
     "test:demos": "jest --expand --coverage false --testRegex=\"/demos/test\\.(ts|tsx|js)$\"",
@@ -54,7 +54,7 @@
   "size-limit": [
     {
       "path": "dist/antares-protocol.js",
-      "limit": "43 KB",
+      "limit": "23 KB",
       "webpack": false
     }
   ],

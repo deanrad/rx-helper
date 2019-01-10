@@ -1,5 +1,5 @@
-import { Observable, Subject, Subscription, asyncScheduler, from, of, empty } from "rxjs"
-import { observeOn, last, startWith, filter, map, first } from "rxjs/operators"
+import { Observable, Subject, Subscription, asyncScheduler, from, of } from "rxjs"
+import { observeOn, filter, map, first } from "rxjs/operators"
 import {
   ActionProcessor,
   Action,
@@ -7,10 +7,13 @@ import {
   ActionStreamItem,
   AgentConfig,
   Concurrency,
+  Filter,
+  Predicate,
   ProcessResult,
+  Renderer,
+  RendererPromiser,
   Subscriber,
-  SubscriberConfig,
-  StreamTransformer
+  SubscriberConfig
 } from "./types"
 
 import { getActionFilter } from "./lib"
@@ -24,7 +27,7 @@ export {
   ActionStreamItem,
   Concurrency,
   ProcessResult,
-  StreamTransformer,
+  RendererPromiser,
   Subscriber,
   SubscriberConfig
 } from "./types"
@@ -43,38 +46,53 @@ export { startWith, last, filter, delay, map, mapTo, scan } from "rxjs/operators
  */
 export class Agent implements ActionProcessor {
   public static configurableProps = ["agentId", "relayActions"]
-  public static VERSION = "2.14.1"
+  public static VERSION = "3.0.0"
 
   /**
    * The heart and circulatory system of an Agent is `action$`, its action stream. */
   private action$: Observable<ActionStreamItem>
-  filterNames: Array<string>
-  rendererNames: Array<string>
   [key: string]: any
-
-  /**
-   * Gets a promise for the next action matching the ActionFilter. */
-  // @ts-ignore
-  nextOfType: ((filter: ActionFilter) => Promise<Action>)
-  /**
-   * Gets an Observable of all actions matching the ActionFilter. */
-  // @ts-ignore
-  allOfType: ((filter: ActionFilter) => Observable<Action>)
 
   private _subscriberCount = 0
   private actionStream: Subject<ActionStreamItem>
   private allFilters: Map<string, Subscriber>
-  private activeRenders: Map<string, Subscription>
-  private activeResults: Map<string, Observable<any>>
+  private allRenderers: Map<string, RendererPromiser>
+
+  rendererNames() {
+    return Array.from(this.allRenderers.keys())
+  }
+  filterNames() {
+    return Array.from(this.allFilters.keys())
+  }
+
+  /**
+   * Gets an Observable of all actions matching the ActionFilter. */
+  actionsOfType(matcher: ActionFilter) {
+    const predicate = getActionFilter(matcher)
+    return this.action$.pipe(
+      filter(predicate),
+      map(({ action }) => action)
+    )
+  }
+
+  /**
+   * Gets a promise for the next action matching the ActionFilter. */
+  nextActionOfType(matcher: ActionFilter) {
+    const predicate = getActionFilter(matcher)
+    return this.action$
+      .pipe(
+        filter(predicate),
+        first(),
+        map(({ action }) => action)
+      )
+      .toPromise()
+  }
 
   constructor(config: AgentConfig = {}) {
     this.actionStream = new Subject<ActionStreamItem>()
     this.action$ = this.actionStream.asObservable()
-    this.filterNames = []
     this.allFilters = new Map<string, Subscriber>()
-    this.rendererNames = []
-    this.activeRenders = new Map<string, Subscription>()
-    this.activeResults = new Map<string, Observable<any>>()
+    this.allRenderers = new Map<string, RendererPromiser>()
 
     for (let key of Object.keys(config)) {
       Agent.configurableProps.includes(key) &&
@@ -85,33 +103,6 @@ export class Agent implements ActionProcessor {
           configurable: false
         })
     }
-
-    Object.defineProperty(this, "nextOfType", {
-      get: () => {
-        return (matcher: ActionFilter) => {
-          const predicate = getActionFilter(matcher)
-          return this.action$
-            .pipe(
-              filter(predicate),
-              first(),
-              map(({ action }) => action)
-            )
-            .toPromise()
-        }
-      }
-    })
-
-    Object.defineProperty(this, "allOfType", {
-      get: () => {
-        return (matcher: ActionFilter) => {
-          const predicate = getActionFilter(matcher)
-          return this.action$.pipe(
-            filter(predicate),
-            map(({ action }) => action)
-          )
-        }
-      }
-    })
   }
 
   /**
@@ -121,87 +112,67 @@ export class Agent implements ActionProcessor {
    * @throws Throws if a filter errs, but not if a renderer errs.
    *
    */
-  process(action: Action, context?: Object): ProcessResult {
-    const results = new Map<string, any>()
-    const renderBeginnings = new Map<string, Subject<boolean>>()
-    const renderEndings = new Map<string, Subject<boolean>>()
-
-    // In order to do completion detection, we need to set these
-    // locations up synchronously, and let them be read later.
-    this.rendererNames.forEach(name => {
-      renderBeginnings.set(name, new Subject<boolean>())
-      renderEndings.set(name, new Subject<boolean>())
-      this.activeResults.set(name, empty())
-    })
-    const item = { action, context, results, renderBeginnings, renderEndings }
-
-    // Run all filters sync (RxJS as of v6 no longer will sync error)
-    for (let filterName of this.allFilters.keys()) {
-      let filter = this.allFilters.get(filterName) || (() => null)
-      let result
-      let err
-      try {
-        result = filter(item)
-      } catch (ex) {
-        err = ex
-        throw ex
-      } finally {
-        results.set(filterName, result || err)
-      }
+  process(action: Action, context?: any): any {
+    // Execute all filters one after the other, synchronously, in the order added
+    const filterResults = new Map<string, any>()
+    const asi: ActionStreamItem = {
+      action: action,
+      results: filterResults
     }
+    this.runFilters(asi, filterResults)
 
-    // If we passed filtering, next it on to the action stream
-    this.actionStream.next(item)
+    this.actionStream.next(asi)
 
-    // Our result is a shallow clone of the action...
-    let resultObject = Object.assign({}, action)
-
-    // Add readonly properties for each result
-    for (let [key, value] of results.entries()) {
+    // Add readonly properties for each filter result
+    // The return value of agent.process ducktypes the action,
+    // plus some additional properties
+    const resultObject = Object.assign({}, action)
+    for (let [key, value] of filterResults) {
       Object.defineProperty(resultObject, key.toString(), {
         value,
-        writable: false,
-        enumerable: false,
-        configurable: false
+        configurable: false,
+        enumerable: true,
+        writable: false
       })
     }
 
-    // Allow hooking the completion of async renders
-    let _completedObject: Promise<boolean[]>
-    Object.defineProperty(resultObject, "completed", {
-      get: () => {
-        if (_completedObject) return _completedObject
+    const renderPromises = new Map<string, Promise<any>>()
+    for (let [name, renderPromiser] of this.allRenderers) {
+      renderPromises.set(name, renderPromiser(action, context))
+    }
 
-        const completedObject = Promise.all(
-          Array.from(renderEndings.values()).map(s => s.asObservable().toPromise())
-        )
-        for (let name of this.rendererNames) {
-          Object.defineProperty(completedObject, name, {
-            get: () => {
-              return new Promise(resolve => {
-                // only on the next callstack is our results Observable ready
-                setTimeout(() => {
-                  const results = this.activeResults.get(name)
-                  // @ts-ignore # we should detect its an Observable
-                  results
-                    .pipe(
-                      startWith(undefined),
-                      last()
-                    )
-                    .toPromise()
-                    .then(resolve)
-                }, 0)
-              })
-            }
-          })
-        }
-        _completedObject = completedObject
-        return completedObject
-      }
+    // From the renderPromises, create the Promise for an array of {name, resolvedValue} objects,
+    // then reduce it to an object where the resolved values are keyed under the name
+    const completedObject = Promise.all(
+      Array.from(renderPromises.keys()).map(name => {
+        // @ts-ignore
+        return renderPromises.get(name).then(value => ({ name, resolvedValue: value }))
+      })
+    ).then(arrResults => {
+      return arrResults.reduce((all, one) => {
+        // @ts-ignore
+        all[one.name] = one.resolvedValue
+        return all
+      }, {})
     })
 
-    // Now they get their result
-    return resultObject as ProcessResult
+    for (let name of renderPromises.keys()) {
+      Object.defineProperty(completedObject, name, {
+        value: renderPromises.get(name),
+        configurable: false,
+        enumerable: true,
+        writable: false
+      })
+    }
+
+    Object.defineProperty(resultObject, "completed", {
+      value: completedObject,
+      configurable: false,
+      enumerable: true,
+      writable: false
+    })
+
+    return resultObject
   }
 
   /**
@@ -234,11 +205,16 @@ export class Agent implements ActionProcessor {
   }
 
   /**
-   * Calls addFilter, but uses a more event-handler-like syntax.
+   * Filters are synchronous functions that sequentially process
+   * each item on `action$`, possibly changing them or creating synchronous
+   * state changes. Useful for type-checking, writing to a memory-based store.
+   * For creating consequences (aka async side-effects aka renders) outside of
+   * the running Agent, write and attach a Renderer. Filters run in series.
    * ```js
    * agent.filter('search/message/success', ({ action }) => console.log(action))
    * ```
    */
+
   filter(actionFilter: ActionFilter, filter: Subscriber, config: SubscriberConfig = {}) {
     const _config = {
       ...config,
@@ -247,15 +223,16 @@ export class Agent implements ActionProcessor {
     return this.addFilter(filter, _config)
   }
 
-  /**
-   * Filters are synchronous functions that sequentially process
-   * each item on `action$`, possibly changing them or creating synchronous
-   * state changes. Useful for type-checking, writing to a memory-based store.
-   * For creating consequences (aka async side-effects aka renders) outside of
-   * the running Agent, write and attach a Renderer. Filters run in series.
+  /** The underlying function, useful for adding an unconditional filter
+   * ```js
+   * agent.addFilter(({ action }) => console.log(action))
+   * ```
    */
-  addFilter(filter: Subscriber, config: SubscriberConfig = {}): Subscription {
+  addFilter(filter: Filter, config: SubscriberConfig = {}): Subscription {
     validateSubscriberName(config.name)
+    const removeFilter = new Subscription(() => {
+      this.allFilters.delete(name)
+    })
 
     // Pass all actions unless otherwise told
     const predicate = config.actionsOfType ? getActionFilter(config.actionsOfType) : () => true
@@ -266,123 +243,126 @@ export class Agent implements ActionProcessor {
     }
 
     const name = this.uniquifyName(config, "filter")
-    this.filterNames.push(name)
     this.allFilters.set(name, _filter)
 
     // The subscription does little except give us an object
     // which, when unsubscribed, will remove our filter
-    const sub = this.action$.subscribe(asi => null)
-    sub.add(() => {
-      this.allFilters.delete(name)
-    })
-    return sub
+    return removeFilter
   }
 
-  addRenderer(subscriber: Subscriber, config: SubscriberConfig = {}): Subscription {
-    validateConfig(config)
+  addRenderer(follower: Renderer, config: SubscriberConfig = {}): Subscription {
+    const removeRenderer = new Subscription(() => {
+      this.allRenderers.delete(name)
+    })
 
     const name = this.uniquifyName(config, "renderer")
-
-    const xform = streamTransformerFrom(config)
-    this.rendererNames.push(name)
-
+    const predicate = getActionFilter(config.actionsOfType || (() => true))
     const concurrency = config.concurrency || Concurrency.parallel
-    const { processResults, type } = config
-    let previousAsi: ActionStreamItem
-    const sub = xform(this.action$)
-      .pipe(observeOn(asyncScheduler))
-      // Note if our stream has been transformed with such as bufferCount,
-      // we won't be processing an ASI, but rather some reduction of one
-      .subscribe(asi => {
-        const itHasBegun = new Subject<boolean>()
-        itHasBegun.complete()
-        asi.renderBeginnings && asi.renderBeginnings.set(name, itHasBegun)
 
-        // Renderers return Observables, usually of actions
-        const _results = subscriber(asi)
-        const results =
-          _results && _results.subscribe // an Observable
-            ? _results
-            : _results && _results[Symbol.iterator] && !_results.substring
-              ? from(_results) // an iterable, such as an array, but not string
-              : of(_results)
+    let prevSub: Subscription // for cutoff to unsubscribe, mute not to start a new
+    // let prevEnder:Subject    // for cutoff to call .error()
+    let prevEnd: Promise<any> // for serial to chain on
 
-        this.activeResults.set(name, results)
+    // Build a function, and keep it around for #process, which
+    // returns a Promise for any rendering done for this action
+    const renderPromiser = (action: Action, context?: any) => {
+      // If this renderer doesn't apply to this action...
+      if (!predicate({ action })) {
+        return Promise.resolve(undefined)
+      }
 
-        const completer = {
-          // If we're set up to do so, send results back through #process
-          next: (result: any) => {
-            if (!processResults && !type) return
-            const toProcess = type ? { type, payload: result } : result
-            this.process(toProcess, asi.context)
-          },
-          complete: () => {
-            // @ts-ignore
-            asi.renderEndings && asi.renderEndings.get(name).complete()
-          },
-          error: () => {
-            // @ts-ignore
-            asi.renderEndings && asi.renderEndings.get(name).error()
-            sub.unsubscribe()
-            this.activeRenders.delete(name)
-            this.rendererNames = this.rendererNames.filter(n => n === name)
-          }
-        }
+      let recipe: Observable<any>
+      let ender = new Subject()
+      let completed = ender.toPromise()
 
-        const inProgress = this.activeRenders.get(name)
-        let thisSub
-        const subAndSave = () => {
-          thisSub = results.subscribe(completer)
-          this.activeRenders.set(name, thisSub)
-        }
+      // Call this if we fail to get the recipe, or subscribe to it
+      const reportFail = (ex: any) => {
+        console.error(ex)
+        removeRenderer.unsubscribe()
+        ender.error(ex)
+      }
 
-        if (concurrency === Concurrency.mute) {
-          // Will not start new if one is in progress
-          if (!inProgress || (inProgress && inProgress.closed)) {
-            subAndSave()
-          }
-        }
+      // 1. Get the Observable aka recipe back from the renderer
+      try {
+        recipe = toObservable(follower({ action, context }))
+      } catch (ex) {
+        reportFail(ex)
+        // will warn of unhandled rejection error if completed and completed.bad are not handled
+        return completed
+      }
 
-        if (concurrency === Concurrency.cutoff) {
-          // cancel any in progress - the latest one is all we care
-          inProgress && inProgress.unsubscribe()
-          subAndSave()
-        }
-        // Bug hiding below: if you run the fruit serial demo,
-        // two keypresses in close succession will both run
-        // after the current inProgress, but not themselves serially
-        // ⑨  🥑   ②  🥑   ①  🥑  🥑  🥑  🥑  🥑  🥑  🥑  ✅
-        // 🍌  🍓  ✅
-        // 🍌  ✅  <-- note the interleaving of banana and strawberry
-        if (concurrency === Concurrency.serial) {
-          if (!previousAsi) {
-            subAndSave()
+      // 2. If processing results, set that up
+      if (config.processResults || config.type) {
+        const opts = config.type ? { type: config.type } : undefined
+        // this.subscribe(ender, opts)
+        this.subscribe(ender.pipe(observeOn(asyncScheduler)), opts)
+      }
+
+      // 3. Subscribe to the recipe accordingly
+      switch (concurrency) {
+        case Concurrency.parallel:
+          recipe.subscribe(ender)
+          break
+        case Concurrency.serial:
+          prevEnd = prevEnd || Promise.resolve()
+          prevEnd.then(() => {
+            recipe.subscribe(ender)
+          })
+          prevEnd = prevEnd.then(() => completed)
+          break
+        case Concurrency.mute:
+          if (prevSub && !prevSub.closed) {
+            // dies in a fire - but do we notify ?
+            // ender.error('mute')
           } else {
-            // @ts-ignore
-            previousAsi.renderEndings
-              .get(name)
-              .toPromise()
-              .then(() => {
-                subAndSave()
-              })
+            prevSub = recipe.subscribe(ender)
           }
-        }
-        if (concurrency === Concurrency.parallel) {
-          subAndSave()
-        }
-        previousAsi = asi
-      })
-    return sub
+          break
+        case Concurrency.cutoff:
+          if (prevSub && !prevSub.closed) {
+            prevSub.unsubscribe()
+          }
+          prevSub = recipe.subscribe(ender)
+          break
+      }
+
+      return completed
+    }
+
+    this.allRenderers.set(name, renderPromiser)
+    return removeRenderer
   }
 
   /**
-   * Subscribes to the Observable of actions (Flux Standard Action), sending
-   * each through agent.process.
+   * Subscribes to an Observable of actions (Flux Standard Action), sending
+   * each through agent.process. If the Observable is not of FSAs, include
+   * { type: 'theType' } to wrap the Observable's items in FSAs of that type.
    * @return A subscription handle with which to unsubscribe()
    *
    */
-  subscribe(action$: Observable<Action>, context?: Object) {
-    return action$.subscribe(action => this.process(action, context))
+  subscribe(item$: Observable<any>, config: SubscriberConfig = {}): Subscription {
+    return item$.subscribe(item => {
+      const actionToProcess = config.type ? { type: config.type, payload: item } : item
+      this.process(actionToProcess)
+    })
+  }
+
+  private runFilters(asi: ActionStreamItem, results: Map<string, any>): void {
+    // Run all filters sync (RxJS as of v6 no longer will sync error)
+    for (let filterName of this.allFilters.keys()) {
+      let filter = this.allFilters.get(filterName)
+      let result
+      let err
+      try {
+        // @ts-ignore
+        result = filter(asi)
+      } catch (ex) {
+        err = ex
+        throw ex
+      } finally {
+        results.set(filterName, result || err)
+      }
+    }
   }
 
   private uniquifyName(config: SubscriberConfig, type: "renderer" | "filter") {
@@ -392,8 +372,9 @@ export class Agent implements ActionProcessor {
       (config.actionsOfType && config.actionsOfType.substring
         ? config.actionsOfType.toString()
         : type)
+    validateSubscriberName(nameBase)
     const name =
-      this[type + "Names"].includes(nameBase) || nameBase === type
+      this[type + "Names"]().includes(nameBase) || nameBase === type
         ? `${nameBase}_${++this._subscriberCount}`
         : nameBase
 
@@ -405,32 +386,6 @@ function validateSubscriberName(name: string | undefined) {
   assert(
     !name || !reservedSubscriberNames.includes(name),
     "The following subscriber names are reserved: " + reservedSubscriberNames.join(", ")
-  )
-}
-
-function streamTransformerFrom(config: SubscriberConfig): StreamTransformer {
-  if (config.xform) return config.xform
-
-  const { actionsOfType } = config
-  let predicate
-  if (actionsOfType) {
-    const predicate = getActionFilter(actionsOfType)
-
-    const xform: StreamTransformer = s => {
-      return s.pipe(filter(predicate))
-    }
-    return xform
-  }
-
-  return s => s
-}
-// Throws if any violations
-function validateConfig(config: SubscriberConfig) {
-  validateSubscriberName(config.name)
-
-  assert(
-    !config.xform || !config.actionsOfType,
-    "For simple control of renderer trigers, use config.actionsOfType; use xform for more complicated ones. Never both."
   )
 }
 
@@ -478,3 +433,29 @@ export const pp = (action: Action) => JSON.stringify(action)
 
 /** An agent instance with no special options - good enough for most purposes */
 export const agent = new Agent()
+
+function toObservable(_results: any) {
+  if (typeof _results === "undefined") return of(undefined)
+
+  // An Observable is preferred
+  if (_results.subscribe) return _results
+
+  // A Promise is acceptable
+  if (_results.then) return from(_results)
+
+  // otherwiser we convert it to a single-item Observable
+  return of(_results)
+}
+
+function actionFilterFrom({ actionsOfType = () => true }: SubscriberConfig): Predicate {
+  let predicate: Predicate
+
+  if (actionsOfType instanceof RegExp) {
+    predicate = ({ action }: ActionStreamItem) => actionsOfType.test(action.type)
+  } else if (actionsOfType instanceof Function) {
+    predicate = actionsOfType
+  } else {
+    predicate = ({ action }: ActionStreamItem) => actionsOfType === action.type
+  }
+  return predicate
+}

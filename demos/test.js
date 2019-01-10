@@ -42,22 +42,10 @@ const append = s => {
 const log = appendLine
 
 jest.setTimeout(30000)
-describe.skip("All Demos", () => {
+describe("All Demos", () => {
   beforeEach(() => {
     output = ""
   })
-  describe("File-rendering Demo", () => {
-    it("should work synchronously", async () => {
-      await runDemo(Demos.writeFileAsFilter)
-      expect(output).toMatchSnapshot()
-    })
-
-    it("should work asynchronously", async () => {
-      await runDemo(Demos.writeFileAsRenderer)
-      expect(output).toMatchSnapshot()
-    })
-  })
-
   describe("Spoken-rendering Demo", () => {
     beforeAll(async () => {
       return await new Promise(resolve => setTimeout(resolve, 200))
@@ -91,18 +79,6 @@ describe.skip("All Demos", () => {
     it("should mute/drop new renders in mute mode", async () => {
       await runDemo(Demos.muteFruit)
       expect(output).toMatchSnapshot()
-    })
-  })
-
-  describe("Batched Write Demo", () => {
-    // these run just for timing info
-    it("should run slower without batching", async () => {
-      expect.assertions(0)
-      await runDemo(Demos.unBatchedWriteFile)
-    })
-    it("should run utlimately faster with batching", async () => {
-      expect.assertions(0)
-      await runDemo(Demos.batchedWriteFile)
     })
   })
 

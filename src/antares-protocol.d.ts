@@ -1,6 +1,6 @@
 import { Observable, Subscription } from "rxjs";
-import { ActionProcessor, Action, ActionFilter, ActionStreamItem, AgentConfig, ProcessResult, Subscriber, SubscriberConfig } from "./types";
-export { Action, ActionFilter, AgentConfig, ActionStreamItem, Concurrency, ProcessResult, StreamTransformer, Subscriber, SubscriberConfig } from "./types";
+import { ActionProcessor, Action, ActionFilter, ActionStreamItem, AgentConfig, Filter, Renderer, Subscriber, SubscriberConfig } from "./types";
+export { Action, ActionFilter, AgentConfig, ActionStreamItem, Concurrency, ProcessResult, RendererPromiser, Subscriber, SubscriberConfig } from "./types";
 export * from "./operators";
 export { from, of, empty, concat, merge, interval } from "rxjs";
 export { startWith, last, filter, delay, map, mapTo, scan } from "rxjs/operators";
@@ -17,20 +17,19 @@ export declare class Agent implements ActionProcessor {
     /**
      * The heart and circulatory system of an Agent is `action$`, its action stream. */
     private action$;
-    filterNames: Array<string>;
-    rendererNames: Array<string>;
     [key: string]: any;
-    /**
-     * Gets a promise for the next action matching the ActionFilter. */
-    nextOfType: ((filter: ActionFilter) => Promise<Action>);
-    /**
-     * Gets an Observable of all actions matching the ActionFilter. */
-    allOfType: ((filter: ActionFilter) => Observable<Action>);
     private _subscriberCount;
     private actionStream;
     private allFilters;
-    private activeRenders;
-    private activeResults;
+    private allRenderers;
+    rendererNames(): string[];
+    filterNames(): string[];
+    /**
+     * Gets an Observable of all actions matching the ActionFilter. */
+    actionsOfType(matcher: ActionFilter): Observable<Action>;
+    /**
+     * Gets a promise for the next action matching the ActionFilter. */
+    nextActionOfType(matcher: ActionFilter): Promise<Action>;
     constructor(config?: AgentConfig);
     /**
      * Process sends an Action (eg Flux Standard Action), which
@@ -39,7 +38,7 @@ export declare class Agent implements ActionProcessor {
      * @throws Throws if a filter errs, but not if a renderer errs.
      *
      */
-    process(action: Action, context?: Object): ProcessResult;
+    process(action: Action, context?: any): any;
     /**
      * Renderers are functions that exist to create side-effects
      * outside of the Antares Agent - called Renderings. This can be changes to a
@@ -63,28 +62,33 @@ export declare class Agent implements ActionProcessor {
      */
     on(actionFilter: ActionFilter, renderer: Subscriber, config?: SubscriberConfig): Subscription;
     /**
-     * Calls addFilter, but uses a more event-handler-like syntax.
-     * ```js
-     * agent.filter('search/message/success', ({ action }) => console.log(action))
-     * ```
-     */
-    filter(actionFilter: ActionFilter, filter: Subscriber, config?: SubscriberConfig): Subscription;
-    /**
      * Filters are synchronous functions that sequentially process
      * each item on `action$`, possibly changing them or creating synchronous
      * state changes. Useful for type-checking, writing to a memory-based store.
      * For creating consequences (aka async side-effects aka renders) outside of
      * the running Agent, write and attach a Renderer. Filters run in series.
+     * ```js
+     * agent.filter('search/message/success', ({ action }) => console.log(action))
+     * ```
      */
-    addFilter(filter: Subscriber, config?: SubscriberConfig): Subscription;
-    addRenderer(subscriber: Subscriber, config?: SubscriberConfig): Subscription;
+    filter(actionFilter: ActionFilter, filter: Subscriber, config?: SubscriberConfig): Subscription;
+    /** The underlying function, useful for adding an unconditional filter
+     * ```js
+     * agent.addFilter(({ action }) => console.log(action))
+     * ```
+     */
+    addFilter(filter: Filter, config?: SubscriberConfig): Subscription;
+    addRenderer(follower: Renderer, config?: SubscriberConfig): Subscription;
     /**
-     * Subscribes to the Observable of actions (Flux Standard Action), sending
-     * each through agent.process.
+     * Subscribes to an Observable of actions (Flux Standard Action), sending
+     * each through agent.process. If the Observable is not of FSAs, include
+     * { type: 'theType' } to wrap the Observable's items in FSAs of that type.
      * @return A subscription handle with which to unsubscribe()
      *
      */
-    subscribe(action$: Observable<Action>, context?: Object): Subscription;
+    subscribe(item$: Observable<any>, config?: SubscriberConfig): Subscription;
+    private runFilters;
+    private uniquifyName;
 }
 export declare const reservedSubscriberNames: string[];
 /**

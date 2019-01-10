@@ -1,22 +1,19 @@
-const { Observable, Subject, concat, of, empty } = require("rxjs")
+const { Subject, concat } = require("rxjs")
 const { after, getUserInputFromStdin } = require("./utils")
 
 // A flag we will set when we've processed our final action (for testing)
 const allDone = new Subject()
 
-module.exports = ({ agent, config = {}, log, append, interactive = false }) => {
+module.exports = ({ agent, after, config = {}, log }) => {
   const { inactivityInterval, warningInterval } = config
 
   // The stream of keypresses we'll send through the program
   const keyPresses$ = process.env.INTERACTIVE ? getUserInputFromStdin(log) : simInput()
 
-  // Action creators
-  const Actions = {
-    warn: () => ({ type: "Timeout.warn" }),
-    logout: () => ({ type: "Timeout.logout" })
-  }
+  // See every action processed
+  // agent.addFilter(asi => console.log({ asi }))
 
-  // The setting-up of our renderers
+  // The setting-up of our renderers, which needn't be Observables
   agent.on("Timeout.warn", warn)
   agent.on("Timeout.logout", logout)
   function warn() {
@@ -35,11 +32,12 @@ module.exports = ({ agent, config = {}, log, append, interactive = false }) => {
   //                 warn     logout
   // |---------------|--------|----->|
   //    inactivity     warning
-  //prettier-ignore
-  agent.on("keyPress", ({ action }) => {
+  agent.on(
+    "keyPress",
+    () => {
       return concat(
-        after(inactivityInterval, {type: 'Timeout.warn'}),
-        after(warningInterval, {type: 'Timeout.logout'})
+        after(inactivityInterval, { type: "Timeout.warn" }),
+        after(warningInterval, { type: "Timeout.logout" })
       )
     },
     {
@@ -50,14 +48,15 @@ module.exports = ({ agent, config = {}, log, append, interactive = false }) => {
 
   // Greet the user and kick something off to begin our initial timeout
   log("Your session will timeout in 5 seconds. Keep pressing keys to keep it alive", config)
-  agent.process({})
 
   // Whether our keypresses are real or from user, process each one.
-  // Cuts off any existing timeout, and causes a new one to start
-  keyPresses$.subscribe(action => {
-    log("Got a keypress")
-    agent.process({ type: "keyPress" })
-  })
+  // keyPresses$.subscribe(key => {
+  //   log("Got a keypress")
+  //   agent.process({ type: "keyPress", payload: key })
+  // })
+  // Alternate style:
+  agent.filter("keyPress", () => log("Got a keypress"))
+  agent.subscribe(keyPresses$, { type: "keyPress" })
 
   const dotsTickInterval = setInterval(() => {
     log("•")
@@ -70,12 +69,12 @@ module.exports = ({ agent, config = {}, log, append, interactive = false }) => {
   function simInput() {
     return concat(
       // two keypresses well within our inactivity interval
-      after(inactivityInterval * 0.5, () => "x"),
-      after(inactivityInterval * 0.5, () => "x"),
+      after(inactivityInterval * 0.5, "x"),
+      after(inactivityInterval * 0.5, "x"),
       // then we wait a bit longer to enter the inactivity interval
-      after(inactivityInterval * 1.1, () => "x"),
+      after(inactivityInterval * 1.1, "x"),
       // dont let the warning interval fully elapse yet
-      after(warningInterval * 0.5, () => "x")
+      after(warningInterval * 0.5, "x")
       // Finally, let the chips fall as they may
     )
   }

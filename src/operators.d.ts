@@ -7,7 +7,7 @@ import { StreamingGetOptions } from "./types";
  * @returns An Observable of what the thunk returns.
  * @example after(100, name => ({type: `Timeout-${name}`}), 'session_expired').subscribe(action => ...)
  */
-export declare const after: (ms: number, thunk: Function, name?: string | undefined) => Observable<any>;
+export declare const after: (ms: number, objOrFn: any, name?: string) => Observable<any>;
 /**
  * Gets the resource, returning an Observable of resources referred to by the URL
  * It is cancelable, and if you have the oboejs library, you'll get full streaming.

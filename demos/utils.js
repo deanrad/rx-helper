@@ -1,15 +1,6 @@
-const { Subject, of } = require("rxjs")
-const { delay, tap } = require("rxjs/operators")
+const { Subject } = require("rxjs")
 
 module.exports = {
-  after: (ms, objOrFn) => {
-    const [obj, effect] = objOrFn instanceof Function ? [null, objOrFn] : [objOrFn, () => {}]
-
-    return of(obj).pipe(
-      delay(ms),
-      tap(effect)
-    )
-  },
   // Returns an Observable of key presses - however Ctrl-C or 'x' terminates the whole process
   getUserInputFromStdin: log => {
     // set up stdin

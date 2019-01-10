@@ -9,7 +9,7 @@ const { storeFilter } = require("./store")
 const agent = new Agent({ agentId: `http://localhost:${port}` })
 agent.addFilter(storeFilter)
 agent.addFilter(randomIdFilter())
-agent.addRenderer(
+agent.on("http/get",
   ({ action, context }) => {
     // Get some fields from the action itself
     const {
@@ -32,8 +32,7 @@ agent.addRenderer(
       res.sendFile(path, { root: "./demos/express/" })
       return
     }
-  },
-  { actionsOfType: "http/get" }
+  }
 )
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static("."))
