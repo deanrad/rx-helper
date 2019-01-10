@@ -942,22 +942,31 @@ img { max-width: 100%; }
 			<a href="../interfaces/agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
+			<a href="../interfaces/filter.html" class="tsd-kind-icon">Filter</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/predicate.html" class="tsd-kind-icon">Predicate</a>
+		</li>
+		<li class=" tsd-kind-interface">
 			<a href="../interfaces/processresult.html" class="tsd-kind-icon">Process<wbr>Result</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="../interfaces/streamtransformer.html" class="tsd-kind-icon">Stream<wbr>Transformer</a>
+			<a href="../interfaces/renderer.html" class="tsd-kind-icon">Renderer</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="../interfaces/streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="../interfaces/subscriber.html" class="tsd-kind-icon">Subscriber</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="../interfaces/subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#subscriber" class="tsd-kind-icon">Subscriber</a>
 		</li>
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#agent" class="tsd-kind-icon">agent</a>
@@ -967,6 +976,9 @@ img { max-width: 100%; }
 		</li>
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#reservedsubscribernames" class="tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names</a>
+		</li>
+		<li class=" tsd-kind-function tsd-is-not-exported">
+			<a href="../globals.html#actionfilterfrom" class="tsd-kind-icon">action<wbr>Filter<wbr>From</a>
 		</li>
 		<li class=" tsd-kind-function">
 			<a href="../globals.html#after" class="tsd-kind-icon">after</a>
@@ -996,13 +1008,10 @@ img { max-width: 100%; }
 			<a href="../globals.html#rxget" class="tsd-kind-icon">rx<wbr>Get</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="../globals.html#streamtransformerfrom" class="tsd-kind-icon">stream<wbr>Transformer<wbr>From</a>
+			<a href="../globals.html#toobservable" class="tsd-kind-icon">to<wbr>Observable</a>
 		</li>
 		<li class=" tsd-kind-function">
 			<a href="../globals.html#toprops" class="tsd-kind-icon">to<wbr>Props</a>
-		</li>
-		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="../globals.html#validateconfig" class="tsd-kind-icon">validate<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="../globals.html#validatesubscribername" class="tsd-kind-icon">validate<wbr>Subscriber<wbr>Name</a>
@@ -1050,7 +1059,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">cutoff<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;cutoff&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L78">types.ts:78</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L70">types.ts:70</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1065,7 +1074,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">mute<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;mute&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L81">types.ts:81</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L73">types.ts:73</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1080,7 +1089,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">parallel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;parallel&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L72">types.ts:72</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L64">types.ts:64</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1095,7 +1104,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">serial<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;serial&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L75">types.ts:75</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L67">types.ts:67</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">

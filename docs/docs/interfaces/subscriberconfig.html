@@ -928,16 +928,22 @@ img { max-width: 100%; }
 			<a href="agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
+			<a href="filter.html" class="tsd-kind-icon">Filter</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="predicate.html" class="tsd-kind-icon">Predicate</a>
+		</li>
+		<li class=" tsd-kind-interface">
 			<a href="processresult.html" class="tsd-kind-icon">Process<wbr>Result</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="streamtransformer.html" class="tsd-kind-icon">Stream<wbr>Transformer</a>
+			<a href="renderer.html" class="tsd-kind-icon">Renderer</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="subscriber.html" class="tsd-kind-icon">Subscriber</a>
 		</li>
 		<li class="current tsd-kind-interface">
 			<a href="subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a>
@@ -957,13 +963,13 @@ img { max-width: 100%; }
 				<li class=" tsd-kind-property tsd-parent-kind-interface">
 					<a href="subscriberconfig.html#type" class="tsd-kind-icon">type</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="subscriberconfig.html#xform" class="tsd-kind-icon">xform</a>
-				</li>
 			</ul>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#subscriber" class="tsd-kind-icon">Subscriber</a>
 		</li>
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#agent" class="tsd-kind-icon">agent</a>
@@ -973,6 +979,9 @@ img { max-width: 100%; }
 		</li>
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#reservedsubscribernames" class="tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names</a>
+		</li>
+		<li class=" tsd-kind-function tsd-is-not-exported">
+			<a href="../globals.html#actionfilterfrom" class="tsd-kind-icon">action<wbr>Filter<wbr>From</a>
 		</li>
 		<li class=" tsd-kind-function">
 			<a href="../globals.html#after" class="tsd-kind-icon">after</a>
@@ -1002,13 +1011,10 @@ img { max-width: 100%; }
 			<a href="../globals.html#rxget" class="tsd-kind-icon">rx<wbr>Get</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="../globals.html#streamtransformerfrom" class="tsd-kind-icon">stream<wbr>Transformer<wbr>From</a>
+			<a href="../globals.html#toobservable" class="tsd-kind-icon">to<wbr>Observable</a>
 		</li>
 		<li class=" tsd-kind-function">
 			<a href="../globals.html#toprops" class="tsd-kind-icon">to<wbr>Props</a>
-		</li>
-		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="../globals.html#validateconfig" class="tsd-kind-icon">validate<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="../globals.html#validatesubscribername" class="tsd-kind-icon">validate<wbr>Subscriber<wbr>Name</a>
@@ -1037,7 +1043,6 @@ img { max-width: 100%; }
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#name" class="tsd-kind-icon">name</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#processresults" class="tsd-kind-icon">process<wbr>Results</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#type" class="tsd-kind-icon">type</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#xform" class="tsd-kind-icon">xform</a></li>
 						</ul>
 					</section>
 				</div>
@@ -1051,7 +1056,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">actions<wbr>OfType<span class="tsd-signature-symbol">:</span> <a href="../globals.html#actionfilter" class="tsd-signature-type">ActionFilter</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L98">types.ts:98</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L95">types.ts:95</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1066,7 +1071,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">concurrency<span class="tsd-signature-symbol">:</span> <a href="../enums/concurrency.html" class="tsd-signature-type">Concurrency</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L92">types.ts:92</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L91">types.ts:91</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1081,7 +1086,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L90">types.ts:90</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L89">types.ts:89</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1096,7 +1101,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">process<wbr>Results<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Boolean</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L96">types.ts:96</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L93">types.ts:93</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1111,27 +1116,12 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L100">types.ts:100</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L97">types.ts:97</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>If provided, this renderers&#39; Observables values will be wrapped in FSAs with this type.</p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="xform" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> xform</h3>
-				<div class="tsd-signature tsd-kind-icon">xform<span class="tsd-signature-symbol">:</span> <a href="streamtransformer.html" class="tsd-signature-type">StreamTransformer</a></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L94">types.ts:94</a></li>
-					</ul>
-				</aside>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Advanced feature - a function allowing you to render on a stream derived from the ActionStream, such as a batched one.</p>
 					</div>
 				</div>
 			</section>

@@ -928,22 +928,31 @@ img { max-width: 100%; }
 			<a href="interfaces/agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
+			<a href="interfaces/filter.html" class="tsd-kind-icon">Filter</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="interfaces/predicate.html" class="tsd-kind-icon">Predicate</a>
+		</li>
+		<li class=" tsd-kind-interface">
 			<a href="interfaces/processresult.html" class="tsd-kind-icon">Process<wbr>Result</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="interfaces/streamtransformer.html" class="tsd-kind-icon">Stream<wbr>Transformer</a>
+			<a href="interfaces/renderer.html" class="tsd-kind-icon">Renderer</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="interfaces/rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="interfaces/streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="interfaces/subscriber.html" class="tsd-kind-icon">Subscriber</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="interfaces/subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="globals.html#subscriber" class="tsd-kind-icon">Subscriber</a>
 		</li>
 		<li class=" tsd-kind-variable">
 			<a href="globals.html#agent" class="tsd-kind-icon">agent</a>
@@ -953,6 +962,9 @@ img { max-width: 100%; }
 		</li>
 		<li class=" tsd-kind-variable">
 			<a href="globals.html#reservedsubscribernames" class="tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names</a>
+		</li>
+		<li class=" tsd-kind-function tsd-is-not-exported">
+			<a href="globals.html#actionfilterfrom" class="tsd-kind-icon">action<wbr>Filter<wbr>From</a>
 		</li>
 		<li class=" tsd-kind-function">
 			<a href="globals.html#after" class="tsd-kind-icon">after</a>
@@ -982,13 +994,10 @@ img { max-width: 100%; }
 			<a href="globals.html#rxget" class="tsd-kind-icon">rx<wbr>Get</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="globals.html#streamtransformerfrom" class="tsd-kind-icon">stream<wbr>Transformer<wbr>From</a>
+			<a href="globals.html#toobservable" class="tsd-kind-icon">to<wbr>Observable</a>
 		</li>
 		<li class=" tsd-kind-function">
 			<a href="globals.html#toprops" class="tsd-kind-icon">to<wbr>Props</a>
-		</li>
-		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="globals.html#validateconfig" class="tsd-kind-icon">validate<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="globals.html#validatesubscribername" class="tsd-kind-icon">validate<wbr>Subscriber<wbr>Name</a>
@@ -1096,10 +1105,12 @@ img { max-width: 100%; }
 							<li class="tsd-kind-interface"><a href="interfaces/actionprocessor.html" class="tsd-kind-icon">Action<wbr>Processor</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/actionstreamitem.html" class="tsd-kind-icon">Action<wbr>Stream<wbr>Item</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/filter.html" class="tsd-kind-icon">Filter</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/predicate.html" class="tsd-kind-icon">Predicate</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/processresult.html" class="tsd-kind-icon">Process<wbr>Result</a></li>
-							<li class="tsd-kind-interface"><a href="interfaces/streamtransformer.html" class="tsd-kind-icon">Stream<wbr>Transformer</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/renderer.html" class="tsd-kind-icon">Renderer</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a></li>
-							<li class="tsd-kind-interface"><a href="interfaces/subscriber.html" class="tsd-kind-icon">Subscriber</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a></li>
 						</ul>
 					</section>
@@ -1107,6 +1118,7 @@ img { max-width: 100%; }
 						<h3>Type aliases</h3>
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-type-alias"><a href="globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a></li>
+							<li class="tsd-kind-type-alias"><a href="globals.html#subscriber" class="tsd-kind-icon">Subscriber</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
@@ -1120,6 +1132,7 @@ img { max-width: 100%; }
 					<section class="tsd-index-section ">
 						<h3>Functions</h3>
 						<ul class="tsd-index-list">
+							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#actionfilterfrom" class="tsd-kind-icon">action<wbr>Filter<wbr>From</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#after" class="tsd-kind-icon">after</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#agentconfigfilter" class="tsd-kind-icon">agent<wbr>Config<wbr>Filter</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#ajaxstreamingget" class="tsd-kind-icon">ajax<wbr>Streaming<wbr>Get</a></li>
@@ -1129,9 +1142,8 @@ img { max-width: 100%; }
 							<li class="tsd-kind-function"><a href="globals.html#randomid" class="tsd-kind-icon">random<wbr>Id</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#randomidfilter" class="tsd-kind-icon">random<wbr>IdFilter</a></li>
 							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#rxget" class="tsd-kind-icon">rx<wbr>Get</a></li>
-							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#streamtransformerfrom" class="tsd-kind-icon">stream<wbr>Transformer<wbr>From</a></li>
+							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#toobservable" class="tsd-kind-icon">to<wbr>Observable</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#toprops" class="tsd-kind-icon">to<wbr>Props</a></li>
-							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#validateconfig" class="tsd-kind-icon">validate<wbr>Config</a></li>
 							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#validatesubscribername" class="tsd-kind-icon">validate<wbr>Subscriber<wbr>Name</a></li>
 						</ul>
 					</section>
@@ -1143,12 +1155,29 @@ img { max-width: 100%; }
 			<section class="tsd-panel tsd-member tsd-kind-type-alias">
 				<a name="actionfilter" class="tsd-anchor"></a>
 				<h3>Action<wbr>Filter</h3>
-				<div class="tsd-signature tsd-kind-icon">Action<wbr>Filter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">function</span></div>
+				<div class="tsd-signature tsd-kind-icon">Action<wbr>Filter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><a href="interfaces/predicate.html" class="tsd-signature-type">Predicate</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/types.ts#L103">types.ts:103</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L100">types.ts:100</a></li>
 					</ul>
 				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-type-alias">
+				<a name="subscriber" class="tsd-anchor"></a>
+				<h3>Subscriber</h3>
+				<div class="tsd-signature tsd-kind-icon">Subscriber<span class="tsd-signature-symbol">:</span> <a href="interfaces/filter.html" class="tsd-signature-type">Filter</a><span class="tsd-signature-symbol"> | </span><a href="interfaces/renderer.html" class="tsd-signature-type">Renderer</a></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/types.ts#L37">types.ts:37</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A subscriber is either a renderer or a filter - a function which
+							receives as its argument the ActionStreamItem, typically to use
+						the payload of the <code>action</code> property to cause some side-effect.</p>
+					</div>
+				</div>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
@@ -1159,7 +1188,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">agent<span class="tsd-signature-symbol">:</span> <a href="classes/agent.html" class="tsd-signature-type">Agent</a><span class="tsd-signature-symbol"> =&nbsp;new Agent()</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L483">antares-protocol.ts:483</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L435">antares-protocol.ts:435</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1174,7 +1203,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">assert<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;typeof require &#x3D;&#x3D;&#x3D; &quot;undefined&quot; ? () &#x3D;&gt; null : require(&quot;assert&quot;)</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L19">antares-protocol.ts:19</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L22">antares-protocol.ts:22</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1184,24 +1213,64 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;completed&quot;, &quot;then&quot;, &quot;catch&quot;]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L440">antares-protocol.ts:440</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L392">antares-protocol.ts:392</a></li>
 					</ul>
 				</aside>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Functions</h2>
-			<section class="tsd-panel tsd-member tsd-kind-function">
-				<a name="after" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagConst">Const</span> after</h3>
-				<ul class="tsd-signatures tsd-kind-function">
-					<li class="tsd-signature tsd-kind-icon">after<span class="tsd-signature-symbol">(</span>ms<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, thunk<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-is-not-exported">
+				<a name="actionfilterfrom" class="tsd-anchor"></a>
+				<h3>action<wbr>Filter<wbr>From</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-is-not-exported">
+					<li class="tsd-signature tsd-kind-icon">action<wbr>Filter<wbr>From<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/predicate.html" class="tsd-signature-type">Predicate</a></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/operators.ts#L15">operators.ts:15</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L450">antares-protocol.ts:450</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>__namedParameters: <span class="tsd-signature-type">object</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter">
+										<h5>actions<wbr>OfType<span class="tsd-signature-symbol">: </span>function</h5>
+										<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-type-literal tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon">actions<wbr>OfType<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">true</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<aside class="tsd-sources">
+													<ul>
+														<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L450">antares-protocol.ts:450</a></li>
+													</ul>
+												</aside>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">true</span></h4>
+											</li>
+									</ul>        </li>
+								</ul>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <a href="interfaces/predicate.html" class="tsd-signature-type">Predicate</a></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-function">
+				<a name="after" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagConst">Const</span> after</h3>
+				<ul class="tsd-signatures tsd-kind-function">
+					<li class="tsd-signature tsd-kind-icon">after<span class="tsd-signature-symbol">(</span>ms<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, objOrFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/operators.ts#L14">operators.ts:14</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1217,10 +1286,10 @@ img { max-width: 100%; }
 								<h5>ms: <span class="tsd-signature-type">number</span></h5>
 							</li>
 							<li>
-								<h5>thunk: <span class="tsd-signature-type">Function</span></h5>
+								<h5>objOrFn: <span class="tsd-signature-type">any</span></h5>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> name: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1238,7 +1307,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L446">antares-protocol.ts:446</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L398">antares-protocol.ts:398</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1267,7 +1336,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/operators.ts#L25">operators.ts:25</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/operators.ts#L28">operators.ts:28</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1298,7 +1367,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/lib.ts#L3">lib.ts:3</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/lib.ts#L3">lib.ts:3</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1339,7 +1408,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/operators.ts#L46">operators.ts:46</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/operators.ts#L49">operators.ts:49</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1362,7 +1431,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L480">antares-protocol.ts:480</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L432">antares-protocol.ts:432</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1390,7 +1459,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L460">antares-protocol.ts:460</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L412">antares-protocol.ts:412</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1420,7 +1489,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L469">antares-protocol.ts:469</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L421">antares-protocol.ts:421</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1452,7 +1521,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/operators.ts#L31">operators.ts:31</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/operators.ts#L34">operators.ts:34</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1466,25 +1535,25 @@ img { max-width: 100%; }
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-function tsd-is-not-exported">
-				<a name="streamtransformerfrom" class="tsd-anchor"></a>
-				<h3>stream<wbr>Transformer<wbr>From</h3>
+				<a name="toobservable" class="tsd-anchor"></a>
+				<h3>to<wbr>Observable</h3>
 				<ul class="tsd-signatures tsd-kind-function tsd-is-not-exported">
-					<li class="tsd-signature tsd-kind-icon">stream<wbr>Transformer<wbr>From<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="interfaces/subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/streamtransformer.html" class="tsd-signature-type">StreamTransformer</a></li>
+					<li class="tsd-signature tsd-kind-icon">to<wbr>Observable<span class="tsd-signature-symbol">(</span>_results<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L414">antares-protocol.ts:414</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L437">antares-protocol.ts:437</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>config: <a href="interfaces/subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a></h5>
+								<h5>_results: <span class="tsd-signature-type">any</span></h5>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <a href="interfaces/streamtransformer.html" class="tsd-signature-type">StreamTransformer</a></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -1498,7 +1567,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/operators.ts#L80">operators.ts:80</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/operators.ts#L83">operators.ts:83</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1520,29 +1589,6 @@ img { max-width: 100%; }
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-function tsd-is-not-exported">
-				<a name="validateconfig" class="tsd-anchor"></a>
-				<h3>validate<wbr>Config</h3>
-				<ul class="tsd-signatures tsd-kind-function tsd-is-not-exported">
-					<li class="tsd-signature tsd-kind-icon">validate<wbr>Config<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="interfaces/subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L431">antares-protocol.ts:431</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>config: <a href="interfaces/subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-function tsd-is-not-exported">
 				<a name="validatesubscribername" class="tsd-anchor"></a>
 				<h3>validate<wbr>Subscriber<wbr>Name</h3>
 				<ul class="tsd-signatures tsd-kind-function tsd-is-not-exported">
@@ -1552,7 +1598,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c7f8f98/src/antares-protocol.ts#L407">antares-protocol.ts:407</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/7d46521/src/antares-protocol.ts#L385">antares-protocol.ts:385</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
