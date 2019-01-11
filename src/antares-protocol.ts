@@ -46,7 +46,7 @@ export { startWith, last, filter, delay, map, mapTo, scan } from "rxjs/operators
  */
 export class Agent implements ActionProcessor {
   public static configurableProps = ["agentId", "relayActions"]
-  public static VERSION = "3.0.0"
+  public static VERSION = "3.0.1"
 
   /**
    * The heart and circulatory system of an Agent is `action$`, its action stream. */
