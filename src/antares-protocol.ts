@@ -258,6 +258,7 @@ export class Agent implements ActionProcessor {
     const name = this.uniquifyName(config, "renderer")
     const predicate = getActionFilter(config.actionsOfType || (() => true))
     const concurrency = config.concurrency || Concurrency.parallel
+    const cutoffHandler = config.onCutoff
 
     let prevSub: Subscription // for cutoff to unsubscribe, mute not to start a new
     // let prevEnder:Subject    // for cutoff to call .error()
@@ -294,8 +295,8 @@ export class Agent implements ActionProcessor {
       // 2. If processing results, set that up
       if (config.processResults || config.type) {
         const opts = config.type ? { type: config.type } : undefined
-        // this.subscribe(ender, opts)
-        this.subscribe(ender.pipe(observeOn(asyncScheduler)), opts)
+        // Some actions from an Observable may be seen prior to the next action
+        this.subscribe(ender, opts)
       }
 
       // 3. Subscribe to the recipe accordingly
@@ -323,6 +324,12 @@ export class Agent implements ActionProcessor {
             prevSub.unsubscribe()
           }
           prevSub = recipe.subscribe(ender)
+          if (cutoffHandler) {
+            prevSub.add(() => {
+              if (!ender.isStopped) cutoffHandler({ action })
+            })
+          }
+
           break
       }
 

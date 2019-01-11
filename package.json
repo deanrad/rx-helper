@@ -36,7 +36,7 @@
     "commit": "git-cz",
     "semantic-release": "semantic-release",
     "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
-    "precommit": "npm run test:ci && node demos/index.js",
+    "precommit": "(! grep 'only(' test/antares-protocol.test.ts) && npm run test:ci",
     "travis-deploy-once": "travis-deploy-once",
     "prepush": "npm run test:ci",
     "commitmsg": "validate-commit-msg",

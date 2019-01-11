@@ -120,8 +120,7 @@ describe("Agent", () => {
       it("should be a promise for the first action matching the type", () => {
         expect.assertions(1)
         const agent = new Agent()
-        const { nextActionOfType } = agent
-        const seenIt = nextActionOfType("test/foo")
+        const seenIt = agent.nextActionOfType("test/foo")
 
         // fails without calling process
         const matcher = { type: "test/foo" }
@@ -136,9 +135,8 @@ describe("Agent", () => {
     describe("actionsOfType", () => {
       it("should be an Observable of matching actions", () => {
         const agent = new Agent()
-        const { actionsOfType } = agent
         let counter = 0
-        actionsOfType("test/foo").subscribe(() => counter++)
+        agent.actionsOfType("test/foo").subscribe(() => counter++)
 
         agent.process({ type: "test/foo" })
         agent.process({ type: "notCaught" })
@@ -731,6 +729,38 @@ describe("Agent", () => {
                 "end: 3"
               ])
             })
+            it("Will call the onCutoff argument", async () => {
+              agent.on("concur", concurTester, {
+                type: "result",
+                concurrency: Concurrency.cutoff,
+                onCutoff: ({ action }) =>
+                  agent.process({ type: "canceled", payload: `cutoff: ${action.payload}` })
+              })
+
+              agent.process({ type: "concur", payload: 1 })
+              agent.process({ type: "concur", payload: 2 })
+              after(10, () => {
+                agent.process({ type: "concur", payload: 3 })
+              }).subscribe()
+
+              await after(50, null).toPromise()
+
+              expect(seen.map(a => a.payload)).toEqual([
+                1,
+                "now: 1",
+                2,
+                "cutoff: 1",
+                "now: 2",
+                "start: 2",
+                3,
+                "cutoff: 2",
+                "now: 3",
+                "start: 3",
+                "end: 3"
+                // when we add a teardown, it gets called even if run to completion
+                // so we get a cutoff: 3 even though 3 ended normally
+              ])
+            })
           })
         })
       })
@@ -797,7 +827,7 @@ describe("Agent", () => {
 })
 
 describe("Utilities", () => {
-  describe.only("after", () => {
+  describe("after", () => {
     let c = 0
     // a function incrementing c
     const incrementVar = () => {

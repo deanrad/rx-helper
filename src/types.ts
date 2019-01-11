@@ -95,6 +95,8 @@ export interface SubscriberConfig {
   actionsOfType?: ActionFilter
   /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
   type?: string
+  /** If provided, this will be called if cutoff mode terminates a rendering. Parameter is {action}. */
+  onCutoff?: Subscriber
 }
 
 export type ActionFilter = string | RegExp | Predicate
