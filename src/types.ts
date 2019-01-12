@@ -99,6 +99,13 @@ export interface SubscriberConfig {
   onCutoff?: Subscriber
 }
 
+export interface SubscribeConfig {
+  /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
+  type?: string
+  /** If provided, this will be the context argument for each processed action */
+  context?: any
+}
+
 export type ActionFilter = string | RegExp | Predicate
 
 export interface Predicate {

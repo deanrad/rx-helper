@@ -427,10 +427,17 @@ describe("Agent", () => {
       })
     })
     describe("Second argument", () => {
-      it("May be an object ", () => {
-        expect.assertions(0)
-        const context = {} // such as an express request
-        agent.process(anyAction, context)
+      it("May be an object ", done => {
+        expect.assertions(1)
+        const contextObj = { foo: "bar" } // an object such as an express request, which a renderer may do work upon
+        agent.on(
+          () => true,
+          ({ context }) => {
+            expect(context).toBe(contextObj)
+            done()
+          }
+        )
+        agent.process(anyAction, contextObj)
       })
     })
 
@@ -821,6 +828,50 @@ describe("Agent", () => {
       describe("errors in async renderers", () => {
         it.skip("should not propogate up to the caller of #process, but surface somewhere", () => {})
         it.skip("should unsubscribe the renderer", () => {})
+      })
+    })
+  })
+
+  describe("#subscribe", () => {
+    describe("First argument <Observable>", () => {
+      it("should call process for each in the observable", () => {
+        agent.addFilter(seenFilter)
+        const o = from([{ type: "A" }, { type: "B" }])
+        agent.subscribe(o)
+        expect(seen).toEqual([{ type: "A" }, { type: "B" }])
+      })
+    })
+    describe("Second argument <Config>", () => {
+      describe("#type", () => {
+        it("should wrap observed items in actions", () => {
+          agent.addFilter(seenFilter)
+          const o = from(["A", "B"])
+          agent.subscribe(o, {
+            type: "category"
+          })
+          expect(seen).toEqual([
+            { type: "category", payload: "A" },
+            { type: "category", payload: "B" }
+          ])
+        })
+      })
+      describe("#context", () => {
+        it("should be passed along to all calls to #process", () => {
+          const contextualRenderings = []
+          const o = from([{ type: "A" }, { type: "B" }])
+          agent.on(
+            () => true,
+            ({ action, context }) =>
+              contextualRenderings.push({ type: action.type, payload: context })
+          )
+          agent.subscribe(o, {
+            context: { client: 123 }
+          })
+          expect(contextualRenderings).toEqual([
+            { payload: { client: 123 }, type: "A" },
+            { payload: { client: 123 }, type: "B" }
+          ])
+        })
       })
     })
   })

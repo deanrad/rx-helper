@@ -13,6 +13,7 @@ import {
   Renderer,
   RendererPromiser,
   Subscriber,
+  SubscribeConfig,
   SubscriberConfig
 } from "./types"
 
@@ -347,10 +348,10 @@ export class Agent implements ActionProcessor {
    * @return A subscription handle with which to unsubscribe()
    *
    */
-  subscribe(item$: Observable<any>, config: SubscriberConfig = {}): Subscription {
+  subscribe(item$: Observable<any>, config: SubscribeConfig = {}): Subscription {
     return item$.subscribe(item => {
       const actionToProcess = config.type ? { type: config.type, payload: item } : item
-      this.process(actionToProcess)
+      this.process(actionToProcess, config.context)
     })
   }
 
