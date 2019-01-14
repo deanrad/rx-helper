@@ -311,7 +311,7 @@ export class Agent implements ActionProcessor {
               prevEnd = completed
             } else {
               prevEnd.then(() => {
-                recipe.subscribe(ender)
+                prevSub = recipe.subscribe(ender)
               })
               prevEnd = prevEnd.then(() => completed)
             }
