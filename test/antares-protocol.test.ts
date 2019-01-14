@@ -681,17 +681,22 @@ describe("Agent", () => {
 
               agent.process({ type: "concur", payload: 1 })
               agent.process({ type: "concur", payload: 2 })
+              agent.process({ type: "concur", payload: 3 })
 
-              await after(50, null).toPromise()
+              await after(90, null).toPromise()
               expect(seen.map(a => a.payload)).toEqual([
                 1,
-                2,
                 "now: 1",
+                2,
+                3,
                 "start: 1",
                 "end: 1",
                 "now: 2",
                 "start: 2",
-                "end: 2"
+                "end: 2",
+                "now: 3",
+                "start: 3",
+                "end: 3"
               ])
             })
           })

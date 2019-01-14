@@ -89,6 +89,12 @@ export interface SubscriberConfig {
     /** If provided, this will be called if cutoff mode terminates a rendering. Parameter is {action}. */
     onCutoff?: Subscriber;
 }
+export interface SubscribeConfig {
+    /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
+    type?: string;
+    /** If provided, this will be the context argument for each processed action */
+    context?: any;
+}
 export declare type ActionFilter = string | RegExp | Predicate;
 export interface Predicate {
     (asi: ActionStreamItem): boolean;

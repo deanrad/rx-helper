@@ -29,7 +29,7 @@
     "jest": "jest --expand",
     "test:watch": "jest --no-coverage --watch",
     "test:unit": "npm run lint && jest --expand --no-coverage --no-cache",
-    "test:ci": "npm run test:unit && npm run build && npm run size",
+    "test:ci": "npm run test:unit -- --runInBand && npm run build && npm run size",
     "test:demos": "jest --expand --coverage false --testRegex=\"/demos/test\\.(ts|tsx|js)$\"",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",

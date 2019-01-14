@@ -306,11 +306,19 @@ export class Agent implements ActionProcessor {
           recipe.subscribe(ender)
           break
         case Concurrency.serial:
-          prevEnd = prevEnd || Promise.resolve()
-          prevEnd.then(() => {
-            recipe.subscribe(ender)
-          })
-          prevEnd = prevEnd.then(() => completed)
+          if (prevSub && !prevSub.closed) {
+            if (!prevEnd) {
+              prevEnd = completed
+            } else {
+              prevEnd.then(() => {
+                recipe.subscribe(ender)
+              })
+              prevEnd = prevEnd.then(() => completed)
+            }
+          } else {
+            prevEnd = completed
+            prevSub = recipe.subscribe(ender)
+          }
           break
         case Concurrency.mute:
           if (prevSub && !prevSub.closed) {

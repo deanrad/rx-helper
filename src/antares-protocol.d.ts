@@ -1,5 +1,5 @@
 import { Observable, Subscription } from "rxjs";
-import { ActionProcessor, Action, ActionFilter, ActionStreamItem, AgentConfig, Filter, Renderer, Subscriber, SubscriberConfig } from "./types";
+import { ActionProcessor, Action, ActionFilter, ActionStreamItem, AgentConfig, Filter, Renderer, Subscriber, SubscribeConfig, SubscriberConfig } from "./types";
 export { Action, ActionFilter, AgentConfig, ActionStreamItem, Concurrency, ProcessResult, RendererPromiser, Subscriber, SubscriberConfig } from "./types";
 export * from "./operators";
 export { from, of, empty, concat, merge, interval } from "rxjs";
@@ -86,7 +86,7 @@ export declare class Agent implements ActionProcessor {
      * @return A subscription handle with which to unsubscribe()
      *
      */
-    subscribe(item$: Observable<any>, config?: SubscriberConfig): Subscription;
+    subscribe(item$: Observable<any>, config?: SubscribeConfig): Subscription;
     private runFilters;
     private uniquifyName;
 }
