@@ -10,11 +10,11 @@ cache:
 notifications:
   email: false
 node_js:
+  - 11
   - 9
   - 8
 os:
   - linux
-  - osx
 script:
   - npm run test:ci
 after_success:
