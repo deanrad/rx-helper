@@ -30,7 +30,7 @@
 // It's best if tests are forgiving at least to 40ms, though
 // ideally this should come down to 15ms or less.
 const Demos = require("./configs")
-const { Agent } = require("../dist/antares-protocol")
+const { Agent } = require("../dist/rx-helper")
 
 let output = ""
 const appendLine = s => {

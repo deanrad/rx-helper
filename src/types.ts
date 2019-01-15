@@ -19,7 +19,7 @@ export interface AgentConfig {
 }
 
 /**
- * The core of the Antares Agent API: methods to add subscribers (filters or renderers)
+ * The core of the Rx-Helper Agent API: methods to add subscribers (filters or renderers)
  * and a single method to 'dispatch' an action (Flux Standard Action) to relevant subscribers.
  */
 export interface ActionProcessor {

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Agent, agentConfigFilter, randomIdFilter } from "../src/antares-protocol"
+import { Agent, agentConfigFilter, randomIdFilter } from "../src/rx-helper"
 import { init } from "@rematch/core"
 import { triviaStoreConfig } from "../demos/trivia/store"
 describe("Multi-agent Trivia Game", () => {

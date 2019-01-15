@@ -55,7 +55,7 @@ export declare class Agent implements ActionProcessor {
      * const { Agent, after } = require('rx-helper')
      * const agent = new Agent()
      * agent.on('kickoff', () => after(50, () => '#go'), { type: 'search' })
-
+  
      * // Logs Done once 50 ms has elapsed
      * agent.process({ type: 'kickoff' }).completed.kickoff.then(() => console.log('done'))
      * ```

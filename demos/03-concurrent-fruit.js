@@ -1,6 +1,6 @@
 const { Subject, interval, concat, from } = require("rxjs")
 const { endWith, map, concatMap, take, tap } = require("rxjs/operators")
-const { after } = require("../dist/antares-protocol")
+const { after } = require("../dist/rx-helper")
 
 const numChar = { 1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "4️⃣", 5: "5️⃣", 6: "6️⃣", 7: "7️⃣", 8: "8️⃣", 9: "9️⃣" }
 const fruitCharacter = {
@@ -34,7 +34,7 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
     }
 
     // Add a renderer which returns a process (Observable) that, when
-    // Antares subscribes to it, will pull values through the pipe of
+    // Rx-Helper subscribes to it, will pull values through the pipe of
     // computation with the specified timing. Example:
     // > ⑤ 5 5 5 5 5 ✅ (over ~1000 msec)
     //
@@ -67,7 +67,7 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
     })
 
     // This function returns an object (an Observable) that, when
-    // Antares subscribes to it, will pull values through the pipe of computation
+    // Rx-Helper subscribes to it, will pull values through the pipe of computation
     // with the specified timing.
     // More simply put, given a variable called digit, (example 5)
     // will call log to produce:

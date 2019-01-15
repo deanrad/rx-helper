@@ -5,31 +5,31 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Antares Agent Client-side Test</title>
+    <title>Rx-Helper Agent Client-side Test</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/rxjs/6.2.1/rxjs.umd.min.js"></script>
     <script src="//unpkg.com/redux@4.0.0/dist/redux.js"></script>
-    <script src="//unpkg.com/antares-protocol@2.13.1/dist/antares-protocol.js"></script>
+    <script src="//unpkg.com/rx-helper@2.13.1/dist/rx-helper.js"></script>
     <script src="//unpkg.com/oboe@2.1.4/dist/oboe-browser.js"></script>
     <script>
         let agent
         let after // an RxJS-Observable-based delay utility
         let ajaxStreamingGet
         let randomIdFilter
-        if (typeof AntaresProtocol !== "undefined") {
-            agent = new AntaresProtocol.Agent
-            after = AntaresProtocol.after
-            ajaxStreamingGet = AntaresProtocol.ajaxStreamingGet
-            randomIdFilter = AntaresProtocol.randomIdFilter
-            console.log("Antares is Ready")
+        if (typeof Rx-HelperProtocol !== "undefined") {
+            agent = new Rx-HelperProtocol.Agent
+            after = Rx-HelperProtocol.after
+            ajaxStreamingGet = Rx-HelperProtocol.ajaxStreamingGet
+            randomIdFilter = Rx-HelperProtocol.randomIdFilter
+            console.log("Rx-Helper is Ready")
         } else {
-            console.log("Antares Loading Error")
+            console.log("Rx-Helper Loading Error")
         }
 
 
         // Welcome, reader of the Source!
-        // This is just a little demo to show how in Antares you
+        // This is just a little demo to show how in Rx-Helper you
         // - Define event-handling behavior which
         //   - matches on type and
         //   - returns an Observable
@@ -183,19 +183,19 @@
 
 <body>
     <div class='antares'>
-        <h1>The Antares Protocol <canvas id="c" title="RxJS-Driven animation"></canvas></h1>
+        <h1>The Rx-Helper Protocol <canvas id="c" title="RxJS-Driven animation"></canvas></h1>
 
         <div class='group docs-tools'>
             <h1>Links</h1>
             <ul>
                 <li>
-                    <a target="_blank" href="https://github.com/deanius/antares">Antares on Github</a>
+                    <a target="_blank" href="https://github.com/deanius/antares">Rx-Helper on Github</a>
                 </li>
                 <li>
-                    <a target="_blank" href="https://github.com/deanius/antares#whats-the-tldr">The 4 Antares Principles</a>
+                    <a target="_blank" href="https://github.com/deanius/antares#whats-the-tldr">The 4 Rx-Helper Principles</a>
                 </li>
                 <li>
-                    <a target="_blank" href="https://deanius.github.io/antares/docs/">Antares Code
+                    <a target="_blank" href="https://deanius.github.io/antares/docs/">Rx-Helper Code
                         Documentation</a>
                 </li>
                 <li>
@@ -225,7 +225,7 @@
         </div>
     </div>
 
-    <!-- A use of RxJS (without Antares) to do a fun animation -->
+    <!-- A use of RxJS (without Rx-Helper) to do a fun animation -->
     <script src="demos/home/kitt.js"></script>
 
     <a class="github-fork-ribbon right-top" href="//github.com/deanius/antares" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>

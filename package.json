@@ -1,12 +1,12 @@
 {
-  "name": "antares-protocol",
-  "version": "0.5.0-pre-alpha",
-  "description": "Antares is an architecture and protocol for real-time web apps.",
+  "name": "rx-helper",
+  "version": "1.0.0",
+  "description": "Structure your Rx applications. Focus on causes ⟺ effects. Waste as little time as possible.",
   "keywords": [],
   "sideEffects": false,
-  "main": "dist/antares-protocol.js",
-  "module": "dist/antares-protocol.js",
-  "typings": "dist/types/antares-protocol.d.ts",
+  "main": "dist/rx-helper.js",
+  "module": "dist/rx-helper.js",
+  "typings": "dist/types/rx-helper.d.ts",
   "files": [
     "dist",
     "runkitExample.js"
@@ -14,7 +14,7 @@
   "author": "Dean Radcliffe <deanmisc@yahoo.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/deanius/antares"
+    "url": "https://github.com/deanius/rx-helper"
   },
   "license": "MIT",
   "engines": {
@@ -23,7 +23,7 @@
   "scripts": {
     "lint": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "build": "webpack --config webpack.config.js && cp index.html docs/ && typedoc --out docs/docs --target es6 --theme minimal --mode file --hideGenerator --excludePrivate src",
+    "build": "webpack --config webpack.config.js && mv src/rx-helper.d.ts dist/; cp index.html docs/ && typedoc --out docs/docs --target es6 --theme minimal --mode file --hideGenerator --excludePrivate src",
     "start": "npm run express",
     "test": "npm run test:ci",
     "jest": "jest --expand",
@@ -36,7 +36,7 @@
     "commit": "git-cz",
     "semantic-release": "semantic-release",
     "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
-    "precommit": "(! grep 'only(' test/antares-protocol.test.ts) && npm run test:ci",
+    "precommit": "(! grep 'only(' test/rx-helper.test.ts) && npm run test:ci",
     "travis-deploy-once": "travis-deploy-once",
     "prepush": "npm run test:ci",
     "commitmsg": "validate-commit-msg",
@@ -53,7 +53,7 @@
   },
   "size-limit": [
     {
-      "path": "dist/antares-protocol.js",
+      "path": "dist/rx-helper.js",
       "limit": "23 KB",
       "webpack": false
     }

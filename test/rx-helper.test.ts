@@ -13,7 +13,7 @@ import {
   toProps,
   ajaxStreamingGet,
   randomId
-} from "../src/antares-protocol"
+} from "../src/rx-helper"
 
 let seen: Array<Action> = []
 let callCount = 0

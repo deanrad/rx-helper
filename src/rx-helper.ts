@@ -39,7 +39,7 @@ export { from, of, empty, concat, merge, interval } from "rxjs"
 export { startWith, last, filter, delay, map, mapTo, scan } from "rxjs/operators"
 
 /**
- * Represents the instance of an Antares action processor which is
+ * Represents the instance of an Rx-Helper action processor which is
  * usually the only one in this JavaScript runtime. The heart and circulatory system of
  * an Agent is its action stream. You put actions on the action stream
  * by calling `agent.process(action)` and from there filters and renderers respond.
@@ -178,7 +178,7 @@ export class Agent implements ActionProcessor {
 
   /**
    * Renderers are functions that exist to create side-effects
-   * outside of the Antares Agent - called Renderings. This can be changes to a
+   * outside of the Rx-Helper Agent - called Renderings. This can be changes to a
    * DOM, to a database, or communications (eg AJAX) sent on the wire. Renderers run
    * in parallel with respect to other renderers. The way they act with respect
    * to their own overlap, is per their `concurrency` config parameter.
@@ -189,7 +189,7 @@ export class Agent implements ActionProcessor {
    *
    * ```js
    * //
-   * const { Agent, after } = require('antares-protocol')
+   * const { Agent, after } = require('rx-helper')
    * const agent = new Agent()
    * agent.on('kickoff', () => after(50, () => '#go'), { type: 'search' })
 

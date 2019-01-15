@@ -1,4 +1,4 @@
-const { Agent, after } = require("antares-protocol")
+const { Agent, after } = require("rx-helper")
 const agent = new Agent()
 const log = (...args) => console.log(...args)
 

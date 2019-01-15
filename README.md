@@ -1,6 +1,6 @@
-## ![Antares](http://www.deanius.com/AntaresLogo.png)
+## ![Rx-Helper](http://www.deanius.com/Rx-HelperLogo.png)
 
-Antares is a way to construct real-time web apps - web apps that have
+Rx-Helper is a way to construct real-time web apps - web apps that have
 essentially banished the notion of stale data from their repertoire,
 and are configured to share and respond with data at the speed modern
 users expect.
@@ -8,8 +8,8 @@ users expect.
 <a href="https://s3.amazonaws.com/www.deanius.com/antares-tag.m4a" target="_blank">🔊</a>
 
 ![ES 2015](https://img.shields.io/badge/ES-2015-brightgreen.svg)
-[![npm version](https://badge.fury.io/js/antares-protocol.svg)](https://badge.fury.io/js/antares-protocol)
-[![<22 kb](https://img.shields.io/badge/gzip%20size-%3C22%20kB-brightgreen.svg)](https://www.npmjs.com/package/antares-protocol)
+[![npm version](https://badge.fury.io/js/rx-helper.svg)](https://badge.fury.io/js/rx-helper)
+[![<22 kb](https://img.shields.io/badge/gzip%20size-%3C22%20kB-brightgreen.svg)](https://www.npmjs.com/package/rx-helper)
 [![Travis](https://img.shields.io/travis/deanius/antares.svg)](https://travis-ci.org/deanius/antares)
 [![Appveyor for Windows](https://ci.appveyor.com/api/projects/status/udjy5549kiy5sk4a/branch/master?svg=true)](https://ci.appveyor.com/project/deanius/antares/branch/master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/deanius/antares.svg)](https://greenkeeper.io/)
@@ -17,10 +17,10 @@ users expect.
 [![Dev Dependencies](https://david-dm.org/deanius/antares/dev-status.svg)](https://david-dm.org/deanius/antares?type=dev)
 ![npm type definitions](https://img.shields.io/npm/types/chalk.svg)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![try on runkit](https://badge.runkitcdn.com/antares-protocol.svg)](https://npm.runkit.com/antares-protocol)
+[![try on runkit](https://badge.runkitcdn.com/rx-helper.svg)](https://npm.runkit.com/rx-helper)
 ![twitter link](https://img.shields.io/badge/twitter-@deaniusaur-55acee.svg)
 
-## What Exactly Is Antares?
+## What Exactly Is Rx-Helper?
 
 An Architecture for assigning Consequences to Events.
 
@@ -35,7 +35,7 @@ An Architecture for assigning Consequences to Events.
 
 ## What kinds of apps can I build with it?
 
-Antares, with RxJS, manages consequences, which any app has, so it's not limited to client or server, or even Web Apps.
+Rx-Helper, with RxJS, manages consequences, which any app has, so it's not limited to client or server, or even Web Apps.
 
 There are many demo apps included in this project that show what you can build.
 
@@ -49,7 +49,7 @@ There are many demo apps included in this project that show what you can build.
 
 ## OK, but where should I start?
 
-The flagship demo which can be utilized as a course to learn how to fit an Antares Agent with an existing React/Redux/Express app, is located here: [The Hotel California Antares Sample App](//github.com/deanius/hotel-california).
+The flagship demo which can be utilized as a course to learn how to fit an Rx-Helper Agent with an existing React/Redux/Express app, is located here: [The Hotel California Rx-Helper Sample App](//github.com/deanius/hotel-california).
 
 It's becoming part of a workshop - if you're interested in learning more, or updating me on your progress, [tweet it](//twitter.com/deaniusol)!
 
@@ -64,11 +64,11 @@ The 4 Principles:
 
 ## Testing? Yes, please!
 
-Antares is highly tested. And since testing async is hard, some integration level tests run a bunch of complex stuff (our [demos](#demos)), and simply assert on the console output. The slightest change in behavior can thus be visible in the output of the demo as a large change. This, with Jest Snapshot testing makes asserting on our output a piece of cake.
+Rx-Helper is highly tested. And since testing async is hard, some integration level tests run a bunch of complex stuff (our [demos](#demos)), and simply assert on the console output. The slightest change in behavior can thus be visible in the output of the demo as a large change. This, with Jest Snapshot testing makes asserting on our output a piece of cake.
 
 For unit tests, check out [what the unit test suite looks like](https://travis-ci.org/deanius/antares-ts/jobs/403257425#L139) on a recent CI build. (Thanks to Dan Abromov for illustrating in his 2015 `react-dnd/dnd-core` project what a nicely formatted test suite output can be)
 
-Antares has unit tests, and demos whose output is tested in CI on MacOS, Linux, and Windows. Because concurrency must be interacted with to truly be understood, many of the demos support you interacting with them in a console, or at least changing their parameters in config (`demos/config.js`)
+Rx-Helper has unit tests, and demos whose output is tested in CI on MacOS, Linux, and Windows. Because concurrency must be interacted with to truly be understood, many of the demos support you interacting with them in a console, or at least changing their parameters in config (`demos/config.js`)
 
 See the output of a run of all demos on [Travis CI](https://travis-ci.org/deanius/antares-ts/jobs/402981544#L681), and if you run them locally, make sure you have sound turned on!
 
@@ -82,7 +82,7 @@ Here are some more ways you can run demos (use cross-env on windows)
 
 ## Show your love!
 
-- Display a badge on your project: ![I ♥️ Antares](https://img.shields.io/badge/built--with-antares-blue.svg)
+- Display a badge on your project: ![I ♥️ Rx-Helper](https://img.shields.io/badge/built--with-antares-blue.svg)
 - Donate to the project [![to the project](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/deanius), or somewhere you think you can pay it forward, even if not here!
 
 ## Gratitude, Props, Thanks To
@@ -95,4 +95,4 @@ Here are some more ways you can run demos (use cross-env on windows)
 
 ---
 
-![Antares](http://www.deanius.com/AntaresLogo.png)
+![Rx-Helper](http://www.deanius.com/Rx-HelperLogo.png)

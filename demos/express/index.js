@@ -1,7 +1,7 @@
 const bodyParser = require("body-parser")
 const express = require("express")
 const morgan = require("morgan")
-const { Agent, randomIdFilter } = require("antares-protocol")
+const { Agent, randomIdFilter } = require("rx-helper")
 const app = express()
 const port = process.env.PORT || 3120
 const { storeFilter } = require("./store")

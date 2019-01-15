@@ -1,7 +1,7 @@
 const path = require("path")
 
 module.exports = {
-  entry: "./src/antares-protocol.ts",
+  entry: "./src/rx-helper.ts",
   mode: "production",
   module: {
     rules: [
@@ -16,10 +16,10 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js"]
   },
   output: {
-    library: "AntaresProtocol",
+    library: "RxHelper",
     libraryTarget: "umd",
     globalObject: "this",
-    filename: "antares-protocol.js",
+    filename: "rx-helper.js",
     path: path.resolve(__dirname, "dist")
   }
 }
