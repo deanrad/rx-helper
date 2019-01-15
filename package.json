@@ -1,12 +1,12 @@
 {
   "name": "rx-helper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Structure your Rx applications. Focus on causes ⟺ effects. Waste as little time as possible.",
   "keywords": [],
   "sideEffects": false,
   "main": "dist/rx-helper.js",
   "module": "dist/rx-helper.js",
-  "typings": "dist/types/rx-helper.d.ts",
+  "typings": "dist/rx-helper.d.ts",
   "files": [
     "dist",
     "runkitExample.js"
@@ -18,7 +18,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "lint": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",

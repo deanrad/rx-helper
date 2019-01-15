@@ -10,3 +10,4 @@ compiled
 .rpt2_cache
 demos/scratch/
 demos/express/TimeHopInbox.html
+src/rx-helper.ts
