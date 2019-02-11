@@ -30,9 +30,13 @@
 // It's best if tests are forgiving at least to 40ms, though
 // ideally this should come down to 15ms or less.
 const Demos = require("./configs")
-const { Agent } = require("../dist/rx-helper")
+const { Agent, after } = require("../dist/rx-helper")
+const { format } = require("./utils")
+const { of, from, empty, asyncScheduler } = require("rxjs")
+const { observeOn } = "rxjs/operators"
 
 let output = ""
+let agent
 const appendLine = s => {
   output = output + `${s}\n`
 }
@@ -45,6 +49,7 @@ jest.setTimeout(30000)
 describe("All Demos", () => {
   beforeEach(() => {
     output = ""
+    agent = new Agent()
   })
   describe("Spoken-rendering Demo", () => {
     beforeAll(async () => {
@@ -93,6 +98,110 @@ describe("All Demos", () => {
     it.skip("should run the test (flaky)", async () => {
       await runDemo(Demos.sessionTimeout)
       expect(output).toMatchSnapshot()
+    })
+  })
+
+  describe("snapshot Demo", () => {
+    it("should match inline snapshot", () => {
+      const expected = {
+        Foo: "bar"
+      }
+      expect(expected).toMatchInlineSnapshot(`
+Object {
+  "Foo": "bar",
+}
+`)
+    })
+
+    /* This illustrates the pattern of turning the runtime logs of a
+      * process into their
+      */
+    it("should assert that log output matches a snapshot", () => {
+      const agent = new Agent()
+
+      // `log` adds to the `output` variable; add an additional line on start
+      agent.filter("start", () => log("--started--"))
+      agent.addFilter(({ action }) => log(format(action)))
+
+      agent.process({ type: "start", payload: { val: "bar" } })
+      agent.process({ type: "foo", payload: { must: "bebar" } })
+
+      expect(output).toMatchInlineSnapshot(`
+"--started--
+start: val: bar
+foo: must: bebar
+"
+`)
+    })
+
+    describe("Array iteration demo", () => {
+      // A subscription of a player in the role of 'comparitor'.
+      // Periodically squawks 'match'!
+      let comparator
+
+      beforeEach(() => {
+        agent.addFilter(({ action }) => log(format(action)))
+
+        comparator = agent.on(
+          "comparison",
+          ({ action }) => {
+            const { item, toFind } = action.payload
+            if (item === toFind) {
+              return of(item)
+            } else {
+              return empty()
+            }
+          },
+          { type: "match" }
+        )
+      })
+
+      it.only("should iterate all if toFind was not found", () => {
+        const ary = [1, 2, 4]
+        const toFind = 3
+
+        let searchSub
+        agent.on("match", ({ action }) => {
+          log("DONE")
+          searchSub.unsubscribe()
+        })
+
+        searchSub = from(ary).subscribe(item => {
+          agent.process({ type: "comparison", payload: { toFind, item } })
+        })
+
+        expect(output).toMatchInlineSnapshot(`
+"comparison: toFind: 3, item: 1
+comparison: toFind: 3, item: 2
+comparison: toFind: 3, item: 4
+"
+`)
+      })
+      it.only("should detect when toFind was found - way 1", () => {
+        const ary = [1, 2, 4]
+        const toFind = 2
+
+        let searchFound = false
+        agent.on("match", ({ action }) => {
+          log("DONE!")
+          searchFound = true
+        })
+
+        for (let item of ary) {
+          if (searchFound) {
+            break
+          }
+          agent.process({ type: "comparison", payload: { toFind, item } })
+        }
+        expect(output).toMatchInlineSnapshot(`
+"comparison: toFind: 2, item: 1
+comparison: toFind: 2, item: 2
+match:
+DONE!
+"
+`)
+      })
+      it.skip("should detect when toFind was found - way 2, takeUntil", () => null)
     })
   })
 })

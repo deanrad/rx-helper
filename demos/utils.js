@@ -1,6 +1,16 @@
 const { Subject } = require("rxjs")
 
 module.exports = {
+  // Pretty-prints an action with minimal punctuation - more YAML than JSON
+  format: ({ type, payload = {} }) => {
+    return (
+      type +
+      ": " +
+      Array.from(Object.keys(payload))
+        .map(k => `${k}: ${payload[k]}`)
+        .join(", ")
+    )
+  },
   // Returns an Observable of key presses - however Ctrl-C or 'x' terminates the whole process
   getUserInputFromStdin: log => {
     // set up stdin
