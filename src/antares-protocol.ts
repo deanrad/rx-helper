@@ -450,6 +450,11 @@ export const pp = (action: Action) => JSON.stringify(action)
 /** An agent instance with no special options - good enough for most purposes */
 export const agent = new Agent()
 
+/** Controls what types can be returned from an `on` handler:
+    Primitive types: `of()`
+    Promises: `from()`
+    Observables: pass-through
+*/
 function toObservable(_results: any) {
   if (typeof _results === "undefined") return of(undefined)
 

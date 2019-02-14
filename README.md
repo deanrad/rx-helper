@@ -22,7 +22,7 @@ users expect.
 
 ## What Exactly Is Antares?
 
-An Architecture for assigning Consequences to Events.
+Antares is an API for building the implementation of your custom-event protocol, on the client or server, by orchestrating the consequences for your chosen event types.
 
 ## What Benefits Can I Get By Using It?
 
