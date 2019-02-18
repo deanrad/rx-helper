@@ -1,0 +1,5 @@
+# A sample logfile for async parsing
+gandalfTheGreat: 1, 2
+spuriousOaf: one, two
+gandalfTheGreat: 3, 4
+spuriousOaf: one, two

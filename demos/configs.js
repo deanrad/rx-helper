@@ -19,6 +19,10 @@ let configs = {
   sessionTimeout: [
     require("./06-session-timeout"),
     { inactivityInterval: 300, warningInterval: 100 }
+  ],
+  nodeCallback: [
+    require("./07-node-callback"),
+    {}
   ]
 }
 

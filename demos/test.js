@@ -100,6 +100,16 @@ describe("All Demos", () => {
       expect(output).toMatchSnapshot()
     })
   })
+  describe("Node Callback Demo", () => {
+    it.only("should run the test", async () => {
+      await runDemo(Demos.nodeCallback)
+      expect(output).toMatchInlineSnapshot(`
+"gandalfTheGreat: 1, 2
+gandalfTheGreat: 3, 4
+"
+`)
+    })
+  })
 
   describe("snapshot Demo", () => {
     it("should match inline snapshot", () => {
@@ -156,7 +166,7 @@ foo: must: bebar
         )
       })
 
-      it.only("should iterate all if toFind was not found", () => {
+      it("should iterate all if toFind was not found", () => {
         const ary = [1, 2, 4]
         const toFind = 3
 
@@ -177,7 +187,7 @@ comparison: toFind: 3, item: 4
 "
 `)
       })
-      it.only("should detect when toFind was found - way 1", () => {
+      it("should detect when toFind was found - way 1", () => {
         const ary = [1, 2, 4]
         const toFind = 2
 
