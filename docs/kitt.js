@@ -20,35 +20,36 @@ const drawKitt = pos => {
   context.fillRect(fromX, 0, 10, canvas.height)
 }
 
-// Approximately 60fps, update the position, moving back and forth across the width
-const work = interval(16).pipe(
-  map(i => {
-    const doubleX = i % (width * 2)
-    if (doubleX > width) {
-      return width * 2 - doubleX
-    } else {
-      return doubleX
-    }
-  })
-)
-// An RxJS 'Observer', as the argument to subscribe,
-// is similar to an Antares Renderer
-// work.subscribe(pos => drawKitt(pos))
-
 // experiment
 const period = 3000
-const startTime = animationFrameScheduler.now()
-interval(0, animationFrameScheduler)
-  .pipe(
-    // uncomment to drop frames - every other
-    // filter(i => i % 2 === 0),
-    // filter(i => Math.random() > 0.3),
-    // turn elapsed time into a decimal expressed as 0..1 part of the period
-    map(() => animationFrameScheduler.now() - startTime),
-    map(delta => (delta % period) / period),
-    // wrap the period around at 0.5 to make it reverse
-    map(phase => 2 * width * (phase < 0.5 ? phase : 1 - phase))
-    // stop after a while
-    // takeUntil(timer(10000))
+
+const gameLoop = startTime =>
+  interval(0, animationFrameScheduler).pipe(
+    map(() => ({
+      delta: animationFrameScheduler.now() - startTime
+    }))
   )
-  .subscribe(pos => drawKitt(pos))
+
+agent.on("frame", ({ action }) => {
+  const { delta } = action.payload
+  const phase = (delta % period) / period
+  const pos = 2 * width * (phase < 0.5 ? phase : 1 - phase)
+  drawKitt(pos)
+})
+
+agent.subscribe(gameLoop(animationFrameScheduler.now()), { type: "frame" })
+
+// interval(0, animationFrameScheduler)
+//   .pipe(
+//     // uncomment to drop frames - every other
+//     // filter(i => i % 2 === 0),
+//     // filter(i => Math.random() > 0.3),
+//     // turn elapsed time into a decimal expressed as 0..1 part of the period
+//     map(() => animationFrameScheduler.now() - startTime),
+//     map(delta => (delta % period) / period),
+//     // wrap the period around at 0.5 to make it reverse
+//     map(phase => 2 * width * (phase < 0.5 ? phase : 1 - phase))
+//     // stop after a while
+//     // takeUntil(timer(10000))
+//   )
+//   .subscribe(pos => drawKitt(pos))

@@ -966,6 +966,9 @@ img { max-width: 100%; }
 		<li class=" tsd-kind-variable">
 			<a href="globals.html#reservedsubscribernames" class="tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names</a>
 		</li>
+		<li class=" tsd-kind-function">
+			<a href="globals.html#gameloop" class="tsd-kind-icon">Game<wbr>Loop</a>
+		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="globals.html#actionfilterfrom" class="tsd-kind-icon">action<wbr>Filter<wbr>From</a>
 		</li>
@@ -1137,6 +1140,7 @@ img { max-width: 100%; }
 					<section class="tsd-index-section ">
 						<h3>Functions</h3>
 						<ul class="tsd-index-list">
+							<li class="tsd-kind-function"><a href="globals.html#gameloop" class="tsd-kind-icon">Game<wbr>Loop</a></li>
 							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#actionfilterfrom" class="tsd-kind-icon">action<wbr>Filter<wbr>From</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#after" class="tsd-kind-icon">after</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#agentconfigfilter" class="tsd-kind-icon">agent<wbr>Config<wbr>Filter</a></li>
@@ -1163,7 +1167,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Action<wbr>Filter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><a href="interfaces/predicate.html" class="tsd-signature-type">Predicate</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/types.ts#L111">types.ts:111</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/types.ts#L111">types.ts:111</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1173,7 +1177,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Subscriber<span class="tsd-signature-symbol">:</span> <a href="interfaces/filter.html" class="tsd-signature-type">Filter</a><span class="tsd-signature-symbol"> | </span><a href="interfaces/renderer.html" class="tsd-signature-type">Renderer</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/types.ts#L37">types.ts:37</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/types.ts#L37">types.ts:37</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1193,7 +1197,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">agent<span class="tsd-signature-symbol">:</span> <a href="classes/agent.html" class="tsd-signature-type">Agent</a><span class="tsd-signature-symbol"> =&nbsp;new Agent()</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L454">antares-protocol.ts:454</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L500">antares-protocol.ts:500</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1208,7 +1212,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">assert<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;typeof require &#x3D;&#x3D;&#x3D; &quot;undefined&quot; ? () &#x3D;&gt; null : require(&quot;assert&quot;)</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L23">antares-protocol.ts:23</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L30">antares-protocol.ts:30</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1218,13 +1222,61 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;completed&quot;, &quot;then&quot;, &quot;catch&quot;]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L411">antares-protocol.ts:411</a></li>
+						<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L418">antares-protocol.ts:418</a></li>
 					</ul>
 				</aside>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Functions</h2>
+			<section class="tsd-panel tsd-member tsd-kind-function">
+				<a name="gameloop" class="tsd-anchor"></a>
+				<h3>Game<wbr>Loop</h3>
+				<ul class="tsd-signatures tsd-kind-function">
+					<li class="tsd-signature tsd-kind-icon">Game<wbr>Loop<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L470">antares-protocol.ts:470</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p> Returns an Observable of { delta } objects where delta is the time in ms
+									since the GameLoop was constructed. Frames occur as often as
+								requestAnimationFrame is invoked, so:</p>
+							</div>
+							<ul>
+								<li>Not while the browser is in the background</li>
+								<li>Whenever the browser has painted and is ready for you to update the view</li>
+							</ul>
+							<dl class="tsd-comment-tags">
+								<dt>example</dt>
+								<dd><pre><code class="language-js">
+ <span class="hljs-keyword">const</span> drawToCanvas(world) { ... }
+
+ <span class="hljs-keyword">const</span> frames = <span class="hljs-keyword">new</span> GameLoop()
+
+ agent.on(<span class="hljs-string">"world"</span>, ({ <span class="hljs-attr">action</span>: { <span class="hljs-attr">payload</span>: { world }}}) =&gt; {
+   drawToCanvas(world)
+ })
+
+ <span class="hljs-keyword">const</span> worlds = frames.pipe(
+    map(<span class="hljs-function">(<span class="hljs-params">{ delta }</span>) =&gt;</span> delta),
+    scan(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aWholeNewWorld</span>(<span class="hljs-params">oldWorld, delta</span>) </span>{
+      <span class="hljs-keyword">return</span> aWholeNewWorld
+    }, {})
+ )
+ agent.subscribe(worlds, { <span class="hljs-attr">type</span>: <span class="hljs-string">"world"</span>})</code></pre>
+								</dd>
+							</dl>
+						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-member tsd-kind-function tsd-is-not-exported">
 				<a name="actionfilterfrom" class="tsd-anchor"></a>
 				<h3>action<wbr>Filter<wbr>From</h3>
@@ -1235,7 +1287,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L474">antares-protocol.ts:474</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L520">antares-protocol.ts:520</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1252,7 +1304,7 @@ img { max-width: 100%; }
 											<li class="tsd-description">
 												<aside class="tsd-sources">
 													<ul>
-														<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L474">antares-protocol.ts:474</a></li>
+														<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L520">antares-protocol.ts:520</a></li>
 													</ul>
 												</aside>
 												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">true</span></h4>
@@ -1275,7 +1327,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/operators.ts#L14">operators.ts:14</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/operators.ts#L14">operators.ts:14</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1312,7 +1364,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L417">antares-protocol.ts:417</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L424">antares-protocol.ts:424</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1341,7 +1393,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/operators.ts#L28">operators.ts:28</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/operators.ts#L28">operators.ts:28</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1372,7 +1424,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/lib.ts#L3">lib.ts:3</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/lib.ts#L3">lib.ts:3</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1413,7 +1465,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/operators.ts#L49">operators.ts:49</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/operators.ts#L49">operators.ts:49</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1436,7 +1488,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L451">antares-protocol.ts:451</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L497">antares-protocol.ts:497</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1464,7 +1516,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L431">antares-protocol.ts:431</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L438">antares-protocol.ts:438</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1494,7 +1546,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L440">antares-protocol.ts:440</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L486">antares-protocol.ts:486</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1526,7 +1578,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/operators.ts#L34">operators.ts:34</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/operators.ts#L34">operators.ts:34</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1549,7 +1601,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L461">antares-protocol.ts:461</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L507">antares-protocol.ts:507</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1580,7 +1632,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/operators.ts#L83">operators.ts:83</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/operators.ts#L83">operators.ts:83</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1611,7 +1663,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/antares/blob/c043731/src/antares-protocol.ts#L404">antares-protocol.ts:404</a></li>
+								<li>Defined in <a href="https://github.com/deanius/antares/blob/9058244/src/antares-protocol.ts#L411">antares-protocol.ts:411</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>

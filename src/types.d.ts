@@ -78,12 +78,12 @@ export interface RendererPromiser {
 export interface SubscriberConfig {
     /** A name by which the results will be keyed. Example: `agent.process(action).completed.NAME.then(() => ...)` */
     name?: string;
+    /** A string, regex, or boolean function controlling which actions this renderer is configured to run upon. */
+    actionsOfType?: ActionFilter;
     /** The concurrency mode to use. Governs what happens when renderings from this renderer overlap. */
     concurrency?: Concurrency;
     /** If true, the Observable returned by the renderer will be fed to `agent.subscribe`, so its actions are `process`ed. */
     processResults?: Boolean;
-    /** A string, regex, or boolean function controlling which actions this renderer is configured to run upon. */
-    actionsOfType?: ActionFilter;
     /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
     type?: string;
     /** If provided, this will be called if cutoff mode terminates a rendering. Parameter is {action}. */
