@@ -88,6 +88,8 @@ export interface SubscriberConfig {
     type?: string;
     /** If provided, this will be called if cutoff mode terminates a rendering. Parameter is {action}. */
     onCutoff?: Subscriber;
+    /** If provided, the context of the action being responded to will be forwarded */
+    withContext?: Boolean;
 }
 export interface SubscribeConfig {
     /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
