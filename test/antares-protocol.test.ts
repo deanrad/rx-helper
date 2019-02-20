@@ -356,6 +356,28 @@ describe("Agent", () => {
             })
           })
         })
+        describe("withContext", () => {
+          it("should allow context to be passed along", done => {
+            expect.assertions(1)
+
+            const ctx = { i: 1 }
+            agent.on(
+              "add",
+              ({ action }) => {
+                // agent.process({ type: "times", payload: 2.1 }, ctx)
+                return of({ type: "times", payload: 2.1 })
+              },
+              { processResults: true, withContext: true }
+            )
+
+            agent.on("times", ({ action, context }) => {
+              expect(context).toEqual(ctx)
+              done()
+            })
+
+            agent.process({ type: "add", payload: -0.5 }, ctx)
+          })
+        })
         describe("validation", () => {
           it.skip("should not allow bad configs", () => {})
         })
