@@ -295,7 +295,10 @@ export class Agent implements ActionProcessor {
 
       // 2. If processing results, set that up
       if (config.processResults || config.type) {
-        const opts = config.type ? { type: config.type } : undefined
+        const opts : SubscribeConfig = config.type ? { type: config.type } : {}
+        if (config.withContext) {
+          opts.context = context
+        }
         // Some actions from an Observable may be seen prior to the next action
         this.subscribe(ender, opts)
       }
