@@ -356,6 +356,9 @@ describe("Agent", () => {
             })
           })
         })
+        describe("type", () => {
+          it.skip("should embed the output payloads in actions of that type", () => {})
+        })
         describe("withContext", () => {
           it("should allow context to be passed along", done => {
             expect.assertions(1)

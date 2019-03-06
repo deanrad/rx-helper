@@ -1,5 +1,13 @@
-import { Observable, Subject, Subscription, asyncScheduler, from, of } from "rxjs"
-import { observeOn, filter, map, first } from "rxjs/operators"
+import {
+  Observable,
+  Subject,
+  Subscription,
+  animationFrameScheduler,
+  from,
+  of,
+  interval
+} from "rxjs"
+import { filter, map, first } from "rxjs/operators"
 import {
   ActionProcessor,
   Action,
@@ -9,7 +17,6 @@ import {
   Concurrency,
   Filter,
   Predicate,
-  ProcessResult,
   Renderer,
   RendererPromiser,
   Subscriber,
@@ -47,7 +54,7 @@ export { startWith, last, filter, delay, map, mapTo, scan } from "rxjs/operators
  */
 export class Agent implements ActionProcessor {
   public static configurableProps = ["agentId", "relayActions"]
-  public static VERSION = "1.0.1"
+  public static VERSION = "1.1.0"
 
   /**
    * The heart and circulatory system of an Agent is `action$`, its action stream. */
@@ -295,7 +302,7 @@ export class Agent implements ActionProcessor {
 
       // 2. If processing results, set that up
       if (config.processResults || config.type) {
-        const opts : SubscribeConfig = config.type ? { type: config.type } : {}
+        const opts: SubscribeConfig = config.type ? { type: config.type } : {}
         if (config.withContext) {
           opts.context = context
         }
@@ -432,6 +439,45 @@ export const randomId = (length: number = 7) => {
   return Math.floor(Math.pow(2, length * 4) * Math.random()).toString(16)
 }
 
+/**
+ *  Returns an Observable of { delta } objects where delta is the time in ms
+ *  since the GameLoop was constructed. Frames occur as often as
+ *  requestAnimationFrame is invoked, so:
+ *
+ *  - Not while the browser is in the background
+ *  - Whenever the browser has painted and is ready for you to update the view
+ *
+ * @example
+ * ```js
+ *
+ *  const drawToCanvas(world) { ... }
+ *
+ *  const frames = new GameLoop()
+ *
+ *  agent.on("world", ({ action: { payload: { world }}}) => {
+ *    drawToCanvas(world)
+ *  })
+ *
+ *  const worlds = frames.pipe(
+ *     map(({ delta }) => delta),
+ *     scan(function aWholeNewWorld(oldWorld, delta) {
+ *       return aWholeNewWorld
+ *     }, {})
+ *  )
+ *  agent.subscribe(worlds, { type: "world"})
+ * ```
+ */
+export function GameLoop() {
+  if (typeof animationFrameScheduler === "undefined") {
+    throw new Error("ERR: animationFrame not detected in this environment.")
+  }
+  const startTime = animationFrameScheduler.now()
+  return interval(0, animationFrameScheduler).pipe(
+    map(() => ({
+      delta: animationFrameScheduler.now() - startTime
+    }))
+  )
+}
 /**
  * A filter that adds a string of hex digits to
  * action.meta.actionId to uniquely identify an action among its neighbors.

@@ -103,6 +103,37 @@ export declare const agentConfigFilter: (agent: Agent) => ({ action }: ActionStr
  */
 export declare const randomId: (length?: number) => string;
 /**
+ *  Returns an Observable of { delta } objects where delta is the time in ms
+ *  since the GameLoop was constructed. Frames occur as often as
+ *  requestAnimationFrame is invoked, so:
+ *
+ *  - Not while the browser is in the background
+ *  - Whenever the browser has painted and is ready for you to update the view
+ *
+ * @example
+ * ```js
+ *
+ *  const drawToCanvas(world) { ... }
+ *
+ *  const frames = new GameLoop()
+ *
+ *  agent.on("world", ({ action: { payload: { world }}}) => {
+ *    drawToCanvas(world)
+ *  })
+ *
+ *  const worlds = frames.pipe(
+ *     map(({ delta }) => delta),
+ *     scan(function aWholeNewWorld(oldWorld, delta) {
+ *       return aWholeNewWorld
+ *     }, {})
+ *  )
+ *  agent.subscribe(worlds, { type: "world"})
+ * ```
+ */
+export declare function GameLoop(): Observable<{
+    delta: number;
+}>;
+/**
  * A filter that adds a string of hex digits to
  * action.meta.actionId to uniquely identify an action among its neighbors.
  * @see randomId
