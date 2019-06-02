@@ -8,11 +8,11 @@ users expect.
 ![ES 2015](https://img.shields.io/badge/ES-2015-brightgreen.svg)
 [![npm version](https://badge.fury.io/js/rx-helper.svg)](https://badge.fury.io/js/rx-helper)
 [![<22 kb](https://img.shields.io/badge/gzip%20size-%3C22%20kB-brightgreen.svg)](https://www.npmjs.com/package/rx-helper)
-[![Travis](https://img.shields.io/travis/deanius/antares.svg)](https://travis-ci.org/deanius/antares)
-[![Appveyor for Windows](https://ci.appveyor.com/api/projects/status/udjy5549kiy5sk4a/branch/master?svg=true)](https://ci.appveyor.com/project/deanius/antares/branch/master)
-[![Greenkeeper badge](https://badges.greenkeeper.io/deanius/antares.svg)](https://greenkeeper.io/)
+[![Travis](https://img.shields.io/travis/deanius/rx-helper.svg)](https://travis-ci.org/deanius/rx-helper)
+[![Appveyor for Windows](https://ci.appveyor.com/api/projects/status/udjy5549kiy5sk4a/branch/master?svg=true)](https://ci.appveyor.com/project/deanius/rx-helper/branch/master)
+[![Greenkeeper badge](https://badges.greenkeeper.io/deanius/rx-helper.svg)](https://greenkeeper.io/)
 
-[![Dev Dependencies](https://david-dm.org/deanius/antares/dev-status.svg)](https://david-dm.org/deanius/antares?type=dev)
+[![Dev Dependencies](https://david-dm.org/deanius/rx-helper/dev-status.svg)](https://david-dm.org/deanius/rx-helper?type=dev)
 ![npm type definitions](https://img.shields.io/npm/types/chalk.svg)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![try on runkit](https://badge.runkitcdn.com/rx-helper.svg)](https://npm.runkit.com/rx-helper)
@@ -32,11 +32,7 @@ A library to help you use the power of RxJS to:
 
 Like JQuery enabled a boom in productivity by paving over differences between browsers, Rx-Helper allows you to pave over differences between:
 
-- Client/server programming style
-- One UI framework and another
-- Data that's available now, and data that's available later
-
-This last point is very powerful - and if you've already hit up against the many limitations of `async`/`await` and Promises, this can help you stay clear of them.
+Rx-Helper is an API for building the implementation of your custom-event protocol, on the client or server, by orchestrating the consequences for your chosen event types.
 
 ## What Benefits Can I Get By Using It?
 
@@ -55,7 +51,7 @@ There are many demo apps included in this project that show what you can build.
 
 - A console app that speaks names and writes to a file
 - A utility that turns all-at-the-end AJAX requests for arrays into streaming Observables (eg `/users/`)
-- A Web Server in [demos/express/index.js](//github.com/deanius/antares/blob/master/demos/express/index.js)
+- A Web Server in [demos/express/index.js](//github.com/deanius/rx-helper/blob/master/demos/express/index.js)
 - A Canvas-based requestAnimationFrame animation.
 - A Console app that detects a cheat-code of 5 clicks in a short interval.
 - A Web Audio app that streams and queues up music from attachments in your Inbox.
@@ -74,15 +70,11 @@ The 4 Principles:
 1.  An `agent` processes Flux Standard Actions given it through either `agent.process` or `agent.subscribe`
 1.  Actions are synchronously processed through functions given to `agent.filter` or `addFilter`
 1.  ...and asynchronously processed through functions known as renderers, configured via `agent.on`.
-1.  Renderer functions may produce consequences (i.e. effects, or side-effects) return [Observables](https://github.com/tc39/proposal-observable) of new actions to be processed, specify a concurrency mode and be run with other [options](https://deanius.github.io/antares/docs/interfaces/subscriberconfig.html)
+1.  Renderer functions may produce consequences (i.e. effects, or side-effects) return [Observables](https://github.com/tc39/proposal-observable) of new actions to be processed, specify a concurrency mode and be run with other [options](https://deanius.github.io/rx-helper/docs/interfaces/subscriberconfig.html)
 
 ## Testing? Yes, please!
 
 Rx-Helper is highly tested. And since testing async is hard, some integration level tests run a bunch of complex stuff (our [demos](#demos)), and simply assert on the console output. The slightest change in behavior can thus be visible in the output of the demo as a large change. This, with Jest Snapshot testing makes asserting on our output a piece of cake.
-
-For unit tests, check out [what the unit test suite looks like](https://travis-ci.org/deanius/antares-ts/jobs/403257425#L139) on a recent CI build. (Thanks to Dan Abromov for illustrating in his 2015 `react-dnd/dnd-core` project what a nicely formatted test suite output can be)
-
-Rx-Helper has unit tests, and demos whose output is tested in CI on MacOS, Linux, and Windows. See the output of a run of all demos on [Travis CI](https://travis-ci.org/deanius/antares-ts/jobs/402981544#L681), and if you run them locally, make sure you have sound turned on!
 
 ## Show your love!
 

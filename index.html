@@ -17,11 +17,11 @@
         let after // an RxJS-Observable-based delay utility
         let ajaxStreamingGet
         let randomIdFilter
-        if (typeof Rx-HelperProtocol !== "undefined") {
-            agent = new Rx-HelperProtocol.Agent
-            after = Rx-HelperProtocol.after
-            ajaxStreamingGet = Rx-HelperProtocol.ajaxStreamingGet
-            randomIdFilter = Rx-HelperProtocol.randomIdFilter
+        if (typeof RxHelper !== "undefined") {
+            agent = new RxHelper.Agent
+            after = RxHelper.after
+            ajaxStreamingGet = RxHelper.ajaxStreamingGet
+            randomIdFilter = RxHelper.randomIdFilter
             console.log("Rx-Helper is Ready")
         } else {
             console.log("Rx-Helper Loading Error")
@@ -226,7 +226,11 @@
     </div>
 
     <!-- A fun animation -->
+<<<<<<< HEAD
     <script src="demos/home/kitt.js"></script>
+=======
+    <script src="kitt.js"></script>
+>>>>>>> master
 
     <a class="github-fork-ribbon right-top" href="//github.com/deanius/rx-helper" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
 </body>
