@@ -969,6 +969,9 @@ img { max-width: 100%; }
 				<li class=" tsd-kind-property tsd-parent-kind-interface">
 					<a href="subscriberconfig.html#type" class="tsd-kind-icon">type</a>
 				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="subscriberconfig.html#withcontext" class="tsd-kind-icon">with<wbr>Context</a>
+				</li>
 			</ul>
 		</li>
 		<li class=" tsd-kind-type-alias">
@@ -985,6 +988,9 @@ img { max-width: 100%; }
 		</li>
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#reservedsubscribernames" class="tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names</a>
+		</li>
+		<li class=" tsd-kind-function">
+			<a href="../globals.html#gameloop" class="tsd-kind-icon">Game<wbr>Loop</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="../globals.html#actionfilterfrom" class="tsd-kind-icon">action<wbr>Filter<wbr>From</a>
@@ -1050,6 +1056,7 @@ img { max-width: 100%; }
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#oncutoff" class="tsd-kind-icon">on<wbr>Cutoff</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#processresults" class="tsd-kind-icon">process<wbr>Results</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#type" class="tsd-kind-icon">type</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="subscriberconfig.html#withcontext" class="tsd-kind-icon">with<wbr>Context</a></li>
 						</ul>
 					</section>
 				</div>
@@ -1063,7 +1070,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">actions<wbr>OfType<span class="tsd-signature-symbol">:</span> <a href="../globals.html#actionfilter" class="tsd-signature-type">ActionFilter</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/070e5da/src/types.ts#L95">types.ts:95</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/0cb777f/src/types.ts#L91">types.ts:91</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1078,7 +1085,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">concurrency<span class="tsd-signature-symbol">:</span> <a href="../enums/concurrency.html" class="tsd-signature-type">Concurrency</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/070e5da/src/types.ts#L91">types.ts:91</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/0cb777f/src/types.ts#L93">types.ts:93</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1093,7 +1100,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/070e5da/src/types.ts#L89">types.ts:89</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/0cb777f/src/types.ts#L89">types.ts:89</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1108,7 +1115,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">on<wbr>Cutoff<span class="tsd-signature-symbol">:</span> <a href="../globals.html#subscriber" class="tsd-signature-type">Subscriber</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/070e5da/src/types.ts#L99">types.ts:99</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/0cb777f/src/types.ts#L99">types.ts:99</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1123,7 +1130,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">process<wbr>Results<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Boolean</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/070e5da/src/types.ts#L93">types.ts:93</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/0cb777f/src/types.ts#L95">types.ts:95</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1138,12 +1145,27 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/antares/blob/070e5da/src/types.ts#L97">types.ts:97</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/0cb777f/src/types.ts#L97">types.ts:97</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>If provided, this renderers&#39; Observables values will be wrapped in FSAs with this type.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="withcontext" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> with<wbr>Context</h3>
+				<div class="tsd-signature tsd-kind-icon">with<wbr>Context<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Boolean</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/0cb777f/src/types.ts#L101">types.ts:101</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>If provided, the context of the action being responded to will be forwarded</p>
 					</div>
 				</div>
 			</section>
