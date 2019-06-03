@@ -12,8 +12,8 @@ app.use(morgan("dev"))
 
 // Set up the agent to declare our side effects of getting an http/get
 const agent = new Agent({ agentId: `http://localhost:${port}` })
-agent.addFilter(storeFilter)
-agent.addFilter(randomIdFilter())
+agent.filter(() => true, storeFilter)
+agent.filter(() => true, randomIdFilter())
 agent.on("http/get", ({ action, context }) => {
   // Get some fields from the action itself
   const {

@@ -131,7 +131,7 @@ Object {
 
       // `log` adds to the `output` variable; add an additional line on start
       agent.filter("start", () => log("--started--"))
-      agent.addFilter(({ action }) => log(format(action)))
+      agent.filter(() => true, ({ action }) => log(format(action)))
 
       agent.process({ type: "start", payload: { val: "bar" } })
       agent.process({ type: "foo", payload: { must: "bebar" } })
@@ -150,7 +150,7 @@ foo: must: bebar
       let comparator
 
       beforeEach(() => {
-        agent.addFilter(({ action }) => log(format(action)))
+        agent.filter(() => true, ({ action }) => log(format(action)))
 
         comparator = agent.on(
           "comparison",

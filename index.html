@@ -57,9 +57,9 @@
         )
 
         // append a random GIT-SHA-like identifier to each action
-        agent.addFilter(randomIdFilter())
+        agent.filter(() => true, randomIdFilter())
         // Send all actions, including those returned by renderers through the store
-        agent.addFilter(({ action }) => store.dispatch(action))
+        agent.filter(() => true, ({ action }) => store.dispatch(action))
 
         // And print out repo(s) as we get them
         agent.on(/repo/, ({ action }) => {

@@ -221,7 +221,7 @@ describe("Agent", () => {
     describe("arguments", () => {
       describe("function argument", () => {
         it("should be a function", () => {
-          agent.addFilter(nullFn)
+          agent.filter(() => true, nullFn)
         })
       })
 
@@ -229,7 +229,7 @@ describe("Agent", () => {
         describe("name", () => {
           it("will be filter_N if not given for a filter", () => {
             expect(agent.filterNames()).not.toContain("filter_1")
-            agent.addFilter(() => 3.141)
+            agent.filter(() => true, () => 3.141)
             expect(agent.filterNames()).toContain("filter_1")
           })
 
@@ -262,7 +262,7 @@ describe("Agent", () => {
             expect.assertions(reservedSubscriberNames.length)
             reservedSubscriberNames.forEach(badName => {
               expect(() => {
-                agent.addFilter(nullFn, { name: badName })
+                agent.filter(() => true, nullFn, { name: badName })
               }).toThrow()
             })
           })
@@ -298,7 +298,7 @@ describe("Agent", () => {
       describe("return value", () => {
         it("is a subscription", () => {
           let callCount = 0
-          const subscription = agent.addFilter(() => callCount++)
+          const subscription = agent.filter(() => true, () => callCount++)
           const result = agent.process(anyAction)
           expect(callCount).toEqual(1)
           subscription.unsubscribe()
@@ -314,7 +314,7 @@ describe("Agent", () => {
       describe("function argument", () => {
         it("will be called synchronously when an action is processed", () => {
           const spy = jest.fn()
-          agent.addFilter(spy)
+          agent.filter(() => true, spy)
           expect(spy).not.toHaveBeenCalled()
           agent.process(anyAction)
           expect(spy).toHaveBeenCalled()
@@ -426,7 +426,7 @@ describe("Agent", () => {
             let seenActions = []
             agent = new Agent()
             // filter to remember
-            agent.addFilter(({ action }) => (seenActions = [...seenActions, action]))
+            agent.filter(() => true, ({ action }) => (seenActions = [...seenActions, action]))
             // renderer to wrap
 
             agent.on("wrap", () => of(2.1), { type: "mapped" }) // implies processResults: true
@@ -472,7 +472,7 @@ describe("Agent", () => {
         expect(result).toMatchObject(anyAction)
       })
       it("Has each filters result under its name", () => {
-        agent.addFilter(seenFilter, { name: "seen" })
+        agent.filter(() => true, seenFilter, { name: "seen" })
         const results = agent.process(anyAction)
         expect(results.seen).toMatchObject(anyAction)
       })
@@ -560,7 +560,7 @@ describe("Agent", () => {
     describe("Behavior", () => {
       describe("Filters", () => {
         it("Will raise exceptions synchronously (without unsubscribing)", () => {
-          agent.addFilter(blowUpOnRender)
+          agent.filter(() => true, blowUpOnRender)
           expect(() => {
             agent.process(anyAction)
           }).toThrow()
@@ -569,7 +569,7 @@ describe("Agent", () => {
           }).toThrow()
         })
         it("may return values", () => {
-          agent.addFilter(seenFilter, { name: "seen" })
+          agent.filter(() => true, seenFilter, { name: "seen" })
           const results = agent.process(anyAction)
           expect(results.seen).toMatchObject(anyAction)
         })
@@ -583,7 +583,7 @@ describe("Agent", () => {
         let badSubRender: Subscription
 
         beforeEach(() => {
-          agent.addFilter(seenAdder, { name: "seenAdder" })
+          agent.filter(() => true, seenAdder, { name: "seenAdder" })
           goodSub1 = agent.on(() => true, () => 3.14159, { name: "pi" })
           goodSub2 = agent.on(() => true, () => after(0, () => 2.71828), { name: "e" })
         })
@@ -836,8 +836,8 @@ describe("Agent", () => {
           return (counter *= 2)
         }
 
-        agent.addFilter(incrementer, { name: "inc" })
-        agent.addFilter(doubler, { name: "double" })
+        agent.filter(() => true, incrementer, { name: "inc" })
+        agent.filter(() => true, doubler, { name: "double" })
 
         let result = agent.process(anyAction)
         const { double, inc } = result
@@ -846,9 +846,12 @@ describe("Agent", () => {
 
       describe("errors in filters", () => {
         it("should propogate up to the caller of #process", () => {
-          agent.addFilter(() => {
-            throw new Error("whoops!")
-          })
+          agent.filter(
+            () => true,
+            () => {
+              throw new Error("whoops!")
+            }
+          )
           expect(() => {
             agent.process({ type: "timebomb" })
           }).toThrowErrorMatchingSnapshot()
@@ -865,7 +868,7 @@ describe("Agent", () => {
   describe("#subscribe", () => {
     describe("First argument <Observable>", () => {
       it("should call process for each in the observable", () => {
-        agent.addFilter(seenFilter)
+        agent.filter(() => true, seenFilter)
         const o = from([{ type: "A" }, { type: "B" }])
         agent.subscribe(o)
         expect(seen).toEqual([{ type: "A" }, { type: "B" }])
@@ -874,7 +877,7 @@ describe("Agent", () => {
     describe("Second argument <Config>", () => {
       describe("#type", () => {
         it("should wrap observed items in actions", () => {
-          agent.addFilter(seenFilter)
+          agent.filter(() => true, seenFilter)
           const o = from(["A", "B"])
           agent.subscribe(o, {
             type: "category"
@@ -960,7 +963,7 @@ describe("Utilities", () => {
       const config: AgentConfig = { agentId: 12345 }
       const agent = new Agent(config)
       const filter = agentConfigFilter(agent)
-      agent.addFilter(filter)
+      agent.filter(() => true, filter)
 
       const action = { type: "gotmeta" }
       agent.process(action)

@@ -14,7 +14,7 @@ describe("Multi-agent Trivia Game", () => {
     player1 = new Agent({ agentId: "player1" })
     emcee = new Agent({ agentId: "emcee" })
 
-    // The topology defines who sends actions to whom
+    // The topology defines who sends events to whom
     const topology = {
       player1: [moderator],
       emcee: [moderator],
@@ -25,7 +25,7 @@ describe("Multi-agent Trivia Game", () => {
     ;[moderator, player1, emcee].forEach(agent => {
       // All agents have a store
       const store = init(triviaStoreConfig)
-      agent.addFilter(({ action }) => store.dispatch(action))
+      agent.filter(() => true, ({ event }) => store.dispatch(event))
       // Expose for testing only!
       Object.assign(agent, { store })
       Object.defineProperty(store, "state", {
@@ -34,33 +34,36 @@ describe("Multi-agent Trivia Game", () => {
         }
       })
 
-      // Stamp actions with agentConfig
-      agent.addFilter(agentConfigFilter(agent))
-      agent.addFilter(randomIdFilter())
+      // Stamp events with agentConfig
+      agent.filter(() => true, agentConfigFilter(agent))
+      agent.filter(() => true, randomIdFilter())
 
-      // Agents send actions to the others in their topology
+      // Agents send events to the others in their topology
       const others = topology[agent.agentId]
-      agent.addFilter(({ action }) => {
-        const meta = action.meta || {}
+      agent.filter(
+        () => true,
+        ({ event }) => {
+          const meta = event.meta || {}
 
-        // Actions marked meta.push false are not even sent to the server
-        if (meta["push"] === false) return
+          // events marked meta.push false are not even sent to the server
+          if (meta["push"] === false) return
 
-        // We send out actions to others but tell them not to push them
-        others.forEach(targetAgent => {
-          // TODO Dont send back the way we came. Requires agentConfigFilter
-          targetAgent.process({
-            ...action,
-            meta: {
-              ...(action.meta || {}),
-              // Except, we can tell the moderator to push to all others
-              // This will change once diffs of the store are filtered and
-              // pushed, instead of the actions that caused them.
-              push: targetAgent.relayActions ? true : false
-            }
+          // We send out events to others but tell them not to push them
+          others.forEach(targetAgent => {
+            // TODO Dont send back the way we came. Requires agentConfigFilter
+            targetAgent.process({
+              ...event,
+              meta: {
+                ...(event.meta || {}),
+                // Except, we can tell the moderator to push to all others
+                // This will change once diffs of the store are filtered and
+                // pushed, instead of the events that caused them.
+                push: targetAgent.relayActions ? true : false
+              }
+            })
           })
-        })
-      })
+        }
+      )
     })
   })
 

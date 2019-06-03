@@ -1,4 +1,4 @@
-import { Observable, Subject, Subscription } from "rxjs"
+import { Observable, Subscription } from "rxjs"
 import { SubscriberConfig } from "./types"
 
 /**
@@ -44,8 +44,16 @@ export interface Action {
 }
 
 export interface ActionStreamItem {
+  /** Alias for action */
+  event?: Action
+  /** The action which caused a filter/handler to be run */
   action: Action
+  /** An optional object, like the websocket or http response
+   * that this action arrived on, on which its processing may
+   * make function calls (such as res.write())
+   */
   context?: Object
+  /** The results of filters, keyed by their name */
   results?: Map<string, any>
 }
 
@@ -73,11 +81,28 @@ export enum Concurrency {
   mute = "mute"
 }
 
+/**
+ * The function you assign to handle `.on(actionType)`
+ * events is known as a Renderer. It receives as arguments
+ * 1) An object containing an event (aka action), and context as fields
+ * 2) The event's payload as a 2nd parameter (This makes
+ *    referring to the payload easy, and is actually similar to JQuery ha!)
+ */
 export interface Renderer {
-  (item: ActionStreamItem): any
+  (item: ActionStreamItem, payload?: any): any
 }
+/**
+ * A Filter runs a synchronous function prior to any renderers
+ * being invoked, and can cancel future filters, and all handlers
+ * by throwing an exception, which must be caught by the caller of
+ * `process(action)`.
+ *
+ * It does *not*, as its name suggest, split off a slice of the
+ * stream. To do that see `actionsOfType`.
+ * @see actionsOfType
+ */
 export interface Filter {
-  (item: ActionStreamItem): any
+  (item: ActionStreamItem, payload?: any): any
 }
 
 export interface RendererPromiser {

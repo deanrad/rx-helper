@@ -16,7 +16,7 @@ module.exports = ({
   // A new agent, where very action the agent sees may be logged
   const agent = new Agent()
   // enable debugging (will be verbose)
-  agent.addFilter(({ action }) => console.error(JSON.stringify(action)))
+  agent.filter(() => true, ({ action }) => console.error(JSON.stringify(action)))
 
   // The agent will respond to 'load' w/ an event of type 'logLines'
   // containing the files' contents as a string.
