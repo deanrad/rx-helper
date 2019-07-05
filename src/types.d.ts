@@ -1,55 +1,55 @@
-import { Observable, Subscription } from "rxjs"
-import { SubscriberConfig } from "./types"
+import { Observable, Subscription } from "rxjs";
+import { SubscriberConfig } from "./types";
 /**
  * Options that get mixed into the agent as read-only
  * properties upon construction. Whitelisted to: agentId
  */
 export interface AgentConfig {
-  /**
-   * Any value: One Suggestion is hex digits (a4ad3d) but
-   * the way you'll create this will depend on your environment.
-   */
-  agentId?: any
-  /**
-   * If true, indicates that this Agent is willing to forward actions to others.
-   */
-  relayActions?: boolean
-  [key: string]: any
+    /**
+     * Any value: One Suggestion is hex digits (a4ad3d) but
+     * the way you'll create this will depend on your environment.
+     */
+    agentId?: any;
+    /**
+     * If true, indicates that this Agent is willing to forward actions to others.
+     */
+    relayActions?: boolean;
+    [key: string]: any;
 }
 /**
  * The core of the Rx-Helper Agent API: methods to add subscribers (filters or renderers)
  * and a single method to 'dispatch' an action (Flux Standard Action) to relevant subscribers.
  */
 export interface ActionProcessor {
-  process(action: Action, context?: Object): ProcessResult
-  subscribe(action$: Observable<Action>, context?: Object): Subscription
-  filter(actionFilter: ActionFilter, renderer: Subscriber, config?: SubscriberConfig): Subscription
-  on(actionFilter: ActionFilter, renderer: Subscriber, config?: SubscriberConfig): Subscription
+    process(action: Action, context?: Object): ProcessResult;
+    subscribe(action$: Observable<Action>, context?: Object): Subscription;
+    filter(actionFilter: ActionFilter, renderer: Subscriber, config?: SubscriberConfig): Subscription;
+    on(actionFilter: ActionFilter, renderer: Subscriber, config?: SubscriberConfig): Subscription;
 }
 /**
  * A subscriber is either a renderer or a filter - a function which
  * receives as its argument the ActionStreamItem, typically to use
  * the payload of the `action` property to cause some side-effect.
  */
-export declare type Subscriber = Filter | Renderer
+export declare type Subscriber = Filter | Renderer;
 export interface Action {
-  type: string
-  payload?: any
-  error?: boolean
-  meta?: Object
+    type: string;
+    payload?: any;
+    error?: boolean;
+    meta?: Object;
 }
 export interface ActionStreamItem {
-  /** The action which caused a filter/handler to be run */
-  action: Action
-  /** Alias for action */
-  event?: Action
-  /** An optional object, like the websocket or http response
-   * that this action arrived on, on which its processing may
-   * make function calls (such as res.write())
-   */
-  context?: Object
-  /** The results of filters, keyed by their name */
-  results?: Map<string, any>
+    /** Alias for action */
+    event?: Action;
+    /** The action which caused a filter/handler to be run */
+    action: Action;
+    /** An optional object, like the websocket or http response
+     * that this action arrived on, on which its processing may
+     * make function calls (such as res.write())
+     */
+    context?: Object;
+    /** The results of filters, keyed by their name */
+    results?: Map<string, any>;
 }
 /**
  * When a renderer (async usually) returns an Observable, it's possible
@@ -61,18 +61,18 @@ export interface ActionStreamItem {
  * - mute: Concurrency of 1, existing render prevents new renders
  */
 export declare enum Concurrency {
-  /**
-   * Concurrent renders are unlimited, unadjusted */
-  parallel = "parallel",
-  /**
-   * Concurrency of 1, render starts are queued */
-  serial = "serial",
-  /**
-   * Concurrency of 1, any existing render is killed */
-  cutoff = "cutoff",
-  /**
-   * Concurrency of 1, existing render prevents new renders */
-  mute = "mute"
+    /**
+     * Concurrent renders are unlimited, unadjusted */
+    parallel = "parallel",
+    /**
+     * Concurrency of 1, render starts are queued */
+    serial = "serial",
+    /**
+     * Concurrency of 1, any existing render is killed */
+    cutoff = "cutoff",
+    /**
+     * Concurrency of 1, existing render prevents new renders */
+    mute = "mute"
 }
 /**
  * The function you assign to handle `.on(actionType)`
@@ -82,7 +82,7 @@ export declare enum Concurrency {
  *    referring to the payload easy, and is actually similar to JQuery ha!)
  */
 export interface Renderer {
-  (item: ActionStreamItem, payload?: any): any
+    (item: ActionStreamItem, payload?: any): any;
 }
 /**
  * A Filter runs a synchronous function prior to any renderers
@@ -95,36 +95,36 @@ export interface Renderer {
  * @see actionsOfType
  */
 export interface Filter {
-  (item: ActionStreamItem, payload?: any): any
+    (item: ActionStreamItem, payload?: any): any;
 }
 export interface RendererPromiser {
-  (action: Action, context?: any): Promise<any>
+    (action: Action, context?: any): Promise<any>;
 }
 export interface SubscriberConfig {
-  /** A name by which the results will be keyed. Example: `agent.process(action).completed.NAME.then(() => ...)` */
-  name?: string
-  /** A string, regex, or boolean function controlling which actions this renderer is configured to run upon. */
-  actionsOfType?: ActionFilter
-  /** The concurrency mode to use. Governs what happens when renderings from this renderer overlap. */
-  concurrency?: Concurrency
-  /** If true, the Observable returned by the renderer will be fed to `agent.subscribe`, so its actions are `process`ed. */
-  processResults?: Boolean
-  /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
-  type?: string
-  /** If provided, this will be called if cutoff mode terminates a rendering. Parameter is {action}. */
-  onCutoff?: Subscriber
-  /** If provided, the context of the action being responded to will be forwarded */
-  withContext?: Boolean
+    /** A name by which the results will be keyed. Example: `agent.process(action).completed.NAME.then(() => ...)` */
+    name?: string;
+    /** A string, regex, or boolean function controlling which actions this renderer is configured to run upon. */
+    actionsOfType?: ActionFilter;
+    /** The concurrency mode to use. Governs what happens when renderings from this renderer overlap. */
+    concurrency?: Concurrency;
+    /** If true, the Observable returned by the renderer will be fed to `agent.subscribe`, so its actions are `process`ed. */
+    processResults?: Boolean;
+    /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
+    type?: string;
+    /** If provided, this will be called if cutoff mode terminates a rendering. Parameter is {action}. */
+    onCutoff?: Subscriber;
+    /** If provided, the context of the action being responded to will be forwarded */
+    withContext?: Boolean;
 }
 export interface SubscribeConfig {
-  /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
-  type?: string
-  /** If provided, this will be the context argument for each processed action */
-  context?: any
+    /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
+    type?: string;
+    /** If provided, this will be the context argument for each processed action */
+    context?: any;
 }
-export declare type ActionFilter = string | RegExp | Predicate
+export declare type ActionFilter = string | RegExp | Predicate;
 export interface Predicate {
-  (asi: ActionStreamItem): boolean
+    (asi: ActionStreamItem): boolean;
 }
 /**
  * Your contract for what is returned from calling #process.
@@ -134,7 +134,7 @@ export interface Predicate {
  * synchronous renderers (filters) can modify or add new meta, and often do.
  */
 export interface ProcessResult {
-  [key: string]: any
+    [key: string]: any;
 }
 /**
  * Options are typical from rxjs/ajax, however the expandKey string
@@ -143,14 +143,14 @@ export interface ProcessResult {
  * namespace, and lib is not set to `rxjs`.
  */
 export interface StreamingGetOptions {
-  url: string
-  /** If an RxJS request, you can provide a key of an array field to turn its items into your notifications. If an Oboe request see: http://oboejs.com/api#pattern-matching */
-  expandKey?: string
-  method?: "GET" | "POST"
-  headers?: Object
-  body?: string | Object
-  withCredentials?: Boolean
-  timeout?: number
-  /** Defaults to `oboe` if global `oboe` is present, otherwise uses `rxjs` */
-  lib?: "rxjs" | "oboe"
+    url: string;
+    /** If an RxJS request, you can provide a key of an array field to turn its items into your notifications. If an Oboe request see: http://oboejs.com/api#pattern-matching */
+    expandKey?: string;
+    method?: "GET" | "POST";
+    headers?: Object;
+    body?: string | Object;
+    withCredentials?: Boolean;
+    timeout?: number;
+    /** Defaults to `oboe` if global `oboe` is present, otherwise uses `rxjs` */
+    lib?: "rxjs" | "oboe";
 }

@@ -42,8 +42,8 @@ export {
 
 // Export utility rxjs operators and our own custom
 export * from "./operators"
-export { from, of, empty, concat, merge, interval } from "rxjs"
-export { startWith, last, filter, delay, map, mapTo, scan } from "rxjs/operators"
+export { from, of, empty, concat, merge, interval, zip } from "rxjs"
+export { startWith, last, filter, delay, map, mapTo, scan, toArray } from "rxjs/operators"
 
 /**
  * Represents the instance of an Rx-Helper action processor which is
@@ -54,7 +54,7 @@ export { startWith, last, filter, delay, map, mapTo, scan } from "rxjs/operators
  */
 export class Agent implements ActionProcessor {
   public static configurableProps = ["agentId", "relayActions"]
-  public static VERSION = "1.2.1"
+  public static VERSION = "1.2.2"
 
   /**
    * The heart and circulatory system of an Agent is `action$`, its action stream. */
@@ -376,6 +376,15 @@ export class Agent implements ActionProcessor {
     })
   }
 
+  /**
+   * Removes all filters and renderers, not canceling any in-progress consequences.
+   * Useful as the first line of a script in a Hot-Module Reloading environment.
+   */
+  reset() {
+    this.allFilters.clear()
+    this.allRenderers.clear()
+  }
+
   private runFilters(asi: ActionStreamItem, results: Map<string, any>): void {
     // Run all filters sync (RxJS as of v6 no longer will sync error)
     for (let filterName of this.allFilters.keys()) {
@@ -501,6 +510,13 @@ export const pp = (action: Action) => JSON.stringify(action)
 
 /** An agent instance with no special options - good enough for most purposes */
 export const agent = new Agent()
+/** Methods for working with the default agent */
+export const { on, guard, process, subscribe } = {
+  on: agent.on.bind(agent),
+  guard: agent.filter.bind(agent),
+  process: agent.process.bind(agent),
+  subscribe: agent.subscribe.bind(agent)
+}
 
 /** A function that creates and processes an action via the default agent */
 export const trigger = (type: string, payload?: any) => agent.process({ type, payload })

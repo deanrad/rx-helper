@@ -908,6 +908,21 @@ describe("Agent", () => {
       })
     })
   })
+
+  describe("#reset", () => {
+    it("should remove all filters and renderers", () => {
+      let i = 0
+      agent.on(/.*/, () => i++)
+      agent.process(anyAction)
+      expect(i).toEqual(1)
+      agent.filter(/.*/, () => {
+        if (i === 1) throw new Error("woops")
+      })
+      agent.reset()
+      agent.process(anyAction)
+      expect(i).toEqual(1)
+    })
+  })
 })
 
 describe("Utilities", () => {
