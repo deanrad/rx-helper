@@ -122,7 +122,7 @@ export interface SubscribeConfig {
     /** If provided, this will be the context argument for each processed action */
     context?: any;
 }
-export declare type ActionFilter = string | RegExp | Predicate | true;
+export declare type ActionFilter = string | RegExp | Predicate | boolean;
 export interface Predicate {
     (asi: ActionStreamItem): boolean;
 }
