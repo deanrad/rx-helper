@@ -103,8 +103,7 @@
       }
     }
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "peerDependencies": {
     "rxjs": ">=6.1.0"
   },

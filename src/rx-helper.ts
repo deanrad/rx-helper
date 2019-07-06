@@ -7,7 +7,7 @@ import {
   of,
   interval
 } from "rxjs"
-import { filter, map, first } from "rxjs/operators"
+import { filter as rxFilter, map, first } from "rxjs/operators"
 import {
   ActionProcessor,
   Action,
@@ -24,10 +24,6 @@ import {
   SubscriberConfig
 } from "./types"
 
-import { getActionFilter } from "./lib"
-
-// Leave this as require not import! https://github.com/webpack/webpack/issues/1019
-const assert = typeof require === "undefined" ? () => null : require("assert")
 export {
   Action,
   ActionFilter,
@@ -43,7 +39,9 @@ export {
 // Export utility rxjs operators and our own custom
 export * from "./operators"
 export { from, of, empty, concat, merge, interval, zip } from "rxjs"
-export { startWith, last, filter, delay, map, mapTo, scan, toArray } from "rxjs/operators"
+
+// Leave this as require not import! https://github.com/webpack/webpack/issues/1019
+const assert = typeof require === "undefined" ? () => null : require("assert")
 
 /**
  * Represents the instance of an Rx-Helper action processor which is
@@ -78,7 +76,7 @@ export class Agent implements ActionProcessor {
   actionsOfType(matcher: ActionFilter) {
     const predicate = getActionFilter(matcher)
     return this.action$.pipe(
-      filter(predicate),
+      rxFilter(predicate),
       map(({ action }) => action)
     )
   }
@@ -89,7 +87,7 @@ export class Agent implements ActionProcessor {
     const predicate = getActionFilter(matcher)
     return this.action$
       .pipe(
-        filter(predicate),
+        rxFilter(predicate),
         first(),
         map(({ action }) => action)
       )
@@ -420,6 +418,21 @@ export class Agent implements ActionProcessor {
   }
 }
 
+function getActionFilter(actionsOfType: ActionFilter) {
+  let predicate: ((asi: ActionStreamItem) => boolean)
+
+  if (actionsOfType instanceof RegExp) {
+    predicate = ({ action }: ActionStreamItem) => actionsOfType.test(action.type)
+  } else if (actionsOfType instanceof Function) {
+    predicate = actionsOfType
+  } else if (typeof actionsOfType === "boolean") {
+    predicate = () => actionsOfType
+  } else {
+    predicate = ({ action }: ActionStreamItem) => actionsOfType === action.type
+  }
+  return predicate
+}
+
 function validateSubscriberName(name: string | undefined) {
   assert(
     !name || !reservedSubscriberNames.includes(name),
@@ -508,12 +521,13 @@ export const randomIdFilter = (length: number = 7, key = "actionId") => ({
  * Pretty-print an action */
 export const pp = (action: Action) => JSON.stringify(action)
 
-/** An agent instance with no special options - good enough for most purposes */
+/** An agent instance with no special options - also exported as `app`. */
 export const agent = new Agent()
+export const app = agent
 /** Methods for working with the default agent */
-export const { on, guard, process, subscribe } = {
+export const { on, filter, process, subscribe } = {
   on: agent.on.bind(agent),
-  guard: agent.filter.bind(agent),
+  filter: agent.filter.bind(agent),
   process: agent.process.bind(agent),
   subscribe: agent.subscribe.bind(agent)
 }
