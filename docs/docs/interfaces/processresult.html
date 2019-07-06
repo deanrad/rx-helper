@@ -981,6 +981,9 @@ img { max-width: 100%; }
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#subscribe" class="tsd-kind-icon">subscribe</a>
 		</li>
+		<li class=" tsd-kind-variable">
+			<a href="../globals.html#trigger" class="tsd-kind-icon">trigger</a>
+		</li>
 		<li class=" tsd-kind-function">
 			<a href="../globals.html#gameloop" class="tsd-kind-icon">Game<wbr>Loop</a>
 		</li>
@@ -1020,9 +1023,6 @@ img { max-width: 100%; }
 		<li class=" tsd-kind-function">
 			<a href="../globals.html#toprops" class="tsd-kind-icon">to<wbr>Props</a>
 		</li>
-		<li class=" tsd-kind-function">
-			<a href="../globals.html#trigger" class="tsd-kind-icon">trigger</a>
-		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="../globals.html#validatesubscribername" class="tsd-kind-icon">validate<wbr>Subscriber<wbr>Name</a>
 		</li>
@@ -1033,11 +1033,9 @@ img { max-width: 100%; }
 		<section class="tsd-panel tsd-comment">
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>Your contract for what is returned from calling #process.
-						Basically this is the Object.assign({}, action, results), and so
-						you can destructure from it your renderer&#39;s return values by name,
-						or <code>type</code>, <code>payload</code>, or <code>meta</code>. Meta will often be interesting since
-					synchronous renderers (filters) can modify or add new meta, and often do.</p>
+					<p>The return value from calling <code>process</code>/<code>trigger</code>.
+						Basically this is the event that was passed to <code>process</code>,
+					but extended via <code>Object.assign</code>, with the return values of filters (under their name).</p>
 				</div>
 			</div>
 		</section>
@@ -1054,11 +1052,9 @@ img { max-width: 100%; }
 			<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>Your contract for what is returned from calling #process.
-						Basically this is the Object.assign({}, action, results), and so
-						you can destructure from it your renderer&#39;s return values by name,
-						or <code>type</code>, <code>payload</code>, or <code>meta</code>. Meta will often be interesting since
-					synchronous renderers (filters) can modify or add new meta, and often do.</p>
+					<p>The return value from calling <code>process</code>/<code>trigger</code>.
+						Basically this is the event that was passed to <code>process</code>,
+					but extended via <code>Object.assign</code>, with the return values of filters (under their name).</p>
 				</div>
 			</div>
 		</section>
