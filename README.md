@@ -1,10 +1,5 @@
 ## Rx-Helper
 
-Rx-Helper is a way to construct real-time web apps - web apps that have
-essentially banished the notion of stale data from their repertoire,
-and are configured to share and respond with data at the speed modern
-users expect.
-
 ![ES 2015](https://img.shields.io/badge/ES-2015-brightgreen.svg)
 [![npm version](https://badge.fury.io/js/rx-helper.svg)](https://badge.fury.io/js/rx-helper)
 [![<22 kb](https://img.shields.io/badge/gzip%20size-%3C22%20kB-brightgreen.svg)](https://www.npmjs.com/package/rx-helper)
@@ -24,53 +19,45 @@ npm install -S rxjs rx-helper
 
 ## What Is Rx-Helper?
 
-A library to help you use the power of RxJS to:
+Rx-Helper is a library to help you use the power of RxJS to:
 
 - Modularize your apps, building out from a core of framework-independent logic
 - Stub out unknowns so you can get right to work on the essence of your application
 - Have a clean architecture that allows you to swap out UI frameworks, persistence tiers, or _any other component_ while leaving most of your program unchanged.
 
-Like JQuery enabled a boom in productivity by paving over differences between browsers, Rx-Helper allows you to pave over differences between:
+## What's the TL;DR?
 
-Rx-Helper is an API for building the implementation of your custom-event protocol, on the client or server, by orchestrating the consequences for your chosen event types.
+Overview:
+
+1.  An `app`, (instance of `Agent`) processes events with a `type` field (Flux Standard Actions) through either `process`/`trigger`, or `subscribe`, if the events are part of an Observable already.
+1.  Events are synchronously processed through functions attached via `filter`, and asynchronously processed through listener functions, attached via `on`.
+1.  Listeners specify a concurrency mode (`parallel`, `serial`, `cutoff`, `mute`) in case events come in while they are still running an async operations.
+1.  Listener functions may in turn raise events, by returning [Observables](https://github.com/tc39/proposal-observable) of new events.
 
 ## What Benefits Can I Get By Using It?
 
 - A [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) of code with a high degree of decoupling and fault-tolerance.
-- A clean, cancelable model of async effects, not dependent on a component toolkit like React
-- Kickstart your apps' development by building abstractions that simulate input or output, allowing you to focus on the core functionality, of your app
-- Understand and use the Observable datatype - a type that is a superset of Promise, and which can stand in for processes that feed your app data, or processes that cause consequences to the outside world.
-- Drive your app during testing with 'simulated user interaction' to see more of its functionality without clicking around.
-- Use snapshot testing to verify your app's behavior, whether or not it uses React or even has a UI.
+- A clean, cancelable model of async effects, compatible with, but not dependent on a component library like React or Angular.
+- Faster prototyping by building abstractions that simulate input or output, allowing you to focus on the core functionality of your app.
+- Familiarity with the Observable datatype - a type that is a superset of Promise, and which can stand in for users, databases, servers, or any number of .
 
 ## What kinds of apps can I build with it?
 
-Rx-Helper, with RxJS, manages consequences, which any app has, so it's not limited to client or server, or even Web Apps.
-
 There are many demo apps included in this project that show what you can build.
 
-- A console app that speaks names and writes to a file
-- A utility that turns all-at-the-end AJAX requests for arrays into streaming Observables (eg `/users/`)
-- A Web Server in [demos/express/index.js](//github.com/deanius/rx-helper/blob/master/demos/express/index.js)
+- A console app that writes names to a file, and speaks them aloud
+- A utility that turns all-at-the-end AJAX requests for arrays (eg `/users/`) into streaming Observables
+- A [Web Server](//github.com/deanius/rx-helper/blob/master/demos/express/index.js)
 - A Canvas-based requestAnimationFrame animation.
 - A Console app that detects a cheat-code of 5 clicks in a short interval.
 - A Web Audio app that streams and queues up music from attachments in your Inbox.
-- An IOT application interfacing with Raspberry Pi GPIO _(Coming Soon)_
+- An IOT application interfacing with Raspberry Pi GPIO
 
 ## OK, but where should I start?
 
 The [Wiki](https://github.com/deanius/rx-helper/wiki/Rx-Helper:-An-Introduction) is a great place and has some case-studies.
 
 If you're interested in learning more, or updating me on your progress, [tweet me](//twitter.com/deaniusol)!
-
-## What's the TL;DR?
-
-The 4 Principles:
-
-1.  An `agent` processes Flux Standard Actions given it through either `agent.process` or `agent.subscribe`
-1.  Actions are synchronously processed through functions given to `agent.filter` or `addFilter`
-1.  ...and asynchronously processed through functions known as renderers, configured via `agent.on`.
-1.  Renderer functions may produce consequences (i.e. effects, or side-effects) return [Observables](https://github.com/tc39/proposal-observable) of new actions to be processed, specify a concurrency mode and be run with other [options](https://deanius.github.io/rx-helper/docs/interfaces/subscriberconfig.html)
 
 ## Testing? Yes, please!
 
