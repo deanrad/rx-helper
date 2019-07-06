@@ -182,6 +182,9 @@ export class Agent implements ActionProcessor {
     return resultObject
   }
 
+  trigger(type: string, payload?: any): any {
+    return this.process({ type, payload })
+  }
   /**
    * Renderers are functions that exist to create side-effects
    * outside of the Rx-Helper Agent - called Renderings. This can be changes to a
@@ -521,19 +524,18 @@ export const randomIdFilter = (length: number = 7, key = "actionId") => ({
  * Pretty-print an action */
 export const pp = (action: Action) => JSON.stringify(action)
 
-/** An agent instance with no special options - also exported as `app`. */
+/** An instance of Agent - also exported as `app`. */
 export const agent = new Agent()
+/** An instance of Agent - also exported as `agent`. */
 export const app = agent
-/** Methods for working with the default agent */
-export const { on, filter, process, subscribe } = {
-  on: agent.on.bind(agent),
-  filter: agent.filter.bind(agent),
+/** Calls the corresponding method of, `app`, the default agent */
+export const { process, trigger, filter, on, subscribe } = {
   process: agent.process.bind(agent),
+  trigger: agent.trigger.bind(agent),
+  filter: agent.filter.bind(agent),
+  on: agent.on.bind(agent),
   subscribe: agent.subscribe.bind(agent)
 }
-
-/** A function that creates and processes an action via the default agent */
-export const trigger = (type: string, payload?: any) => agent.process({ type, payload })
 
 /** Controls what types can be returned from an `on` handler:
     Primitive types: `of()`

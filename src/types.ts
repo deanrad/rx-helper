@@ -140,11 +140,9 @@ export interface Predicate {
 }
 
 /**
- * Your contract for what is returned from calling #process.
- * Basically this is the Object.assign({}, action, results), and so
- * you can destructure from it your renderer's return values by name,
- * or `type`, `payload`, or `meta`. Meta will often be interesting since
- * synchronous renderers (filters) can modify or add new meta, and often do.
+ * The return value from calling `process`/`trigger`.
+ * Basically this is the event that was passed to `process`,
+ * but extended via `Object.assign`, with the return values of filters (under their name).
  */
 export interface ProcessResult {
   [key: string]: any
