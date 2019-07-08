@@ -52,7 +52,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements ActionProcessor {
   public static configurableProps = ["agentId", "relayActions"]
-  public static VERSION = "1.2.3"
+  public static VERSION = "1.2.4"
 
   /**
    * The heart and circulatory system of an Agent is `action$`, its action stream. */
@@ -367,13 +367,15 @@ export class Agent implements ActionProcessor {
    * Subscribes to an Observable of actions (Flux Standard Action), sending
    * each through agent.process. If the Observable is not of FSAs, include
    * { type: 'theType' } to wrap the Observable's items in FSAs of that type.
+   * Allows a shorthand where the second argument is just a string type for wrapping.
    * @return A subscription handle with which to unsubscribe()
    *
    */
-  subscribe(item$: Observable<any>, config: SubscribeConfig = {}): Subscription {
+  subscribe(item$: Observable<any>, config: SubscribeConfig | string = {}): Subscription {
+    const _config = typeof config === "string" ? { type: config } : config
     return item$.subscribe(item => {
-      const actionToProcess = config.type ? { type: config.type, payload: item } : item
-      this.process(actionToProcess, config.context)
+      const actionToProcess = _config.type ? { type: _config.type, payload: item } : item
+      this.process(actionToProcess, _config.context)
     })
   }
 

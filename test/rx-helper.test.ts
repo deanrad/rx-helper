@@ -61,10 +61,10 @@ const seenAdder: Subscriber = ({ action }) => {
   return of(action)
 }
 
-// Dies in a fire upon invocation
+// Dies in a fire upon invocation, to test error handling
 const blowUpOnRender: Subscriber = ({ action }) => {
   blowupCount++
-  throw new Error("Cant render this")
+  throw new Error("Expected Error - wont fail the suite")
 }
 
 // Dies in a fire upon subscription
@@ -595,8 +595,12 @@ describe("Agent", () => {
             const result = agent.process(anyAction)
 
             // Available on the Promises
-            expect(result.completed.blowUpOnRender).rejects.toEqual(new Error("Cant render this"))
-            expect(result.completed).rejects.toEqual(new Error("Cant render this"))
+            expect(result.completed.blowUpOnRender).rejects.toEqual(
+              new Error("Expected Error - wont fail the suite")
+            )
+            expect(result.completed).rejects.toEqual(
+              new Error("Expected Error - wont fail the suite")
+            )
 
             // Prevents unhandled rejection error on completed and completed.blowUpOnRender
             handleError(result.completed, "blowUpOnRender", () => {})
@@ -612,8 +616,12 @@ describe("Agent", () => {
             badSubRender = agent.on(() => true, blowUpOnRender, { name: "blowUpOnRender" })
 
             const result = agent.process(anyAction)
-            expect(result.completed.blowUpOnRender).rejects.toEqual(new Error("Cant render this"))
-            expect(result.completed).rejects.toEqual(new Error("Cant render this"))
+            expect(result.completed.blowUpOnRender).rejects.toEqual(
+              new Error("Expected Error - wont fail the suite")
+            )
+            expect(result.completed).rejects.toEqual(
+              new Error("Expected Error - wont fail the suite")
+            )
 
             // Prevents unhandled rejection error on completed and completed.blowUpOnRender
             handleError(result.completed, "blowUpOnRender", () => {})
@@ -885,6 +893,15 @@ describe("Agent", () => {
           expect(seen).toEqual([
             { type: "category", payload: "A" },
             { type: "category", payload: "B" }
+          ])
+        })
+        it("should allow a string shorthand", () => {
+          agent.filter(() => true, seenFilter)
+          const o = from(["A", "B"])
+          agent.subscribe(o, "coolAction")
+          expect(seen).toEqual([
+            { type: "coolAction", payload: "A" },
+            { type: "coolAction", payload: "B" }
           ])
         })
       })
