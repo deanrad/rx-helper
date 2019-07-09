@@ -101,7 +101,7 @@ describe("All Demos", () => {
     })
   })
   describe("Node Callback Demo", () => {
-    it.only("should run the test", async () => {
+    it("should run the test", async () => {
       await runDemo(Demos.nodeCallback)
       expect(output).toMatchInlineSnapshot(`
 "gandalfTheGreat: 1, 2
@@ -203,10 +203,11 @@ comparison: toFind: 3, item: 4
           }
           agent.process({ type: "comparison", payload: { toFind, item } })
         }
+        
         expect(output).toMatchInlineSnapshot(`
 "comparison: toFind: 2, item: 1
 comparison: toFind: 2, item: 2
-match:
+match: 
 DONE!
 "
 `)
