@@ -179,45 +179,21 @@ describe("Agent", () => {
       process: expect.any(Function),
       on: expect.any(Function),
       filter: expect.any(Function),
-      subscribe: expect.any(Function),
-      addFilter: expect.any(Function),
-      addRenderer: expect.any(Function)
+      subscribe: expect.any(Function)
     })
   })
 
   describe("#filter", () => {
-    it("should alias addFilter, reversing arguments", () => {
-      let counter = 0
-      agent.filter("foo", () => counter++)
-      agent.process({ type: "foo" })
-      agent.process({ type: "not" })
-      expect(counter).toEqual(1)
+    it("will be called synchronously when an action is processed", () => {
+      const spy = jest.fn()
+      agent.filter(() => true, spy)
+      expect(spy).not.toHaveBeenCalled()
+      agent.process(anyAction)
+      expect(spy).toHaveBeenCalled()
     })
   })
 
-  describe("#on", () => {
-    it("should alias addRenderer", () => {
-      expect.assertions(3)
-      const seenTypes = []
-      agent.on(/foo/, ({ action: { type } }) => {
-        seenTypes.push(type)
-        return empty() // An Observable which completes, so we know it's completed
-      })
-
-      return agent
-        .process({ type: "foolz" })
-        .completed.then(() => {
-          return agent.process({ type: "fool2" }).completed
-        })
-        .then(() => {
-          expect(seenTypes).toHaveLength(2)
-          expect(seenTypes).toContain("foolz")
-          expect(seenTypes).toContain("fool2")
-        })
-    })
-  })
-
-  describe("#addFilter or #addRenderer", () => {
+  describe("#filter or #on", () => {
     describe("arguments", () => {
       describe("function argument", () => {
         it("should be a function", () => {
@@ -309,21 +285,7 @@ describe("Agent", () => {
     })
   })
 
-  describe("#addFilter", () => {
-    describe("arguments", () => {
-      describe("function argument", () => {
-        it("will be called synchronously when an action is processed", () => {
-          const spy = jest.fn()
-          agent.filter(() => true, spy)
-          expect(spy).not.toHaveBeenCalled()
-          agent.process(anyAction)
-          expect(spy).toHaveBeenCalled()
-        })
-      })
-    })
-  })
-
-  describe("#addRenderer", () => {
+  describe("#on", () => {
     describe("arguments", () => {
       describe("first argument", () => {
         it.skip("should return an Observable", () => {})
@@ -436,6 +398,27 @@ describe("Agent", () => {
             })
           })
         })
+      })
+    })
+    describe("behavior", () => {
+      it("should supplement the return value of process via completed", () => {
+        expect.assertions(3)
+        const seenTypes = []
+        agent.on(/foo/, ({ action: { type } }) => {
+          seenTypes.push(type)
+          return empty() // An Observable which completes, so we know it's completed
+        })
+
+        return agent
+          .process({ type: "foolz" })
+          .completed.then(() => {
+            return agent.process({ type: "fool2" }).completed
+          })
+          .then(() => {
+            expect(seenTypes).toHaveLength(2)
+            expect(seenTypes).toContain("foolz")
+            expect(seenTypes).toContain("fool2")
+          })
       })
     })
     describe("error handling", () => {

@@ -186,11 +186,11 @@ export class Agent implements ActionProcessor {
     return this.process({ type, payload })
   }
   /**
-   * Renderers are functions that exist to create side-effects
-   * outside of the Rx-Helper Agent - called Renderings. This can be changes to a
-   * DOM, to a database, or communications (eg AJAX) sent on the wire. Renderers run
-   * in parallel with respect to other renderers. The way they act with respect
-   * to their own overlap, is per their `concurrency` config parameter.
+   * Handlers attached via `on` are functions that exist to create side-effects
+   * outside of the Rx-Helper Agent. Handlers may make changes to a
+   * DOM, to a database, or communications (eg AJAX) sent on the wire. Handlers run
+   * in parallel with respect to other handlers, and are error-isolated.
+   * They control their behavior, upon overlap, with the `concurrency` config parameter.
    *
    * Here we attach a renderer to fire on actions of `type: 'kickoff'`.
    * After 50ms, the agent will process `{ type: 'search', payload: '#go!' }`,
@@ -218,13 +218,11 @@ export class Agent implements ActionProcessor {
    * Filters are synchronous functions that sequentially process
    * each item on `action$`, possibly changing them or creating synchronous
    * state changes. Useful for type-checking, writing to a memory-based store.
-   * For creating consequences (aka async side-effects aka renders) outside of
-   * the running Agent, write and attach a Renderer. Filters run in series.
+   * Filters run in series. Their results are present on the return value of `process`/`trigger`
    * ```js
    * agent.filter('search/message/success', ({ action }) => console.log(action))
    * ```
    */
-
   filter(actionFilter: ActionFilter, filter: Subscriber, config: SubscriberConfig = {}) {
     const _config = {
       ...config,
@@ -233,12 +231,7 @@ export class Agent implements ActionProcessor {
     return this.addFilter(filter, _config)
   }
 
-  /** The unconditional version of filter
-   * ```js
-   * agent.addFilter(({ action }) => console.log(action))
-   * ```
-   */
-  addFilter(filter: Filter, config: SubscriberConfig = {}): Subscription {
+  private addFilter(filter: Filter, config: SubscriberConfig = {}): Subscription {
     validateSubscriberName(config.name)
     const removeFilter = new Subscription(() => {
       this.allFilters.delete(name)
@@ -260,7 +253,7 @@ export class Agent implements ActionProcessor {
     return removeFilter
   }
 
-  addRenderer(follower: Renderer, config: SubscriberConfig = {}): Subscription {
+  private addRenderer(follower: Renderer, config: SubscriberConfig = {}): Subscription {
     const removeRenderer = new Subscription(() => {
       this.allRenderers.delete(name)
     })
