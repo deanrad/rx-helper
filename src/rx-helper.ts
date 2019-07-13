@@ -542,22 +542,20 @@ function toObservable(_results: any) {
   // An Observable is preferred
   if (_results.subscribe) return _results
 
+  // Returning a subscription from a handler will allow
+  // modes serial and cutoff to work.
+  // Remember we're already subscribed - just add
+  // completion/teardown logic.
+  if (_results.unsubscribe)
+    return new Observable(notify => {
+      const sub: Subscription = _results
+      sub.add(() => notify.complete())
+      return () => sub.unsubscribe()
+    })
+
   // A Promise is acceptable
   if (_results.then) return from(_results)
 
   // otherwiser we convert it to a single-item Observable
   return of(_results)
-}
-
-function actionFilterFrom({ actionsOfType = () => true }: SubscriberConfig): Predicate {
-  let predicate: Predicate
-
-  if (actionsOfType instanceof RegExp) {
-    predicate = ({ action }: ActionStreamItem) => actionsOfType.test(action.type)
-  } else if (actionsOfType instanceof Function) {
-    predicate = actionsOfType
-  } else {
-    predicate = ({ action }: ActionStreamItem) => actionsOfType === action.type
-  }
-  return predicate
 }

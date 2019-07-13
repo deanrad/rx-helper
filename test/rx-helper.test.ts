@@ -287,9 +287,15 @@ describe("Agent", () => {
 
   describe("#on", () => {
     describe("arguments", () => {
-      describe("first argument", () => {
+      describe("actionFilter argument", () => {
+        it.skip("should be an actionFilter", () => {})
+      })
+
+      describe("function argument", () => {
         it.skip("should return an Observable", () => {})
-        it.skip("may return null or an object to be cast to Observable", () => {})
+        it.skip("may return a Subscription", () => {})
+        it.skip("may return a Promise", () => {})
+        it.skip("may return any object, null, or undefined", () => {})
       })
 
       describe("config argument", () => {
@@ -400,6 +406,7 @@ describe("Agent", () => {
         })
       })
     })
+
     describe("behavior", () => {
       it("should supplement the return value of process via completed", () => {
         expect.assertions(3)
@@ -421,6 +428,7 @@ describe("Agent", () => {
           })
       })
     })
+
     describe("error handling", () => {
       it.skip("should set the renderResult to be in error", () => {})
       it.skip("should unsubscribe the offending renderer", () => {})
@@ -428,13 +436,13 @@ describe("Agent", () => {
   })
 
   describe("#process", () => {
-    describe("First argument", () => {
+    describe("First argument: { type, action }", () => {
       it("Should be a Flux Standard Action", () => {
         expect.assertions(0)
         agent.process(anyAction)
       })
     })
-    describe("Second argument", () => {
+    describe("Second argument: context", () => {
       it("May be an object ", done => {
         expect.assertions(1)
         const contextObj = { foo: "bar" } // an object such as an express request, which a renderer may do work upon
@@ -511,7 +519,7 @@ describe("Agent", () => {
         // didn't change
         expect(await result.completed.later).toEqual(2)
       })
-      it("Does not cause rerenders when accessing #completed multiple times", () => {
+      it("Is safe to access #completed multiple times", () => {
         expect.assertions(3)
 
         let timesCalled = 0
@@ -560,6 +568,7 @@ describe("Agent", () => {
         it.skip("Will not be awaited if they return a promise", () => {})
         it.skip("May modify the actions", () => {})
       })
+      
       describe("Renderers", () => {
         let goodSub1: Subscription
         let goodSub2: Subscription
