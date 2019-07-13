@@ -190,9 +190,12 @@ export class Agent implements ActionProcessor {
    * outside of the Rx-Helper Agent. Handlers may make changes to a
    * DOM, to a database, or communications (eg AJAX) sent on the wire. Handlers run
    * in parallel with respect to other handlers, and are error-isolated.
-   * They control their behavior, upon overlap, with the `concurrency` config parameter.
+   * They return Observables - an object that models a series of notifications over
+   * time, much like Promise models a single result over some time.
+   * Should they overlap, the `concurrency` config parameter controls whether they
+   * run immediately, are queued, dropped, or replace the existing running one.
    *
-   * Here we attach a renderer to fire on actions of `type: 'kickoff'`.
+   * Here we attach a handler to fire on actions of `type: 'kickoff'`.
    * After 50ms, the agent will process `{ type: 'search', payload: '#go!' }`,
    * at which point the Promise `result.completed.kickoff` will resolve.
    *
