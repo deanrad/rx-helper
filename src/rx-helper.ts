@@ -225,30 +225,24 @@ export class Agent implements ActionProcessor {
    * ```js
    * agent.filter('search/message/success', ({ action }) => console.log(action))
    * ```
+   * Returns an object which, when unsubscribed, will remove our filter. Filters are *not* removed
+   * automatically upon untrapped errors, like handlers attached via `on`.
    */
   filter(actionFilter: ActionFilter, filter: Subscriber, config: SubscriberConfig = {}) {
-    const _config = {
-      ...config,
-      actionsOfType: actionFilter
-    }
-    return this.addFilter(filter, _config)
-  }
-
-  private addFilter(filter: Filter, config: SubscriberConfig = {}): Subscription {
     validateSubscriberName(config.name)
     const removeFilter = new Subscription(() => {
       this.allFilters.delete(name)
     })
 
     // Pass all actions unless otherwise told
-    const predicate = config.actionsOfType ? getActionFilter(config.actionsOfType) : () => true
+    const predicate = actionFilter ? getActionFilter(actionFilter) : () => true
     const _filter: Subscriber = (asi: ActionStreamItem) => {
       if (predicate(asi)) {
         return filter(asi, asi.action.payload)
       }
     }
 
-    const name = this.uniquifyName(config, "filter")
+    const name = this.uniquifyName(config.name, actionFilter, "filter")
     this.allFilters.set(name, _filter)
 
     // The subscription does little except give us an object
@@ -261,7 +255,7 @@ export class Agent implements ActionProcessor {
       this.allRenderers.delete(name)
     })
 
-    const name = this.uniquifyName(config, "renderer")
+    const name = this.uniquifyName(config.name, config.actionsOfType, "renderer")
     const predicate = getActionFilter(config.actionsOfType || (() => true))
     const concurrency = config.concurrency || Concurrency.parallel
     const cutoffHandler = config.onCutoff
@@ -402,34 +396,35 @@ export class Agent implements ActionProcessor {
     }
   }
 
-  private uniquifyName(config: SubscriberConfig, type: "renderer" | "filter") {
+  private uniquifyName(
+    name: string | undefined,
+    actionFilter: ActionFilter | undefined,
+    type: "renderer" | "filter"
+  ) {
     const nameBase =
-      config.name ||
       //@ts-ignore
-      (config.actionsOfType && config.actionsOfType.substring
-        ? config.actionsOfType.toString()
-        : type)
+      name || (actionFilter && actionFilter.substring ? actionFilter.toString() : type)
     validateSubscriberName(nameBase)
-    const name =
+    const _name =
       this[type + "Names"]().includes(nameBase) || nameBase === type
         ? `${nameBase}_${++this._subscriberCount}`
         : nameBase
 
-    return name
+    return _name
   }
 }
 
-function getActionFilter(actionsOfType: ActionFilter) {
+function getActionFilter(actionFilter: ActionFilter) {
   let predicate: ((asi: ActionStreamItem) => boolean)
 
-  if (actionsOfType instanceof RegExp) {
-    predicate = ({ action }: ActionStreamItem) => actionsOfType.test(action.type)
-  } else if (actionsOfType instanceof Function) {
-    predicate = actionsOfType
-  } else if (typeof actionsOfType === "boolean") {
-    predicate = () => actionsOfType
+  if (actionFilter instanceof RegExp) {
+    predicate = ({ action }: ActionStreamItem) => actionFilter.test(action.type)
+  } else if (actionFilter instanceof Function) {
+    predicate = actionFilter
+  } else if (typeof actionFilter === "boolean") {
+    predicate = () => actionFilter
   } else {
-    predicate = ({ action }: ActionStreamItem) => actionsOfType === action.type
+    predicate = ({ action }: ActionStreamItem) => actionFilter === action.type
   }
   return predicate
 }
