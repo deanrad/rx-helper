@@ -928,12 +928,6 @@ img { max-width: 100%; }
 					<a href="agent.html#actionsoftype" class="tsd-kind-icon">actions<wbr>OfType</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="agent.html#addfilter" class="tsd-kind-icon">add<wbr>Filter</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="agent.html#addrenderer" class="tsd-kind-icon">add<wbr>Renderer</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="agent.html#filter" class="tsd-kind-icon">filter</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -1026,6 +1020,9 @@ img { max-width: 100%; }
 			<a href="../globals.html#reservedsubscribernames" class="tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names</a>
 		</li>
 		<li class=" tsd-kind-variable">
+			<a href="../globals.html#reset" class="tsd-kind-icon">reset</a>
+		</li>
+		<li class=" tsd-kind-variable">
 			<a href="../globals.html#subscribe" class="tsd-kind-icon">subscribe</a>
 		</li>
 		<li class=" tsd-kind-variable">
@@ -1033,9 +1030,6 @@ img { max-width: 100%; }
 		</li>
 		<li class=" tsd-kind-function">
 			<a href="../globals.html#gameloop" class="tsd-kind-icon">Game<wbr>Loop</a>
-		</li>
-		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="../globals.html#actionfilterfrom" class="tsd-kind-icon">action<wbr>Filter<wbr>From</a>
 		</li>
 		<li class=" tsd-kind-function">
 			<a href="../globals.html#after" class="tsd-kind-icon">after</a>
@@ -1046,7 +1040,7 @@ img { max-width: 100%; }
 		<li class=" tsd-kind-function">
 			<a href="../globals.html#ajaxstreamingget" class="tsd-kind-icon">ajax<wbr>Streaming<wbr>Get</a>
 		</li>
-		<li class=" tsd-kind-function">
+		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="../globals.html#getactionfilter" class="tsd-kind-icon">get<wbr>Action<wbr>Filter</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
@@ -1136,8 +1130,6 @@ img { max-width: 100%; }
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="agent.html#actionsoftype" class="tsd-kind-icon">actions<wbr>OfType</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="agent.html#addfilter" class="tsd-kind-icon">add<wbr>Filter</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="agent.html#addrenderer" class="tsd-kind-icon">add<wbr>Renderer</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="agent.html#filter" class="tsd-kind-icon">filter</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="agent.html#filternames" class="tsd-kind-icon">filter<wbr>Names</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="agent.html#nextactionoftype" class="tsd-kind-icon">next<wbr>Action<wbr>OfType</a></li>
@@ -1164,7 +1156,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L95">rx-helper.ts:95</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L95">rx-helper.ts:95</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1183,10 +1175,10 @@ img { max-width: 100%; }
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
 				<a name="version" class="tsd-anchor"></a>
 				<h3><span class="tsd-flag ts-flagStatic">Static</span> VERSION</h3>
-				<div class="tsd-signature tsd-kind-icon">VERSION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;1.2.4&quot;</span></div>
+				<div class="tsd-signature tsd-kind-icon">VERSION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;1.2.6&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L55">rx-helper.ts:55</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L55">rx-helper.ts:55</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1196,7 +1188,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">configurable<wbr>Props<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;agentId&quot;, &quot;relayActions&quot;]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L54">rx-helper.ts:54</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L54">rx-helper.ts:54</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1213,7 +1205,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L76">rx-helper.ts:76</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L76">rx-helper.ts:76</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1232,64 +1224,6 @@ img { max-width: 100%; }
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="addfilter" class="tsd-anchor"></a>
-				<h3>add<wbr>Filter</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Filter<span class="tsd-signature-symbol">(</span>filter<span class="tsd-signature-symbol">: </span><a href="../interfaces/filter.html" class="tsd-signature-type">Filter</a>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L241">rx-helper.ts:241</a></li>
-							</ul>
-						</aside>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>The unconditional version of filter</p>
-								<pre><code class="language-js">agent.addFilter(<span class="hljs-function">(<span class="hljs-params">{ action }</span>) =&gt;</span> <span class="hljs-built_in">console</span>.log(action))</code></pre>
-							</div>
-						</div>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>filter: <a href="../interfaces/filter.html" class="tsd-signature-type">Filter</a></h5>
-							</li>
-							<li>
-								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../interfaces/subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="addrenderer" class="tsd-anchor"></a>
-				<h3>add<wbr>Renderer</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Renderer<span class="tsd-signature-symbol">(</span>follower<span class="tsd-signature-symbol">: </span><a href="../interfaces/renderer.html" class="tsd-signature-type">Renderer</a>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L263">rx-helper.ts:263</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>follower: <a href="../interfaces/renderer.html" class="tsd-signature-type">Renderer</a></h5>
-							</li>
-							<li>
-								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../interfaces/subscriberconfig.html" class="tsd-signature-type">SubscriberConfig</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 				<a name="filter" class="tsd-anchor"></a>
 				<h3>filter</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -1299,7 +1233,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L228">rx-helper.ts:228</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L231">rx-helper.ts:231</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1307,9 +1241,10 @@ img { max-width: 100%; }
 								<p>Filters are synchronous functions that sequentially process
 									each item on <code>action$</code>, possibly changing them or creating synchronous
 									state changes. Useful for type-checking, writing to a memory-based store.
-									For creating consequences (aka async side-effects aka renders) outside of
-								the running Agent, write and attach a Renderer. Filters run in series.</p>
+								Filters run in series. Their results are present on the return value of <code>process</code>/<code>trigger</code></p>
 								<pre><code class="language-js">agent.filter(<span class="hljs-string">'search/message/success'</span>, ({ action }) =&gt; <span class="hljs-built_in">console</span>.log(action))</code></pre>
+								<p>Returns an object which, when unsubscribed, will remove our filter. Filters are <em>not</em> removed
+								automatically upon untrapped errors, like handlers attached via <code>on</code>.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1338,7 +1273,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L70">rx-helper.ts:70</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L70">rx-helper.ts:70</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -1355,7 +1290,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L86">rx-helper.ts:86</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L86">rx-helper.ts:86</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1383,18 +1318,21 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L209">rx-helper.ts:209</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L212">rx-helper.ts:212</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>Renderers are functions that exist to create side-effects
-									outside of the Rx-Helper Agent - called Renderings. This can be changes to a
-									DOM, to a database, or communications (eg AJAX) sent on the wire. Renderers run
-									in parallel with respect to other renderers. The way they act with respect
-								to their own overlap, is per their <code>concurrency</code> config parameter.</p>
+								<p>Handlers attached via <code>on</code> are functions that exist to create side-effects
+									outside of the Rx-Helper Agent. Handlers may make changes to a
+									DOM, to a database, or communications (eg AJAX) sent on the wire. Handlers run
+									in parallel with respect to other handlers, and are error-isolated.
+									They return Observables - an object that models a series of notifications over
+									time, much like Promise models a single result over some time.
+									Should they overlap, the <code>concurrency</code> config parameter controls whether they
+								run immediately, are queued, dropped, or replace the existing running one.</p>
 							</div>
-							<p>Here we attach a renderer to fire on actions of <code>type: &#39;kickoff&#39;</code>.
+							<p>Here we attach a handler to fire on actions of <code>type: &#39;kickoff&#39;</code>.
 								After 50ms, the agent will process <code>{ type: &#39;search&#39;, payload: &#39;#go!&#39; }</code>,
 							at which point the Promise <code>result.completed.kickoff</code> will resolve.</p>
 							<pre><code class="language-js"><span class="hljs-comment">//</span>
@@ -1431,7 +1369,7 @@ agent.process({ <span class="hljs-attr">type</span>: <span class="hljs-string">'
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L121">rx-helper.ts:121</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L121">rx-helper.ts:121</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1469,7 +1407,7 @@ agent.process({ <span class="hljs-attr">type</span>: <span class="hljs-string">'
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L67">rx-helper.ts:67</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L67">rx-helper.ts:67</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -1486,7 +1424,7 @@ agent.process({ <span class="hljs-attr">type</span>: <span class="hljs-string">'
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L386">rx-helper.ts:386</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L376">rx-helper.ts:376</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1509,7 +1447,7 @@ agent.process({ <span class="hljs-attr">type</span>: <span class="hljs-string">'
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L374">rx-helper.ts:374</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L364">rx-helper.ts:364</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1544,7 +1482,7 @@ agent.process({ <span class="hljs-attr">type</span>: <span class="hljs-string">'
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/4cd4916/src/rx-helper.ts#L185">rx-helper.ts:185</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/825230d/src/rx-helper.ts#L185">rx-helper.ts:185</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
