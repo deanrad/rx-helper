@@ -13,7 +13,7 @@ import {
   toProps,
   ajaxStreamingGet,
   randomId
-} from "../src/rx-helper"
+} from "../src/agent"
 
 let seen: Array<Action> = []
 let callCount = 0

@@ -1,7 +1,7 @@
 const path = require("path")
 
 module.exports = {
-  entry: "./src/rx-helper.ts",
+  entry: "./src/agent.ts",
   mode: "production",
   module: {
     rules: [
