@@ -209,54 +209,13 @@ export class Agent implements ActionProcessor {
    * agent.process({ type: 'kickoff' }).completed.kickoff.then(() => console.log('done'))
    * ```
    */
-  on(actionFilter: ActionFilter, renderer: Subscriber, config: SubscriberConfig = {}) {
-    const _config = {
-      ...config,
-      actionsOfType: actionFilter
-    }
-    return this.addRenderer(renderer, _config)
-  }
-
-  /**
-   * Filters are synchronous functions that sequentially process
-   * each item on `action$`, possibly changing them or creating synchronous
-   * state changes. Useful for type-checking, writing to a memory-based store.
-   * Filters run in series. Their results are present on the return value of `process`/`trigger`
-   * ```js
-   * agent.filter('search/message/success', ({ action }) => console.log(action))
-   * ```
-   * Returns an object which, when unsubscribed, will remove our filter. Filters are *not* removed
-   * automatically upon untrapped errors, like handlers attached via `on`.
-   */
-  filter(actionFilter: ActionFilter, filter: Subscriber, config: SubscriberConfig = {}) {
-    validateSubscriberName(config.name)
-    const removeFilter = new Subscription(() => {
-      this.allFilters.delete(name)
-    })
-
-    // Pass all actions unless otherwise told
-    const predicate = actionFilter ? getActionFilter(actionFilter) : () => true
-    const _filter: Subscriber = (asi: ActionStreamItem) => {
-      if (predicate(asi)) {
-        return filter(asi, asi.action.payload)
-      }
-    }
-
-    const name = this.uniquifyName(config.name, actionFilter, "filter")
-    this.allFilters.set(name, _filter)
-
-    // The subscription does little except give us an object
-    // which, when unsubscribed, will remove our filter
-    return removeFilter
-  }
-
-  private addRenderer(follower: Renderer, config: SubscriberConfig = {}): Subscription {
+  on(actionFilter: ActionFilter, subscriber: Subscriber, config: SubscriberConfig = {}) {
     const removeRenderer = new Subscription(() => {
       this.allRenderers.delete(name)
     })
 
-    const name = this.uniquifyName(config.name, config.actionsOfType, "renderer")
-    const predicate = getActionFilter(config.actionsOfType || (() => true))
+    const name = this.uniquifyName(config.name, actionFilter, "renderer")
+    const predicate = getActionFilter(actionFilter || (() => true))
     const concurrency = config.concurrency || Concurrency.parallel
     const cutoffHandler = config.onCutoff
 
@@ -286,8 +245,8 @@ export class Agent implements ActionProcessor {
       // 1. Get the Observable aka recipe back from the renderer
       try {
         const actionStreamItem = { action, context, event: action }
-        const followerReturnValue = follower(actionStreamItem, action.payload)
-        recipe = toObservable(followerReturnValue)
+        const subscriberReturnValue = subscriber(actionStreamItem, action.payload)
+        recipe = toObservable(subscriberReturnValue)
       } catch (ex) {
         reportFail(ex)
         // will warn of unhandled rejection error if completed and completed.bad are not handled
@@ -351,6 +310,39 @@ export class Agent implements ActionProcessor {
 
     this.allRenderers.set(name, renderPromiser)
     return removeRenderer
+  }
+
+  /**
+   * Filters are synchronous functions that sequentially process
+   * each item on `action$`, possibly changing them or creating synchronous
+   * state changes. Useful for type-checking, writing to a memory-based store.
+   * Filters run in series. Their results are present on the return value of `process`/`trigger`
+   * ```js
+   * agent.filter('search/message/success', ({ action }) => console.log(action))
+   * ```
+   * Returns an object which, when unsubscribed, will remove our filter. Filters are *not* removed
+   * automatically upon untrapped errors, like handlers attached via `on`.
+   */
+  filter(actionFilter: ActionFilter, filter: Subscriber, config: SubscriberConfig = {}) {
+    validateSubscriberName(config.name)
+    const removeFilter = new Subscription(() => {
+      this.allFilters.delete(name)
+    })
+
+    // Pass all actions unless otherwise told
+    const predicate = actionFilter ? getActionFilter(actionFilter) : () => true
+    const _filter: Subscriber = (asi: ActionStreamItem) => {
+      if (predicate(asi)) {
+        return filter(asi, asi.action.payload)
+      }
+    }
+
+    const name = this.uniquifyName(config.name, actionFilter, "filter")
+    this.allFilters.set(name, _filter)
+
+    // The subscription does little except give us an object
+    // which, when unsubscribed, will remove our filter
+    return removeFilter
   }
 
   /**

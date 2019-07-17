@@ -221,7 +221,7 @@ describe("Agent", () => {
 
           it("will be renderer_N if not given for a renderer", () => {
             expect(agent.rendererNames()).not.toContain("renderer_1")
-            agent.addRenderer(() => 3.141)
+            agent.on(true, () => 3.141)
             expect(agent.rendererNames()).toContain("renderer_1")
           })
 
@@ -287,22 +287,54 @@ describe("Agent", () => {
 
   describe("#on", () => {
     describe("arguments", () => {
-      describe("actionFilter argument", () => {
-        it.skip("should be an actionFilter", () => {})
+      describe("actionFilter", () => {
+        it("should only run the render on matching actions (string)", () => {
+          expect.assertions(1)
+          agent.on("Counter.inc", () => of(++counter), { name: "inc" })
+          let result1 = agent.process(anyAction)
+          let result2 = agent.process({ type: "Counter.inc" }).completed.inc
+
+          return result2.then(() => {
+            expect(counter).toEqual(1)
+          })
+        })
+        it("should only run the action render on matching actions (Regexp)", () => {
+          expect.assertions(1)
+          agent.on(/^Counter\./, () => of(++counter), { name: "inc" })
+          let result1 = agent.process(anyAction)
+          let result2 = agent.process({ type: "Counter.inc" }).completed.inc
+
+          return result2.then(() => {
+            expect(counter).toEqual(1)
+          })
+        })
+        it("should only run the action render on matching actions (Function)", () => {
+          expect.assertions(1)
+          agent.on(({ action: { type } }) => type.startsWith("Counter"), () => of(++counter), {
+            name: "inc"
+          })
+          let result1 = agent.process(anyAction)
+          let result2 = agent.process({ type: "Counter.inc" }).completed.inc
+
+          return result2.then(() => {
+            expect(counter).toEqual(1)
+          })
+        })
       })
 
-      describe("function argument", () => {
+      describe("handler", () => {
         it.skip("should return an Observable", () => {})
         it.skip("may return a Subscription", () => {})
         it.skip("may return a Promise", () => {})
         it.skip("may return any object, null, or undefined", () => {})
       })
 
-      describe("config argument", () => {
+      describe("config", () => {
         describe("processResults", () => {
           it("should enable returned actions from renderer to go through agent.process", () => {
             expect.assertions(1)
-            agent.addRenderer(
+            agent.on(
+              true,
               ({ action }) => {
                 if (action.type === "addTwo") {
                   counter += 2
@@ -351,41 +383,6 @@ describe("Agent", () => {
         })
         describe("validation", () => {
           it.skip("should not allow bad configs", () => {})
-        })
-        describe("actionsOfType", () => {
-          it("should only run the render on matching actions (string)", () => {
-            expect.assertions(1)
-            agent.addRenderer(() => of(++counter), { name: "inc", actionsOfType: "Counter.inc" })
-            let result1 = agent.process(anyAction)
-            let result2 = agent.process({ type: "Counter.inc" }).completed.inc
-
-            return result2.then(() => {
-              expect(counter).toEqual(1)
-            })
-          })
-          it("should only run the action render on matching actions (Regexp)", () => {
-            expect.assertions(1)
-            agent.addRenderer(() => of(++counter), { name: "inc", actionsOfType: /^Counter\./ })
-            let result1 = agent.process(anyAction)
-            let result2 = agent.process({ type: "Counter.inc" }).completed.inc
-
-            return result2.then(() => {
-              expect(counter).toEqual(1)
-            })
-          })
-          it("should only run the action render on matching actions (Function)", () => {
-            expect.assertions(1)
-            agent.addRenderer(() => of(++counter), {
-              name: "inc",
-              actionsOfType: ({ action: { type } }) => type.startsWith("Counter")
-            })
-            let result1 = agent.process(anyAction)
-            let result2 = agent.process({ type: "Counter.inc" }).completed.inc
-
-            return result2.then(() => {
-              expect(counter).toEqual(1)
-            })
-          })
         })
 
         describe("result mappers", () => {
@@ -568,7 +565,7 @@ describe("Agent", () => {
         it.skip("Will not be awaited if they return a promise", () => {})
         it.skip("May modify the actions", () => {})
       })
-      
+
       describe("Renderers", () => {
         let goodSub1: Subscription
         let goodSub2: Subscription
@@ -972,12 +969,24 @@ describe("Utilities", () => {
       })
     })
     describe("Behavior", () => {
-      it("Does nothing unless subscribed to", async () => {
+      it("Is an unstarted timer by default", async () => {
         let o = after(1, incrementVar)
 
         // didnt call subscribe or toPromise
         await timer(10).toPromise()
         expect(c).toEqual(0)
+      })
+      it("Can be awaited by calling toPromise", async () => {
+        let o = after(1, () => 3.14)
+
+        // didnt call subscribe or toPromise
+        const result = await o.toPromise()
+        expect(result).toEqual(3.14)
+      })
+      it("can be awaited directly", async () => {
+        //expect a fail
+        const result = await after(1, () => 2.718)
+        expect(result).toEqual(2.718)
       })
     })
   })

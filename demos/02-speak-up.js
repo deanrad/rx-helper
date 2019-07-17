@@ -27,7 +27,7 @@ module.exports = ({ Agent, log, config }) => {
     let agent = new Agent()
 
     // This one speaks things
-    agent.addRenderer(speakIt, { concurrency })
+    agent.on(true, speakIt, { concurrency })
 
     // We don't await the processing of each action, but we
     // return a promise for the completion of all renderings
