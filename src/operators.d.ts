@@ -4,7 +4,7 @@ import { StreamingGetOptions } from "./types";
  * Delays the invocation of a function, for the number of milliseconds given.
  * Produces an Observable of the thunk's invocation and subsequent return value.
  * The optional 3rd argument can be a name string which will be passed to the thunk.
- * @returns An Observable of what the thunk returns.
+ * @returns An Observable of the object or thunk return value. It is 'thenable', so may also be awaited directly.
  * @example after(100, name => ({type: `Timeout-${name}`}), 'session_expired').subscribe(action => ...)
  */
 export declare const after: (ms: number, objOrFn: any, name?: string) => Observable<any>;

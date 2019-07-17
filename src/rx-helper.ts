@@ -52,7 +52,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements ActionProcessor {
   public static configurableProps = ["agentId", "relayActions"]
-  public static VERSION = "1.2.6"
+  public static VERSION = "1.2.7"
 
   /**
    * The heart and circulatory system of an Agent is `action$`, its action stream. */
