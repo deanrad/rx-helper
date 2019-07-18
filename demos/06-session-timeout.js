@@ -11,7 +11,7 @@ module.exports = ({ agent, after, config = {}, log }) => {
   const keyPresses$ = process.env.INTERACTIVE ? getUserInputFromStdin(log) : simInput()
 
   // See every event processed
-  // agent.filter(() => true, asi => console.log({ asi }))
+  // agent.filter(() => true, item => console.log({ item }))
 
   // The setting-up of our handlers, which needn't be Observables
   agent.on("Timeout.warn", warn)

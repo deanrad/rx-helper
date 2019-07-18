@@ -919,16 +919,22 @@ img { max-width: 100%; }
 			<a href="action.html" class="tsd-kind-icon">Action</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="actionprocessor.html" class="tsd-kind-icon">Action<wbr>Processor</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="actionstreamitem.html" class="tsd-kind-icon">Action<wbr>Stream<wbr>Item</a>
-		</li>
-		<li class=" tsd-kind-interface">
 			<a href="agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="eventbus.html" class="tsd-kind-icon">Event<wbr>Bus</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="eventbusitem.html" class="tsd-kind-icon">Event<wbr>Bus<wbr>Item</a>
 		</li>
 		<li class="current tsd-kind-interface">
 			<a href="filter.html" class="tsd-kind-icon">Filter</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="handler.html" class="tsd-kind-icon">Handler</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="handlerconfig.html" class="tsd-kind-icon">Handler<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="predicate.html" class="tsd-kind-icon">Predicate</a>
@@ -937,22 +943,13 @@ img { max-width: 100%; }
 			<a href="processresult.html" class="tsd-kind-icon">Process<wbr>Result</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="renderer.html" class="tsd-kind-icon">Renderer</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a>
-		</li>
-		<li class=" tsd-kind-interface">
 			<a href="streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="subscribeconfig.html" class="tsd-kind-icon">Subscribe<wbr>Config</a>
 		</li>
-		<li class=" tsd-kind-interface">
-			<a href="subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a>
-		</li>
 		<li class=" tsd-kind-type-alias">
-			<a href="../globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a>
+			<a href="../globals.html#eventmatcher" class="tsd-kind-icon">Event<wbr>Matcher</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#subscriber" class="tsd-kind-icon">Subscriber</a>
@@ -994,13 +991,10 @@ img { max-width: 100%; }
 			<a href="../globals.html#after" class="tsd-kind-icon">after</a>
 		</li>
 		<li class=" tsd-kind-function">
-			<a href="../globals.html#agentconfigfilter" class="tsd-kind-icon">agent<wbr>Config<wbr>Filter</a>
-		</li>
-		<li class=" tsd-kind-function">
 			<a href="../globals.html#ajaxstreamingget" class="tsd-kind-icon">ajax<wbr>Streaming<wbr>Get</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="../globals.html#getactionfilter" class="tsd-kind-icon">get<wbr>Action<wbr>Filter</a>
+			<a href="../globals.html#geteventpredicate" class="tsd-kind-icon">get<wbr>Event<wbr>Predicate</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="../globals.html#oboeget" class="tsd-kind-icon">oboe<wbr>Get</a>
@@ -1033,16 +1027,16 @@ img { max-width: 100%; }
 		<section class="tsd-panel tsd-comment">
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>A Filter runs a synchronous function prior to any renderers
+					<p>A Filter runs a synchronous function prior to any handlers
 						being invoked, and can cancel future filters, and all handlers
 						by throwing an exception, which must be caught by the caller of
-					<code>process(action)</code>.</p>
+					<code>process(event)</code>.</p>
 				</div>
 				<p>It does <em>not</em>, as its name suggest, split off a slice of the
-				stream. To do that see <code>actionsOfType</code>.</p>
+				stream. To do that see <code>getAllEvents</code>.</p>
 				<dl class="tsd-comment-tags">
 					<dt>see</dt>
-					<dd><p>actionsOfType</p>
+					<dd><p>getAllEvents</p>
 					</dd>
 				</dl>
 			</div>
@@ -1058,29 +1052,29 @@ img { max-width: 100%; }
 		<section class="tsd-panel">
 			<h3 class="tsd-before-signature">Callable</h3>
 			<ul class="tsd-signatures tsd-kind-interface">
-				<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><a href="actionstreamitem.html" class="tsd-signature-type">ActionStreamItem</a>, payload<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+				<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><a href="eventbusitem.html" class="tsd-signature-type">EventBusItem</a>, payload<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 			</ul>
 			<ul class="tsd-descriptions">
 				<li class="tsd-description">
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L104">types.ts:104</a></li>
+							<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L98">types.ts:98</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>A Filter runs a synchronous function prior to any renderers
+							<p>A Filter runs a synchronous function prior to any handlers
 								being invoked, and can cancel future filters, and all handlers
 								by throwing an exception, which must be caught by the caller of
-							<code>process(action)</code>.</p>
+							<code>process(event)</code>.</p>
 						</div>
 						<p>It does <em>not</em>, as its name suggest, split off a slice of the
-						stream. To do that see <code>actionsOfType</code>.</p>
+						stream. To do that see <code>getAllEvents</code>.</p>
 					</div>
 					<h4 class="tsd-parameters-title">Parameters</h4>
 					<ul class="tsd-parameters">
 						<li>
-							<h5>item: <a href="actionstreamitem.html" class="tsd-signature-type">ActionStreamItem</a></h5>
+							<h5>item: <a href="eventbusitem.html" class="tsd-signature-type">EventBusItem</a></h5>
 						</li>
 						<li>
 							<h5><span class="tsd-flag ts-flagOptional">Optional</span> payload: <span class="tsd-signature-type">any</span></h5>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Renderer | rx-helper</title>
+	<title>HandlerConfig | rx-helper</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -919,16 +919,42 @@ img { max-width: 100%; }
 			<a href="action.html" class="tsd-kind-icon">Action</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="actionprocessor.html" class="tsd-kind-icon">Action<wbr>Processor</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="actionstreamitem.html" class="tsd-kind-icon">Action<wbr>Stream<wbr>Item</a>
-		</li>
-		<li class=" tsd-kind-interface">
 			<a href="agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
+			<a href="eventbus.html" class="tsd-kind-icon">Event<wbr>Bus</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="eventbusitem.html" class="tsd-kind-icon">Event<wbr>Bus<wbr>Item</a>
+		</li>
+		<li class=" tsd-kind-interface">
 			<a href="filter.html" class="tsd-kind-icon">Filter</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="handler.html" class="tsd-kind-icon">Handler</a>
+		</li>
+		<li class="current tsd-kind-interface">
+			<a href="handlerconfig.html" class="tsd-kind-icon">Handler<wbr>Config</a>
+			<ul>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="handlerconfig.html#concurrency" class="tsd-kind-icon">concurrency</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="handlerconfig.html#name" class="tsd-kind-icon">name</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="handlerconfig.html#oncutoff" class="tsd-kind-icon">on<wbr>Cutoff</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="handlerconfig.html#processresults" class="tsd-kind-icon">process<wbr>Results</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="handlerconfig.html#type" class="tsd-kind-icon">type</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="handlerconfig.html#withcontext" class="tsd-kind-icon">with<wbr>Context</a>
+				</li>
+			</ul>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="predicate.html" class="tsd-kind-icon">Predicate</a>
@@ -936,23 +962,14 @@ img { max-width: 100%; }
 		<li class=" tsd-kind-interface">
 			<a href="processresult.html" class="tsd-kind-icon">Process<wbr>Result</a>
 		</li>
-		<li class="current tsd-kind-interface">
-			<a href="renderer.html" class="tsd-kind-icon">Renderer</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a>
-		</li>
 		<li class=" tsd-kind-interface">
 			<a href="streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="subscribeconfig.html" class="tsd-kind-icon">Subscribe<wbr>Config</a>
 		</li>
-		<li class=" tsd-kind-interface">
-			<a href="subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a>
-		</li>
 		<li class=" tsd-kind-type-alias">
-			<a href="../globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a>
+			<a href="../globals.html#eventmatcher" class="tsd-kind-icon">Event<wbr>Matcher</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#subscriber" class="tsd-kind-icon">Subscriber</a>
@@ -994,13 +1011,10 @@ img { max-width: 100%; }
 			<a href="../globals.html#after" class="tsd-kind-icon">after</a>
 		</li>
 		<li class=" tsd-kind-function">
-			<a href="../globals.html#agentconfigfilter" class="tsd-kind-icon">agent<wbr>Config<wbr>Filter</a>
-		</li>
-		<li class=" tsd-kind-function">
 			<a href="../globals.html#ajaxstreamingget" class="tsd-kind-icon">ajax<wbr>Streaming<wbr>Get</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="../globals.html#getactionfilter" class="tsd-kind-icon">get<wbr>Action<wbr>Filter</a>
+			<a href="../globals.html#geteventpredicate" class="tsd-kind-icon">get<wbr>Event<wbr>Predicate</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="../globals.html#oboeget" class="tsd-kind-icon">oboe<wbr>Get</a>
@@ -1030,58 +1044,124 @@ img { max-width: 100%; }
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
-		<section class="tsd-panel tsd-comment">
-			<div class="tsd-comment tsd-typography">
-				<div class="lead">
-					<p>The function you assign to handle <code>.on(actionType)</code>
-						events is known as a Renderer. It receives as arguments
-						1) An object containing an event (aka action), and context as fields
-						2) The event&#39;s payload as a 2nd parameter (This makes
-					referring to the payload easy, and is actually similar to JQuery ha!)</p>
-				</div>
-			</div>
-		</section>
 		<section class="tsd-panel tsd-hierarchy">
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="target">Renderer</span>
+					<span class="target">HandlerConfig</span>
 				</li>
 			</ul>
 		</section>
-		<section class="tsd-panel">
-			<h3 class="tsd-before-signature">Callable</h3>
-			<ul class="tsd-signatures tsd-kind-interface">
-				<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><a href="actionstreamitem.html" class="tsd-signature-type">ActionStreamItem</a>, payload<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
-			</ul>
-			<ul class="tsd-descriptions">
-				<li class="tsd-description">
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L91">types.ts:91</a></li>
+		<section class="tsd-panel-group tsd-index-group">
+			<h2>Index</h2>
+			<section class="tsd-panel tsd-index-panel">
+				<div class="tsd-index-content">
+					<section class="tsd-index-section ">
+						<h3>Properties</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handlerconfig.html#concurrency" class="tsd-kind-icon">concurrency</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handlerconfig.html#name" class="tsd-kind-icon">name</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handlerconfig.html#oncutoff" class="tsd-kind-icon">on<wbr>Cutoff</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handlerconfig.html#processresults" class="tsd-kind-icon">process<wbr>Results</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handlerconfig.html#type" class="tsd-kind-icon">type</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handlerconfig.html#withcontext" class="tsd-kind-icon">with<wbr>Context</a></li>
 						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The function you assign to handle <code>.on(actionType)</code>
-								events is known as a Renderer. It receives as arguments
-								1) An object containing an event (aka action), and context as fields
-								2) The event&#39;s payload as a 2nd parameter (This makes
-							referring to the payload easy, and is actually similar to JQuery ha!)</p>
-						</div>
-					</div>
-					<h4 class="tsd-parameters-title">Parameters</h4>
-					<ul class="tsd-parameters">
-						<li>
-							<h5>item: <a href="actionstreamitem.html" class="tsd-signature-type">ActionStreamItem</a></h5>
-						</li>
-						<li>
-							<h5><span class="tsd-flag ts-flagOptional">Optional</span> payload: <span class="tsd-signature-type">any</span></h5>
-						</li>
+					</section>
+				</div>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group ">
+			<h2>Properties</h2>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="concurrency" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> concurrency</h3>
+				<div class="tsd-signature tsd-kind-icon">concurrency<span class="tsd-signature-symbol">:</span> <a href="../enums/concurrency.html" class="tsd-signature-type">Concurrency</a></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L106">types.ts:106</a></li>
 					</ul>
-					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
-				</li>
-			</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The concurrency mode to use. Governs what happens when another handling from this handler is already in progress.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="name" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> name</h3>
+				<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L104">types.ts:104</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A name by which the results will be keyed. Example: <code>agent.process(event).completed.NAME.then(() =&gt; ...)</code></p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="oncutoff" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Cutoff</h3>
+				<div class="tsd-signature tsd-kind-icon">on<wbr>Cutoff<span class="tsd-signature-symbol">:</span> <a href="../globals.html#subscriber" class="tsd-signature-type">Subscriber</a></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L112">types.ts:112</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>If provided, this will be called if cutoff mode terminates a handling. Parameter is {event}.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="processresults" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> process<wbr>Results</h3>
+				<div class="tsd-signature tsd-kind-icon">process<wbr>Results<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Boolean</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L108">types.ts:108</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>If true, the Observable returned by the handler will be fed to <code>agent.subscribe</code>, so its events are <code>process</code>ed.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="type" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> type</h3>
+				<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L110">types.ts:110</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>If provided, this handlers&#39; Observables values will be wrapped in FSAs with this type.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="withcontext" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> with<wbr>Context</h3>
+				<div class="tsd-signature tsd-kind-icon">with<wbr>Context<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Boolean</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L114">types.ts:114</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>If provided, the context of the event being responded to will be forwarded</p>
+					</div>
+				</div>
+			</section>
 		</section>
 		<footer>
 			<div class="container">

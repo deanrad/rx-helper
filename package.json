@@ -1,7 +1,7 @@
 {
   "name": "rx-helper",
-  "version": "1.2.7",
-  "description": "Structure your Rx applications. Focus on causes ⟺ effects. Waste as little time as possible.",
+  "version": "2.0.0",
+  "description": "Structure your applications around events. Focus on causes ⟺ effects.",
   "keywords": [],
   "sideEffects": false,
   "main": "dist/rx-helper.js",

@@ -99,10 +99,6 @@ export interface Filter {
   (item: EventBusItem, payload?: any): any
 }
 
-export interface handlerPromiser {
-  (event: Action, context?: any): Promise<any>
-}
-
 export interface HandlerConfig {
   /** A name by which the results will be keyed. Example: `agent.process(event).completed.NAME.then(() => ...)` */
   name?: string
@@ -127,8 +123,9 @@ export interface SubscribeConfig {
 
 export type EventMatcher = string | RegExp | Predicate | boolean
 
+/* A function that can be used as an EventMatcher. */
 export interface Predicate {
-  (asi: EventBusItem): boolean
+  (item: EventBusItem): boolean
 }
 
 /**

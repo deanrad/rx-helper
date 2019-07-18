@@ -919,28 +919,28 @@ img { max-width: 100%; }
 			<a href="action.html" class="tsd-kind-icon">Action</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="actionprocessor.html" class="tsd-kind-icon">Action<wbr>Processor</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="actionstreamitem.html" class="tsd-kind-icon">Action<wbr>Stream<wbr>Item</a>
-		</li>
-		<li class=" tsd-kind-interface">
 			<a href="agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
+			<a href="eventbus.html" class="tsd-kind-icon">Event<wbr>Bus</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="eventbusitem.html" class="tsd-kind-icon">Event<wbr>Bus<wbr>Item</a>
+		</li>
+		<li class=" tsd-kind-interface">
 			<a href="filter.html" class="tsd-kind-icon">Filter</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="handler.html" class="tsd-kind-icon">Handler</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="handlerconfig.html" class="tsd-kind-icon">Handler<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="predicate.html" class="tsd-kind-icon">Predicate</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="processresult.html" class="tsd-kind-icon">Process<wbr>Result</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="renderer.html" class="tsd-kind-icon">Renderer</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
@@ -956,11 +956,8 @@ img { max-width: 100%; }
 				</li>
 			</ul>
 		</li>
-		<li class=" tsd-kind-interface">
-			<a href="subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a>
-		</li>
 		<li class=" tsd-kind-type-alias">
-			<a href="../globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a>
+			<a href="../globals.html#eventmatcher" class="tsd-kind-icon">Event<wbr>Matcher</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#subscriber" class="tsd-kind-icon">Subscriber</a>
@@ -1002,13 +999,10 @@ img { max-width: 100%; }
 			<a href="../globals.html#after" class="tsd-kind-icon">after</a>
 		</li>
 		<li class=" tsd-kind-function">
-			<a href="../globals.html#agentconfigfilter" class="tsd-kind-icon">agent<wbr>Config<wbr>Filter</a>
-		</li>
-		<li class=" tsd-kind-function">
 			<a href="../globals.html#ajaxstreamingget" class="tsd-kind-icon">ajax<wbr>Streaming<wbr>Get</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="../globals.html#getactionfilter" class="tsd-kind-icon">get<wbr>Action<wbr>Filter</a>
+			<a href="../globals.html#geteventpredicate" class="tsd-kind-icon">get<wbr>Event<wbr>Predicate</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="../globals.html#oboeget" class="tsd-kind-icon">oboe<wbr>Get</a>
@@ -1068,12 +1062,12 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">context<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L133">types.ts:133</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L121">types.ts:121</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>If provided, this will be the context argument for each processed action</p>
+						<p>If provided, this will be the context argument for each processed event</p>
 					</div>
 				</div>
 			</section>
@@ -1083,12 +1077,12 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L131">types.ts:131</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L119">types.ts:119</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>If provided, this renderers&#39; Observables values will be wrapped in FSAs with this type.</p>
+						<p>If provided, this handlers&#39; Observables values will be wrapped in FSAs with this type.</p>
 					</div>
 				</div>
 			</section>

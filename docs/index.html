@@ -33,16 +33,16 @@
         // - Define event-handling behavior which
         //   - matches on type and
         //   - returns an Observable
-        // - Process some actions or subscribe to a process which does
+        // - Process some events or subscribe to a process which does
         // What it does: We send you to a new browser location (in your Address Bar)
         // while you read this
 
-        // Define a renderer which changes the browser's address bar (after a delay)
-        agent.on('browser/go', ({ action }) => {
-            return after(2000, () => document.location.hash = action.payload)
+        // Define a handler which changes the browser's address bar (after a delay)
+        agent.on('browser/go', ({ event }) => {
+            return after(2000, () => document.location.hash = event.payload)
         })
 
-        // Create a store in which to reduce actions.
+        // Create a store in which to reduce events.
         // Note we dont actually bother with a reducer, but allow devtools to instrument us
         const store = Redux.createStore(
             (state = {}, { type, payload }) => {
@@ -56,14 +56,14 @@
             window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
         )
 
-        // append a random GIT-SHA-like identifier to each action
+        // append a random GIT-SHA-like identifier to each event
         agent.filter(() => true, randomIdFilter())
-        // Send all actions, including those returned by renderers through the store
-        agent.filter(() => true, ({ action }) => store.dispatch(action))
+        // Send all events, including those returned by handlers through the store
+        agent.filter(() => true, ({ event }) => store.dispatch(event))
 
         // And print out repo(s) as we get them
-        agent.on(/repo/, ({ action }) => {
-            const { payload } = action
+        agent.on(/repo/, ({ event }) => {
+            const { payload } = event
             console.log(payload.shift ? payload.join("\n") : payload)
 
             // if recieved batches (arrays)
@@ -96,7 +96,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
 
-            // Kick off the action - we should expect to see an update in the address bar!
+            // Kick off the event - we should expect to see an update in the address bar!
             if (document.location.hash.length === 1) {
                 agent.process({
                     type: 'browser/go',

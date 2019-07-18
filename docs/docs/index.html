@@ -919,16 +919,22 @@ img { max-width: 100%; }
 			<a href="interfaces/action.html" class="tsd-kind-icon">Action</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="interfaces/actionprocessor.html" class="tsd-kind-icon">Action<wbr>Processor</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="interfaces/actionstreamitem.html" class="tsd-kind-icon">Action<wbr>Stream<wbr>Item</a>
-		</li>
-		<li class=" tsd-kind-interface">
 			<a href="interfaces/agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
+			<a href="interfaces/eventbus.html" class="tsd-kind-icon">Event<wbr>Bus</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="interfaces/eventbusitem.html" class="tsd-kind-icon">Event<wbr>Bus<wbr>Item</a>
+		</li>
+		<li class=" tsd-kind-interface">
 			<a href="interfaces/filter.html" class="tsd-kind-icon">Filter</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="interfaces/handler.html" class="tsd-kind-icon">Handler</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="interfaces/handlerconfig.html" class="tsd-kind-icon">Handler<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="interfaces/predicate.html" class="tsd-kind-icon">Predicate</a>
@@ -937,22 +943,13 @@ img { max-width: 100%; }
 			<a href="interfaces/processresult.html" class="tsd-kind-icon">Process<wbr>Result</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="interfaces/renderer.html" class="tsd-kind-icon">Renderer</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="interfaces/rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a>
-		</li>
-		<li class=" tsd-kind-interface">
 			<a href="interfaces/streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="interfaces/subscribeconfig.html" class="tsd-kind-icon">Subscribe<wbr>Config</a>
 		</li>
-		<li class=" tsd-kind-interface">
-			<a href="interfaces/subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a>
-		</li>
 		<li class=" tsd-kind-type-alias">
-			<a href="globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a>
+			<a href="globals.html#eventmatcher" class="tsd-kind-icon">Event<wbr>Matcher</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="globals.html#subscriber" class="tsd-kind-icon">Subscriber</a>
@@ -994,13 +991,10 @@ img { max-width: 100%; }
 			<a href="globals.html#after" class="tsd-kind-icon">after</a>
 		</li>
 		<li class=" tsd-kind-function">
-			<a href="globals.html#agentconfigfilter" class="tsd-kind-icon">agent<wbr>Config<wbr>Filter</a>
-		</li>
-		<li class=" tsd-kind-function">
 			<a href="globals.html#ajaxstreamingget" class="tsd-kind-icon">ajax<wbr>Streaming<wbr>Get</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="globals.html#getactionfilter" class="tsd-kind-icon">get<wbr>Action<wbr>Filter</a>
+			<a href="globals.html#geteventpredicate" class="tsd-kind-icon">get<wbr>Event<wbr>Predicate</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="globals.html#oboeget" class="tsd-kind-icon">oboe<wbr>Get</a>
@@ -1062,7 +1056,7 @@ img { max-width: 100%; }
 			<ul>
 				<li>A <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Clean Architecture</a> of code with a high degree of decoupling and fault-tolerance.</li>
 				<li>A clean, cancelable model of async effects, compatible with, but not dependent on a component library like React or Angular.</li>
-				<li>Faster prototyping by building abstractions that simulate input or output, allowing you to focus on the core functionality of your app.</li>
+				<li>Faster prototyping by building abstrrctions that simulate input or output, allowing you to focus on the core functionality of your app.</li>
 				<li>Familiarity with the Observable datatype - a type that is a superset of Promise, and which can stand in for users, databases, servers, or any number of .</li>
 			</ul>
 			<h2 id="what-kinds-of-apps-can-i-build-with-it-">What kinds of apps can I build with it?</h2>
@@ -1116,23 +1110,22 @@ img { max-width: 100%; }
 						<h3>Interfaces</h3>
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-interface"><a href="interfaces/action.html" class="tsd-kind-icon">Action</a></li>
-							<li class="tsd-kind-interface"><a href="interfaces/actionprocessor.html" class="tsd-kind-icon">Action<wbr>Processor</a></li>
-							<li class="tsd-kind-interface"><a href="interfaces/actionstreamitem.html" class="tsd-kind-icon">Action<wbr>Stream<wbr>Item</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/eventbus.html" class="tsd-kind-icon">Event<wbr>Bus</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/eventbusitem.html" class="tsd-kind-icon">Event<wbr>Bus<wbr>Item</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/filter.html" class="tsd-kind-icon">Filter</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/handler.html" class="tsd-kind-icon">Handler</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/handlerconfig.html" class="tsd-kind-icon">Handler<wbr>Config</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/predicate.html" class="tsd-kind-icon">Predicate</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/processresult.html" class="tsd-kind-icon">Process<wbr>Result</a></li>
-							<li class="tsd-kind-interface"><a href="interfaces/renderer.html" class="tsd-kind-icon">Renderer</a></li>
-							<li class="tsd-kind-interface"><a href="interfaces/rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/subscribeconfig.html" class="tsd-kind-icon">Subscribe<wbr>Config</a></li>
-							<li class="tsd-kind-interface"><a href="interfaces/subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
 						<h3>Type aliases</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-type-alias"><a href="globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a></li>
+							<li class="tsd-kind-type-alias"><a href="globals.html#eventmatcher" class="tsd-kind-icon">Event<wbr>Matcher</a></li>
 							<li class="tsd-kind-type-alias"><a href="globals.html#subscriber" class="tsd-kind-icon">Subscriber</a></li>
 						</ul>
 					</section>
@@ -1156,9 +1149,8 @@ img { max-width: 100%; }
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-function"><a href="globals.html#gameloop" class="tsd-kind-icon">Game<wbr>Loop</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#after" class="tsd-kind-icon">after</a></li>
-							<li class="tsd-kind-function"><a href="globals.html#agentconfigfilter" class="tsd-kind-icon">agent<wbr>Config<wbr>Filter</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#ajaxstreamingget" class="tsd-kind-icon">ajax<wbr>Streaming<wbr>Get</a></li>
-							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#getactionfilter" class="tsd-kind-icon">get<wbr>Action<wbr>Filter</a></li>
+							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#geteventpredicate" class="tsd-kind-icon">get<wbr>Event<wbr>Predicate</a></li>
 							<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#oboeget" class="tsd-kind-icon">oboe<wbr>Get</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#pp" class="tsd-kind-icon">pp</a></li>
 							<li class="tsd-kind-function"><a href="globals.html#randomid" class="tsd-kind-icon">random<wbr>Id</a></li>
@@ -1175,29 +1167,29 @@ img { max-width: 100%; }
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Type aliases</h2>
 			<section class="tsd-panel tsd-member tsd-kind-type-alias">
-				<a name="actionfilter" class="tsd-anchor"></a>
-				<h3>Action<wbr>Filter</h3>
-				<div class="tsd-signature tsd-kind-icon">Action<wbr>Filter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><a href="interfaces/predicate.html" class="tsd-signature-type">Predicate</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></div>
+				<a name="eventmatcher" class="tsd-anchor"></a>
+				<h3>Event<wbr>Matcher</h3>
+				<div class="tsd-signature tsd-kind-icon">Event<wbr>Matcher<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><a href="interfaces/predicate.html" class="tsd-signature-type">Predicate</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L136">types.ts:136</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L124">types.ts:124</a></li>
 					</ul>
 				</aside>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-type-alias">
 				<a name="subscriber" class="tsd-anchor"></a>
 				<h3>Subscriber</h3>
-				<div class="tsd-signature tsd-kind-icon">Subscriber<span class="tsd-signature-symbol">:</span> <a href="interfaces/filter.html" class="tsd-signature-type">Filter</a><span class="tsd-signature-symbol"> | </span><a href="interfaces/renderer.html" class="tsd-signature-type">Renderer</a></div>
+				<div class="tsd-signature tsd-kind-icon">Subscriber<span class="tsd-signature-symbol">:</span> <a href="interfaces/filter.html" class="tsd-signature-type">Filter</a><span class="tsd-signature-symbol"> | </span><a href="interfaces/handler.html" class="tsd-signature-type">Handler</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L37">types.ts:37</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L33">types.ts:33</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A subscriber is either a renderer or a filter - a function which
-							receives as its argument the ActionStreamItem, typically to use
-						the payload of the <code>action</code> property to cause some side-effect.</p>
+						<p>A subscriber is either a handler or a filter - a function which
+							receives as its argument the EventBusItem, typically to use
+						the payload of the <code>event</code> property to cause some side-effect.</p>
 					</div>
 				</div>
 			</section>
@@ -1210,7 +1202,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">agent<span class="tsd-signature-symbol">:</span> <a href="classes/agent.html" class="tsd-signature-type">Agent</a><span class="tsd-signature-symbol"> =&nbsp;new Agent()</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L513">rx-helper.ts:513</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L493">agent.ts:493</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1225,7 +1217,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">app<span class="tsd-signature-symbol">:</span> <a href="classes/agent.html" class="tsd-signature-type">Agent</a><span class="tsd-signature-symbol"> =&nbsp;agent</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L515">rx-helper.ts:515</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L495">agent.ts:495</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1240,7 +1232,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">assert<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;typeof require &#x3D;&#x3D;&#x3D; &quot;undefined&quot; ? () &#x3D;&gt; null : require(&quot;assert&quot;)</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L44">rx-helper.ts:44</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L39">agent.ts:39</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1250,7 +1242,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">filter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L517">rx-helper.ts:517</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L497">agent.ts:497</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1260,7 +1252,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L517">rx-helper.ts:517</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L497">agent.ts:497</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1270,7 +1262,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L517">rx-helper.ts:517</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L497">agent.ts:497</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1280,7 +1272,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;completed&quot;, &quot;then&quot;, &quot;catch&quot;]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L431">rx-helper.ts:431</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L424">agent.ts:424</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1290,7 +1282,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L517">rx-helper.ts:517</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L497">agent.ts:497</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1300,7 +1292,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">subscribe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L517">rx-helper.ts:517</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L497">agent.ts:497</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1310,7 +1302,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">trigger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L517">rx-helper.ts:517</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L497">agent.ts:497</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1327,7 +1319,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L483">rx-helper.ts:483</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L463">agent.ts:463</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1347,7 +1339,7 @@ img { max-width: 100%; }
 
  <span class="hljs-keyword">const</span> frames = <span class="hljs-keyword">new</span> GameLoop()
 
- agent.on(<span class="hljs-string">"world"</span>, ({ <span class="hljs-attr">action</span>: { <span class="hljs-attr">payload</span>: { world }}}) =&gt; {
+ agent.on(<span class="hljs-string">"world"</span>, ({ <span class="hljs-attr">event</span>: { <span class="hljs-attr">payload</span>: { world }}}) =&gt; {
    drawToCanvas(world)
  })
 
@@ -1375,7 +1367,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/operators.ts#L14">operators.ts:14</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/operators.ts#L14">operators.ts:14</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1403,35 +1395,6 @@ img { max-width: 100%; }
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-function">
-				<a name="agentconfigfilter" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagConst">Const</span> agent<wbr>Config<wbr>Filter</h3>
-				<ul class="tsd-signatures tsd-kind-function">
-					<li class="tsd-signature tsd-kind-icon">agent<wbr>Config<wbr>Filter<span class="tsd-signature-symbol">(</span>agent<span class="tsd-signature-symbol">: </span><a href="classes/agent.html" class="tsd-signature-type">Agent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L437">rx-helper.ts:437</a></li>
-							</ul>
-						</aside>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>Constructs a filter (see agent.addFilter) which mixes AgentConfig properties
-								into the meta of an action</p>
-							</div>
-						</div>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>agent: <a href="classes/agent.html" class="tsd-signature-type">Agent</a></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-function">
 				<a name="ajaxstreamingget" class="tsd-anchor"></a>
 				<h3><span class="tsd-flag ts-flagConst">Const</span> ajax<wbr>Streaming<wbr>Get</h3>
 				<ul class="tsd-signatures tsd-kind-function">
@@ -1441,7 +1404,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/operators.ts#L37">operators.ts:37</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/operators.ts#L37">operators.ts:37</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1463,36 +1426,36 @@ img { max-width: 100%; }
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-function tsd-is-not-exported">
-				<a name="getactionfilter" class="tsd-anchor"></a>
-				<h3>get<wbr>Action<wbr>Filter</h3>
+				<a name="geteventpredicate" class="tsd-anchor"></a>
+				<h3>get<wbr>Event<wbr>Predicate</h3>
 				<ul class="tsd-signatures tsd-kind-function tsd-is-not-exported">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Action<wbr>Filter<span class="tsd-signature-symbol">(</span>actionFilter<span class="tsd-signature-symbol">: </span><a href="globals.html#actionfilter" class="tsd-signature-type">ActionFilter</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Event<wbr>Predicate<span class="tsd-signature-symbol">(</span>eventMatcher<span class="tsd-signature-symbol">: </span><a href="globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L409">rx-helper.ts:409</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L402">agent.ts:402</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>actionFilter: <a href="globals.html#actionfilter" class="tsd-signature-type">ActionFilter</a></h5>
+								<h5>eventMatcher: <a href="globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">function</span></h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-siganture">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>asi<span class="tsd-signature-symbol">: </span><a href="interfaces/actionstreamitem.html" class="tsd-signature-type">ActionStreamItem</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><a href="interfaces/eventbusitem.html" class="tsd-signature-type">EventBusItem</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
 										<h4 class="tsd-parameters-title">Parameters</h4>
 										<ul class="tsd-parameters">
 											<li>
-												<h5>asi: <a href="interfaces/actionstreamitem.html" class="tsd-signature-type">ActionStreamItem</a></h5>
+												<h5>item: <a href="interfaces/eventbusitem.html" class="tsd-signature-type">EventBusItem</a></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1513,7 +1476,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/operators.ts#L58">operators.ts:58</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/operators.ts#L58">operators.ts:58</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1530,24 +1493,24 @@ img { max-width: 100%; }
 				<a name="pp" class="tsd-anchor"></a>
 				<h3><span class="tsd-flag ts-flagConst">Const</span> pp</h3>
 				<ul class="tsd-signatures tsd-kind-function">
-					<li class="tsd-signature tsd-kind-icon">pp<span class="tsd-signature-symbol">(</span>action<span class="tsd-signature-symbol">: </span><a href="interfaces/action.html" class="tsd-signature-type">Action</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					<li class="tsd-signature tsd-kind-icon">pp<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="interfaces/action.html" class="tsd-signature-type">Action</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L510">rx-helper.ts:510</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L490">agent.ts:490</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>Pretty-print an action</p>
+								<p>Pretty-print an event</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>action: <a href="interfaces/action.html" class="tsd-signature-type">Action</a></h5>
+								<h5>event: <a href="interfaces/action.html" class="tsd-signature-type">Action</a></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -1564,13 +1527,13 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L451">rx-helper.ts:451</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L431">agent.ts:431</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
 								<p>A random enough identifier, 1 in a million or so,
-									to identify actions in a stream. Not globally or cryptographically
+									to identify events in a stream. Not globally or cryptographically
 								random, just more random than: <a href="https://xkcd.com/221/">https://xkcd.com/221/</a></p>
 							</div>
 						</div>
@@ -1594,13 +1557,13 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L499">rx-helper.ts:499</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L479">agent.ts:479</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
 								<p>A filter that adds a string of hex digits to
-								action.meta.actionId to uniquely identify an action among its neighbors.</p>
+								event.meta.eventId to uniquely identify an event among its neighbors.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1609,7 +1572,7 @@ img { max-width: 100%; }
 								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> length: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;7</span></h5>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;actionId&quot;</span></h5>
+								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;eventId&quot;</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
@@ -1626,7 +1589,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/operators.ts#L43">operators.ts:43</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/operators.ts#L43">operators.ts:43</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1649,7 +1612,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L531">rx-helper.ts:531</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L511">agent.ts:511</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1680,7 +1643,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/operators.ts#L92">operators.ts:92</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/operators.ts#L92">operators.ts:92</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1711,7 +1674,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/rx-helper.ts#L424">rx-helper.ts:424</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/agent.ts#L417">agent.ts:417</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>

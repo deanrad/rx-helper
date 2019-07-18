@@ -15,10 +15,6 @@ import {
   EventBusItem,
   AgentConfig,
   Concurrency,
-  Filter,
-  Predicate,
-  Handler,
-  handlerPromiser,
   Subscriber,
   SubscribeConfig,
   HandlerConfig
@@ -31,7 +27,6 @@ export {
   EventBusItem,
   Concurrency,
   ProcessResult,
-  handlerPromiser,
   Subscriber,
   HandlerConfig
 } from "./types"
@@ -53,7 +48,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements EventBus {
   public static configurableProps = ["agentId"]
-  public static VERSION = "1.2.7"
+  public static VERSION = "2.0.0"
 
   private event$: Observable<EventBusItem>
   [key: string]: any
@@ -61,7 +56,7 @@ export class Agent implements EventBus {
   private _subscriberCount = 0
   private eventBus: Subject<EventBusItem>
   private allFilters: Map<string, Subscriber>
-  private allHandlers: Map<string, handlerPromiser>
+  private allHandlers: Map<string, Function>
 
   handlerNames() {
     return Array.from(this.allHandlers.keys())
@@ -97,7 +92,7 @@ export class Agent implements EventBus {
     this.eventBus = new Subject<EventBusItem>()
     this.event$ = this.eventBus.asObservable()
     this.allFilters = new Map<string, Subscriber>()
-    this.allHandlers = new Map<string, handlerPromiser>()
+    this.allHandlers = new Map<string, Function>()
     config.agentId = config.agentId || randomId()
     for (let key of Object.keys(config)) {
       Agent.configurableProps.includes(key) &&
@@ -120,13 +115,13 @@ export class Agent implements EventBus {
   process(event: Action, context?: any): any {
     // Execute all filters one after the other, synchronously, in the order added
     const filterResults = new Map<string, any>()
-    const asi: EventBusItem = {
+    const item: EventBusItem = {
       event,
       results: filterResults
     }
-    this.runFilters(asi, filterResults)
+    this.runFilters(item, filterResults)
 
-    this.eventBus.next(asi)
+    this.eventBus.next(item)
 
     // Add readonly properties for each filter result
     // The return value of agent.process ducktypes the event,
@@ -329,9 +324,9 @@ export class Agent implements EventBus {
 
     // Pass all events unless otherwise told
     const predicate = eventMatcher ? getEventPredicate(eventMatcher) : () => true
-    const _filter: Subscriber = (asi: EventBusItem) => {
-      if (predicate(asi)) {
-        return filter(asi, asi.event.payload)
+    const _filter: Subscriber = (item: EventBusItem) => {
+      if (predicate(item)) {
+        return filter(item, item.event.payload)
       }
     }
 
@@ -368,7 +363,7 @@ export class Agent implements EventBus {
     this.allHandlers.clear()
   }
 
-  private runFilters(asi: EventBusItem, results: Map<string, any>): void {
+  private runFilters(item: EventBusItem, results: Map<string, any>): void {
     // Run all filters sync (RxJS as of v6 no longer will sync error)
     for (let filterName of this.allFilters.keys()) {
       let filter = this.allFilters.get(filterName)
@@ -376,7 +371,7 @@ export class Agent implements EventBus {
       let err
       try {
         // @ts-ignore
-        result = filter(asi)
+        result = filter(item)
       } catch (ex) {
         err = ex
         throw ex
@@ -405,7 +400,7 @@ export class Agent implements EventBus {
 }
 
 function getEventPredicate(eventMatcher: EventMatcher) {
-  let predicate: ((asi: EventBusItem) => boolean)
+  let predicate: ((item: EventBusItem) => boolean)
 
   if (eventMatcher instanceof RegExp) {
     predicate = ({ event }: EventBusItem) => eventMatcher.test(event.type)

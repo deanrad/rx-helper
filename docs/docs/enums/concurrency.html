@@ -933,16 +933,22 @@ img { max-width: 100%; }
 			<a href="../interfaces/action.html" class="tsd-kind-icon">Action</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="../interfaces/actionprocessor.html" class="tsd-kind-icon">Action<wbr>Processor</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="../interfaces/actionstreamitem.html" class="tsd-kind-icon">Action<wbr>Stream<wbr>Item</a>
-		</li>
-		<li class=" tsd-kind-interface">
 			<a href="../interfaces/agentconfig.html" class="tsd-kind-icon">Agent<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
+			<a href="../interfaces/eventbus.html" class="tsd-kind-icon">Event<wbr>Bus</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/eventbusitem.html" class="tsd-kind-icon">Event<wbr>Bus<wbr>Item</a>
+		</li>
+		<li class=" tsd-kind-interface">
 			<a href="../interfaces/filter.html" class="tsd-kind-icon">Filter</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/handler.html" class="tsd-kind-icon">Handler</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/handlerconfig.html" class="tsd-kind-icon">Handler<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="../interfaces/predicate.html" class="tsd-kind-icon">Predicate</a>
@@ -951,22 +957,13 @@ img { max-width: 100%; }
 			<a href="../interfaces/processresult.html" class="tsd-kind-icon">Process<wbr>Result</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="../interfaces/renderer.html" class="tsd-kind-icon">Renderer</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="../interfaces/rendererpromiser.html" class="tsd-kind-icon">Renderer<wbr>Promiser</a>
-		</li>
-		<li class=" tsd-kind-interface">
 			<a href="../interfaces/streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="../interfaces/subscribeconfig.html" class="tsd-kind-icon">Subscribe<wbr>Config</a>
 		</li>
-		<li class=" tsd-kind-interface">
-			<a href="../interfaces/subscriberconfig.html" class="tsd-kind-icon">Subscriber<wbr>Config</a>
-		</li>
 		<li class=" tsd-kind-type-alias">
-			<a href="../globals.html#actionfilter" class="tsd-kind-icon">Action<wbr>Filter</a>
+			<a href="../globals.html#eventmatcher" class="tsd-kind-icon">Event<wbr>Matcher</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#subscriber" class="tsd-kind-icon">Subscriber</a>
@@ -1008,13 +1005,10 @@ img { max-width: 100%; }
 			<a href="../globals.html#after" class="tsd-kind-icon">after</a>
 		</li>
 		<li class=" tsd-kind-function">
-			<a href="../globals.html#agentconfigfilter" class="tsd-kind-icon">agent<wbr>Config<wbr>Filter</a>
-		</li>
-		<li class=" tsd-kind-function">
 			<a href="../globals.html#ajaxstreamingget" class="tsd-kind-icon">ajax<wbr>Streaming<wbr>Get</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
-			<a href="../globals.html#getactionfilter" class="tsd-kind-icon">get<wbr>Action<wbr>Filter</a>
+			<a href="../globals.html#geteventpredicate" class="tsd-kind-icon">get<wbr>Event<wbr>Predicate</a>
 		</li>
 		<li class=" tsd-kind-function tsd-is-not-exported">
 			<a href="../globals.html#oboeget" class="tsd-kind-icon">oboe<wbr>Get</a>
@@ -1047,14 +1041,14 @@ img { max-width: 100%; }
 		<section class="tsd-panel tsd-comment">
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>When a renderer (async usually) returns an Observable, it&#39;s possible
-						that multiple renderings will be active at once (see demo &#39;speak-up&#39;). The options
-					are:</p>
+					<p>When a handler (async usually) returns an Observable, it&#39;s possible
+						that another handler for that type is running already (see demo &#39;speak-up&#39;).
+					The options are:</p>
 					<ul>
-						<li>parallel: Concurrent renders are unlimited, unadjusted</li>
-						<li>serial: Concurrency of 1, render starts are queued</li>
-						<li>cutoff: Concurrency of 1, any existing render is killed</li>
-						<li>mute: Concurrency of 1, existing render prevents new renders</li>
+						<li>parallel: Concurrent handlers are unlimited, unadjusted</li>
+						<li>serial: Concurrency of 1, handlers are queued</li>
+						<li>cutoff: Concurrency of 1, any existing handler is killed</li>
+						<li>mute: Concurrency of 1, existing handler prevents new handlers</li>
 					</ul>
 				</div>
 			</div>
@@ -1083,12 +1077,12 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">cutoff<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;cutoff&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L78">types.ts:78</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L72">types.ts:72</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Concurrency of 1, any existing render is killed</p>
+						<p>Concurrency of 1, any existing handler is killed</p>
 					</div>
 				</div>
 			</section>
@@ -1098,12 +1092,12 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">mute<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;mute&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L81">types.ts:81</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L75">types.ts:75</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Concurrency of 1, existing render prevents new renders</p>
+						<p>Concurrency of 1, existing handler prevents new handlers</p>
 					</div>
 				</div>
 			</section>
@@ -1113,12 +1107,12 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">parallel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;parallel&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L72">types.ts:72</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L66">types.ts:66</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Concurrent renders are unlimited, unadjusted</p>
+						<p>Handlers are invoked on-demand - no limits</p>
 					</div>
 				</div>
 			</section>
@@ -1128,12 +1122,12 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">serial<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;serial&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1dede5c/src/types.ts#L75">types.ts:75</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/542ccee/src/types.ts#L69">types.ts:69</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Concurrency of 1, render starts are queued</p>
+						<p>Concurrency of 1, handlers are queued</p>
 					</div>
 				</div>
 			</section>
