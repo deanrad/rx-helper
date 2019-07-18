@@ -5,7 +5,7 @@ const { readFile } = fs
 // A version that returns an Observable
 const notifyOfFileContents = bindNodeCallback(readFile)
 
-// A flag we will set when we've processed our final action (for testing)
+// A flag we will set when we've processed our final event (for testing)
 const allDone = new Subject()
 
 const FILE_PATH = __dirname + "/07-log.txt"
@@ -13,14 +13,14 @@ module.exports = ({
   Agent,
   log /* it is the concatenation of our calls to log that will appear in the snapshot */
 }) => {
-  // A new agent, where very action the agent sees may be logged
+  // A new agent, where very event the agent sees may be logged
   const agent = new Agent()
   // enable debugging (will be verbose)
-  agent.filter(() => true, ({ action }) => console.error(JSON.stringify(action)))
+  agent.filter(() => true, ({ event }) => console.error(JSON.stringify(event)))
 
   // The agent will respond to 'load' w/ an event of type 'logLines'
   // containing the files' contents as a string.
-  agent.on("load", ({ action: { payload } }) => notifyOfFileContents(payload, "UTF8"), {
+  agent.on("load", ({ event: { payload } }) => notifyOfFileContents(payload, "UTF8"), {
     type: "logLines"
   })
 
@@ -28,8 +28,8 @@ module.exports = ({
   // in an Observable of type 'goodLines'
   agent.on(
     "logLines",
-    ({ action }) => {
-      const { payload: lines } = action
+    ({ event }) => {
+      const { payload: lines } = event
       const goodLines = lines.split("\n").filter(line => line.match(/gandalf/))
       return goodLines
     },
@@ -37,8 +37,8 @@ module.exports = ({
   )
 
   // Once we know our goodLines, we can create the output file
-  agent.on("goodLines", ({ action }) => {
-    const lines = action.payload
+  agent.on("goodLines", ({ event }) => {
+    const lines = event.payload
     lines.forEach(log)
 
     // This is effectively what bindNodeCallback did for us for the case of fs.readFile

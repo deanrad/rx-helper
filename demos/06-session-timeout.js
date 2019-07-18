@@ -1,7 +1,7 @@
 const { Subject, concat } = require("rxjs")
 const { after, getUserInputFromStdin } = require("./utils")
 
-// A flag we will set when we've processed our final action (for testing)
+// A flag we will set when we've processed our final event (for testing)
 const allDone = new Subject()
 
 module.exports = ({ agent, after, config = {}, log }) => {
@@ -10,10 +10,10 @@ module.exports = ({ agent, after, config = {}, log }) => {
   // The stream of keypresses we'll send through the program
   const keyPresses$ = process.env.INTERACTIVE ? getUserInputFromStdin(log) : simInput()
 
-  // See every action processed
+  // See every event processed
   // agent.filter(() => true, asi => console.log({ asi }))
 
-  // The setting-up of our renderers, which needn't be Observables
+  // The setting-up of our handlers, which needn't be Observables
   agent.on("Timeout.warn", warn)
   agent.on("Timeout.logout", logout)
   function warn() {
@@ -26,9 +26,9 @@ module.exports = ({ agent, after, config = {}, log }) => {
   }
 
   // An observable resembling the following is created and started
-  // after every action. 'Cutoff' concurrency mode means it terminates
+  // after every event. 'Cutoff' concurrency mode means it terminates
   // any preceeding one, thus potentially no warn or logout ever occurs
-  // if actions occur within the specified inactivityInterval
+  // if events occur within the specified inactivityInterval
   //                 warn     logout
   // |---------------|--------|----->|
   //    inactivity     warning

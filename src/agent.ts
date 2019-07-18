@@ -9,31 +9,31 @@ import {
 } from "rxjs"
 import { filter as rxFilter, map, first } from "rxjs/operators"
 import {
-  ActionProcessor,
+  EventBus,
   Action,
-  ActionFilter,
-  ActionStreamItem,
+  EventMatcher,
+  EventBusItem,
   AgentConfig,
   Concurrency,
   Filter,
   Predicate,
-  Renderer,
-  RendererPromiser,
+  Handler,
+  handlerPromiser,
   Subscriber,
   SubscribeConfig,
-  SubscriberConfig
+  HandlerConfig
 } from "./types"
 
 export {
   Action,
-  ActionFilter,
+  EventMatcher,
   AgentConfig,
-  ActionStreamItem,
+  EventBusItem,
   Concurrency,
   ProcessResult,
-  RendererPromiser,
+  handlerPromiser,
   Subscriber,
-  SubscriberConfig
+  HandlerConfig
 } from "./types"
 
 // Export utility rxjs operators and our own custom
@@ -44,62 +44,61 @@ export { from, of, empty, concat, merge, interval, zip } from "rxjs"
 const assert = typeof require === "undefined" ? () => null : require("assert")
 
 /**
- * Represents the instance of an Rx-Helper action processor which is
- * usually the only one in this JavaScript runtime. The heart and circulatory system of
- * an Agent is its action stream. You put actions on the action stream
- * by calling `agent.process(action)` and from there filters and renderers respond.
- * Because renderers may emit more actions, this process can continue indefinitely.
+ * Represents an instance of an event bus which you trigger/process events
+ * to, and listen via handlers attached via `filter`(sync) and `on`(async).
+ * Handlers can emit further events, thus extending the process.
+ *
+ * A singleton instance is exported as `app`, and top-level `filter` `on`
+ * `process` and `subscribe` are bound to it.
  */
-export class Agent implements ActionProcessor {
-  public static configurableProps = ["agentId", "relayActions"]
+export class Agent implements EventBus {
+  public static configurableProps = ["agentId"]
   public static VERSION = "1.2.7"
 
-  /**
-   * The heart and circulatory system of an Agent is `action$`, its action stream. */
-  private action$: Observable<ActionStreamItem>
+  private event$: Observable<EventBusItem>
   [key: string]: any
 
   private _subscriberCount = 0
-  private actionStream: Subject<ActionStreamItem>
+  private eventBus: Subject<EventBusItem>
   private allFilters: Map<string, Subscriber>
-  private allRenderers: Map<string, RendererPromiser>
+  private allHandlers: Map<string, handlerPromiser>
 
-  rendererNames() {
-    return Array.from(this.allRenderers.keys())
+  handlerNames() {
+    return Array.from(this.allHandlers.keys())
   }
   filterNames() {
     return Array.from(this.allFilters.keys())
   }
 
   /**
-   * Gets an Observable of all actions matching the ActionFilter. */
-  actionsOfType(matcher: ActionFilter) {
-    const predicate = getActionFilter(matcher)
-    return this.action$.pipe(
+   * Gets an Observable of all events matching the EventMatcher. */
+  getAllEvents(matcher: EventMatcher) {
+    const predicate = getEventPredicate(matcher)
+    return this.event$.pipe(
       rxFilter(predicate),
-      map(({ action }) => action)
+      map(({ event }) => event)
     )
   }
 
   /**
-   * Gets a promise for the next action matching the ActionFilter. */
-  nextActionOfType(matcher: ActionFilter) {
-    const predicate = getActionFilter(matcher)
-    return this.action$
+   * Gets a promise for the next event matching the EventMatcher. */
+  getNextEvent(matcher: EventMatcher = true) {
+    const predicate = getEventPredicate(matcher)
+    return this.event$
       .pipe(
         rxFilter(predicate),
         first(),
-        map(({ action }) => action)
+        map(({ event }) => event)
       )
       .toPromise()
   }
 
   constructor(config: AgentConfig = {}) {
-    this.actionStream = new Subject<ActionStreamItem>()
-    this.action$ = this.actionStream.asObservable()
+    this.eventBus = new Subject<EventBusItem>()
+    this.event$ = this.eventBus.asObservable()
     this.allFilters = new Map<string, Subscriber>()
-    this.allRenderers = new Map<string, RendererPromiser>()
-
+    this.allHandlers = new Map<string, handlerPromiser>()
+    config.agentId = config.agentId || randomId()
     for (let key of Object.keys(config)) {
       Agent.configurableProps.includes(key) &&
         Object.defineProperty(this, key.toString(), {
@@ -112,28 +111,27 @@ export class Agent implements ActionProcessor {
   }
 
   /**
-   * Process sends an Action (eg Flux Standard Action), which
-   * is an object with a payload and type description, through the chain of
-   * filters, and then out through any applicable renderers.
-   * @throws Throws if a filter errs, but not if a renderer errs.
-   *
+   * Process sends an event (eg Flux Standard Action), which
+   * is an object with a payload and `type`, through the chain of
+   * filters, and then triggers any applicable handlers.
+   * @throws Throws if a filter errs, but not if a handler errs.
+   * @see trigger
    */
-  process(action: Action, context?: any): any {
+  process(event: Action, context?: any): any {
     // Execute all filters one after the other, synchronously, in the order added
     const filterResults = new Map<string, any>()
-    const asi: ActionStreamItem = {
-      action: action,
-      event: action,
+    const asi: EventBusItem = {
+      event,
       results: filterResults
     }
     this.runFilters(asi, filterResults)
 
-    this.actionStream.next(asi)
+    this.eventBus.next(asi)
 
     // Add readonly properties for each filter result
-    // The return value of agent.process ducktypes the action,
+    // The return value of agent.process ducktypes the event,
     // plus some additional properties
-    const resultObject = Object.assign({}, action)
+    const resultObject = Object.assign({}, event)
     for (let [key, value] of filterResults) {
       Object.defineProperty(resultObject, key.toString(), {
         value,
@@ -143,17 +141,17 @@ export class Agent implements ActionProcessor {
       })
     }
 
-    const renderPromises = new Map<string, Promise<any>>()
-    for (let [name, renderPromiser] of this.allRenderers) {
-      renderPromises.set(name, renderPromiser(action, context))
+    const handlerPromises = new Map<string, Promise<any>>()
+    for (let [name, handlerPromiser] of this.allHandlers) {
+      handlerPromises.set(name, handlerPromiser(event, context))
     }
 
-    // From the renderPromises, create the Promise for an array of {name, resolvedValue} objects,
+    // From the handlerPromises, create the Promise for an array of {name, resolvedValue} objects,
     // then reduce it to an object where the resolved values are keyed under the name
     const completedObject = Promise.all(
-      Array.from(renderPromises.keys()).map(name => {
+      Array.from(handlerPromises.keys()).map(name => {
         // @ts-ignore
-        return renderPromises.get(name).then(value => ({ name, resolvedValue: value }))
+        return handlerPromises.get(name).then(value => ({ name, resolvedValue: value }))
       })
     ).then(arrResults => {
       return arrResults.reduce((all, one) => {
@@ -163,9 +161,9 @@ export class Agent implements ActionProcessor {
       }, {})
     })
 
-    for (let name of renderPromises.keys()) {
+    for (let name of handlerPromises.keys()) {
       Object.defineProperty(completedObject, name, {
-        value: renderPromises.get(name),
+        value: handlerPromises.get(name),
         configurable: false,
         enumerable: true,
         writable: false
@@ -195,7 +193,7 @@ export class Agent implements ActionProcessor {
    * Should they overlap, the `concurrency` config parameter controls whether they
    * run immediately, are queued, dropped, or replace the existing running one.
    *
-   * Here we attach a handler to fire on actions of `type: 'kickoff'`.
+   * Here we attach a handler to fire on events of `type: 'kickoff'`.
    * After 50ms, the agent will process `{ type: 'search', payload: '#go!' }`,
    * at which point the Promise `result.completed.kickoff` will resolve.
    *
@@ -209,13 +207,13 @@ export class Agent implements ActionProcessor {
    * agent.process({ type: 'kickoff' }).completed.kickoff.then(() => console.log('done'))
    * ```
    */
-  on(actionFilter: ActionFilter, subscriber: Subscriber, config: SubscriberConfig = {}) {
-    const removeRenderer = new Subscription(() => {
-      this.allRenderers.delete(name)
+  on(eventMatcher: EventMatcher, subscriber: Subscriber, config: HandlerConfig = {}) {
+    const removeHandler = new Subscription(() => {
+      this.allHandlers.delete(name)
     })
 
-    const name = this.uniquifyName(config.name, actionFilter, "renderer")
-    const predicate = getActionFilter(actionFilter || (() => true))
+    const name = this.uniquifyName(config.name, eventMatcher, "handler")
+    const predicate = getEventPredicate(eventMatcher || (() => true))
     const concurrency = config.concurrency || Concurrency.parallel
     const cutoffHandler = config.onCutoff
 
@@ -224,10 +222,10 @@ export class Agent implements ActionProcessor {
     let prevEnd: Promise<any> // for serial to chain on
 
     // Build a function, and keep it around for #process, which
-    // returns a Promise for any rendering done for this action
-    const renderPromiser = (action: Action, context?: any) => {
-      // If this renderer doesn't apply to this action...
-      if (!predicate({ action })) {
+    // returns a Promise for any handling done for this event
+    const handlerPromiser = (event: Action, context?: any) => {
+      // If this handler doesn't apply to this event...
+      if (!predicate({ event })) {
         return Promise.resolve(undefined)
       }
 
@@ -238,14 +236,14 @@ export class Agent implements ActionProcessor {
       // Call this if we fail to get the recipe, or subscribe to it
       const reportFail = (ex: any) => {
         console.error(ex)
-        removeRenderer.unsubscribe()
+        removeHandler.unsubscribe()
         ender.error(ex)
       }
 
-      // 1. Get the Observable aka recipe back from the renderer
+      // 1. Get the Observable aka recipe back from the handler
       try {
-        const actionStreamItem = { action, context, event: action }
-        const subscriberReturnValue = subscriber(actionStreamItem, action.payload)
+        const eventStreamItem = { event, context }
+        const subscriberReturnValue = subscriber(eventStreamItem, event.payload)
         recipe = toObservable(subscriberReturnValue)
       } catch (ex) {
         reportFail(ex)
@@ -259,7 +257,7 @@ export class Agent implements ActionProcessor {
         if (config.withContext) {
           opts.context = context
         }
-        // Some actions from an Observable may be seen prior to the next action
+        // Some events from an Observable may be seen prior to the next event
         this.subscribe(ender, opts)
       }
 
@@ -298,7 +296,7 @@ export class Agent implements ActionProcessor {
           prevSub = recipe.subscribe(ender)
           if (cutoffHandler) {
             prevSub.add(() => {
-              if (!ender.isStopped) cutoffHandler({ action })
+              if (!ender.isStopped) cutoffHandler({ event })
             })
           }
 
@@ -308,36 +306,36 @@ export class Agent implements ActionProcessor {
       return completed
     }
 
-    this.allRenderers.set(name, renderPromiser)
-    return removeRenderer
+    this.allHandlers.set(name, handlerPromiser)
+    return removeHandler
   }
 
   /**
-   * Filters are synchronous functions that sequentially process
-   * each item on `action$`, possibly changing them or creating synchronous
-   * state changes. Useful for type-checking, writing to a memory-based store.
+   * Filters are synchronous functions that sequentially process events,
+   * possibly changing them or creating synchronous state changes.
+   * Filters are useful for type-checking, writing to a memory-based store.
    * Filters run in series. Their results are present on the return value of `process`/`trigger`
    * ```js
-   * agent.filter('search/message/success', ({ action }) => console.log(action))
+   * agent.filter('search/message/success', ({ event }) => console.log(event))
    * ```
    * Returns an object which, when unsubscribed, will remove our filter. Filters are *not* removed
    * automatically upon untrapped errors, like handlers attached via `on`.
    */
-  filter(actionFilter: ActionFilter, filter: Subscriber, config: SubscriberConfig = {}) {
+  filter(eventMatcher: EventMatcher, filter: Subscriber, config: HandlerConfig = {}) {
     validateSubscriberName(config.name)
     const removeFilter = new Subscription(() => {
       this.allFilters.delete(name)
     })
 
-    // Pass all actions unless otherwise told
-    const predicate = actionFilter ? getActionFilter(actionFilter) : () => true
-    const _filter: Subscriber = (asi: ActionStreamItem) => {
+    // Pass all events unless otherwise told
+    const predicate = eventMatcher ? getEventPredicate(eventMatcher) : () => true
+    const _filter: Subscriber = (asi: EventBusItem) => {
       if (predicate(asi)) {
-        return filter(asi, asi.action.payload)
+        return filter(asi, asi.event.payload)
       }
     }
 
-    const name = this.uniquifyName(config.name, actionFilter, "filter")
+    const name = this.uniquifyName(config.name, eventMatcher, "filter")
     this.allFilters.set(name, _filter)
 
     // The subscription does little except give us an object
@@ -346,7 +344,7 @@ export class Agent implements ActionProcessor {
   }
 
   /**
-   * Subscribes to an Observable of actions (Flux Standard Action), sending
+   * Subscribes to an Observable of events (Flux Standard Action), sending
    * each through agent.process. If the Observable is not of FSAs, include
    * { type: 'theType' } to wrap the Observable's items in FSAs of that type.
    * Allows a shorthand where the second argument is just a string type for wrapping.
@@ -356,21 +354,21 @@ export class Agent implements ActionProcessor {
   subscribe(item$: Observable<any>, config: SubscribeConfig | string = {}): Subscription {
     const _config = typeof config === "string" ? { type: config } : config
     return item$.subscribe(item => {
-      const actionToProcess = _config.type ? { type: _config.type, payload: item } : item
-      this.process(actionToProcess, _config.context)
+      const event = _config.type ? { type: _config.type, payload: item } : item
+      this.process(event, _config.context)
     })
   }
 
   /**
-   * Removes all filters and renderers, not canceling any in-progress consequences.
+   * Removes all filters and handlers, not canceling any in-progress consequences.
    * Useful as the first line of a script in a Hot-Module Reloading environment.
    */
   reset() {
     this.allFilters.clear()
-    this.allRenderers.clear()
+    this.allHandlers.clear()
   }
 
-  private runFilters(asi: ActionStreamItem, results: Map<string, any>): void {
+  private runFilters(asi: EventBusItem, results: Map<string, any>): void {
     // Run all filters sync (RxJS as of v6 no longer will sync error)
     for (let filterName of this.allFilters.keys()) {
       let filter = this.allFilters.get(filterName)
@@ -390,12 +388,12 @@ export class Agent implements ActionProcessor {
 
   private uniquifyName(
     name: string | undefined,
-    actionFilter: ActionFilter | undefined,
-    type: "renderer" | "filter"
+    eventMatcher: EventMatcher | undefined,
+    type: "handler" | "filter"
   ) {
     const nameBase =
       //@ts-ignore
-      name || (actionFilter && actionFilter.substring ? actionFilter.toString() : type)
+      name || (eventMatcher && eventMatcher.substring ? eventMatcher.toString() : type)
     validateSubscriberName(nameBase)
     const _name =
       this[type + "Names"]().includes(nameBase) || nameBase === type
@@ -406,17 +404,17 @@ export class Agent implements ActionProcessor {
   }
 }
 
-function getActionFilter(actionFilter: ActionFilter) {
-  let predicate: ((asi: ActionStreamItem) => boolean)
+function getEventPredicate(eventMatcher: EventMatcher) {
+  let predicate: ((asi: EventBusItem) => boolean)
 
-  if (actionFilter instanceof RegExp) {
-    predicate = ({ action }: ActionStreamItem) => actionFilter.test(action.type)
-  } else if (actionFilter instanceof Function) {
-    predicate = actionFilter
-  } else if (typeof actionFilter === "boolean") {
-    predicate = () => actionFilter
+  if (eventMatcher instanceof RegExp) {
+    predicate = ({ event }: EventBusItem) => eventMatcher.test(event.type)
+  } else if (eventMatcher instanceof Function) {
+    predicate = eventMatcher
+  } else if (typeof eventMatcher === "boolean") {
+    predicate = () => eventMatcher
   } else {
-    predicate = ({ action }: ActionStreamItem) => actionFilter === action.type
+    predicate = ({ event }: EventBusItem) => eventMatcher === event.type
   }
   return predicate
 }
@@ -431,21 +429,8 @@ function validateSubscriberName(name: string | undefined) {
 export const reservedSubscriberNames = ["completed", "then", "catch"]
 
 /**
- * Constructs a filter (see agent.addFilter) which mixes AgentConfig properties
- * into the meta of an action
- */
-export const agentConfigFilter = (agent: Agent) => ({ action }: ActionStreamItem) => {
-  Object.assign(action, { meta: action.meta || {} })
-  Agent.configurableProps.forEach(key => {
-    if (typeof agent[key] !== "undefined") {
-      Object.assign(action.meta, { [key]: agent[key] })
-    }
-  })
-}
-
-/**
  * A random enough identifier, 1 in a million or so,
- * to identify actions in a stream. Not globally or cryptographically
+ * to identify events in a stream. Not globally or cryptographically
  * random, just more random than: https://xkcd.com/221/
  */
 export const randomId = (length: number = 7) => {
@@ -467,7 +452,7 @@ export const randomId = (length: number = 7) => {
  *
  *  const frames = new GameLoop()
  *
- *  agent.on("world", ({ action: { payload: { world }}}) => {
+ *  agent.on("world", ({ event: { payload: { world }}}) => {
  *    drawToCanvas(world)
  *  })
  *
@@ -493,21 +478,21 @@ export function GameLoop() {
 }
 /**
  * A filter that adds a string of hex digits to
- * action.meta.actionId to uniquely identify an action among its neighbors.
+ * event.meta.eventId to uniquely identify an event among its neighbors.
  * @see randomId
  */
-export const randomIdFilter = (length: number = 7, key = "actionId") => ({
-  action
-}: ActionStreamItem) => {
-  action.meta = action.meta || {}
+export const randomIdFilter = (length: number = 7, key = "eventId") => ({
+  event
+}: EventBusItem) => {
+  event.meta = event.meta || {}
   const newId = randomId(length)
   // @ts-ignore
-  action.meta[key] = newId
+  event.meta[key] = newId
 }
 
 /**
- * Pretty-print an action */
-export const pp = (action: Action) => JSON.stringify(action)
+ * Pretty-print an event */
+export const pp = (event: Action) => JSON.stringify(event)
 
 /** An instance of Agent - also exported as `app`. */
 export const agent = new Agent()

@@ -70,16 +70,16 @@ module.exports = ({ Agent, log, append }) => {
     )
   }
 
-  const cheatsDetected = agent.actionsOfType("keypress").pipe(
+  const cheatsDetected = agent.getAllEvents("keypress").pipe(
     // just worry about the payload
-    map(action => action.payload),
+    map(event => event.payload),
     // group them into 5, allowing a new 1 in each group each time
     bufferCount(5, 1),
     // only create events with sufficiently close spacing
     filter(fiveBlock => fiveBlock[4].timestamp - fiveBlock[0].timestamp < 1000),
     // dont allow a 6-click to trigger 2 in close succession
     throttleTime(1200),
-    // map to a distinct action type
+    // map to a distinct event type
     map(() => ({
       type: "cheatDetected"
     }))

@@ -85,7 +85,7 @@
         map(x => x && x.a),
         takeUntil(merge(timer(5000), zeroDetected))
       )
-      // require some user interaction - will allow audio to play too
+      // require some user interrction - will allow audio to play too
       const logStart = document.getElementById("startLog")
       logStart.addEventListener("click", () => {
         logDom.innerText = ""

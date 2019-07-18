@@ -33,7 +33,7 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
       await new Promise(resolve => process.on(signalToWaitOn, resolve))
     }
 
-    // Add a renderer which returns a process (Observable) that, when
+    // Add a handler which returns a process (Observable) that, when
     // Rx-Helper subscribes to it, will pull values through the pipe of
     // computation with the specified timing. Example:
     // > ⑤ 5 5 5 5 5 ✅ (over ~1000 msec)
@@ -41,8 +41,8 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
     // prettier-ignore
 
     // LEFTOFF we get a message that we called unsubscribe(), but is someone else subscribed; it doesn't truly cancel
-    agent.on("digit", ({ action }) => {
-      const digit = action.payload
+    agent.on("digit", ({ event }) => {
+      const digit = event.payload
       // Show the digit pressed right away
       append("  " + numChar[digit] + " ")
 
@@ -53,7 +53,7 @@ module.exports = async ({ Agent, config = {}, log, append, interactive = false }
   )
 
     const inputStream = interactive ? getUserInputFromStdin() : simulatedUserInput(numArray)
-    // wait till our subscription has ended (and its last renderer)
+    // wait till our subscription has ended (and its last handler)
     let result
     return new Promise(resolve => {
       // for each keypress, process it

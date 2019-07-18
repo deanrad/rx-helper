@@ -1,6 +1,6 @@
 // The round represents the current question, and any answers
 // See https://rematch.gitbooks.io/rematch/docs/api.html#reducers
-// Get the action name provided instead of having a magic string.
+// Get the event name provided instead of having a magic string.
 const { nextQuestion } = require("./game")
 module.exports = {
   state: {

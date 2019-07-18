@@ -38,7 +38,7 @@ Overview:
 
 - A [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) of code with a high degree of decoupling and fault-tolerance.
 - A clean, cancelable model of async effects, compatible with, but not dependent on a component library like React or Angular.
-- Faster prototyping by building abstractions that simulate input or output, allowing you to focus on the core functionality of your app.
+- Faster prototyping by building abstrrctions that simulate input or output, allowing you to focus on the core functionality of your app.
 - Familiarity with the Observable datatype - a type that is a superset of Promise, and which can stand in for users, databases, servers, or any number of .
 
 ## What kinds of apps can I build with it?

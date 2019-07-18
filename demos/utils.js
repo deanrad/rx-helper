@@ -1,7 +1,7 @@
 const { Subject } = require("rxjs")
 
 module.exports = {
-  // Pretty-prints an action with minimal punctuation - more YAML than JSON
+  // Pretty-prints an event with minimal punctuation - more YAML than JSON
   format: ({ type, payload = {} }) => {
     return (
       type +

@@ -14,18 +14,18 @@ app.use(morgan("dev"))
 const agent = new Agent({ agentId: `http://localhost:${port}` })
 agent.filter(() => true, storeFilter)
 agent.filter(() => true, randomIdFilter())
-agent.on("http/get", ({ action, context }) => {
-  // Get some fields from the action itself
+agent.on("http/get", ({ event, context }) => {
+  // Get some fields from the event itself
   const {
     payload: { query, path },
-    meta: { actionId } // the randomId filter put this property here for us
-  } = action
+    meta: { eventId } // the randomId filter put this property here for us
+  } = event
 
   // And get our response object from the context so we can write to it
   const { res } = context
   // we dont have different endpoints yet
   if (path.includes("api")) {
-    res.json({ path, query, actionId })
+    res.json({ path, query, eventId })
     return
   } else if (path === "/") {
     res.sendFile("index.html", { root: "." })
@@ -38,17 +38,17 @@ agent.on("http/get", ({ action, context }) => {
   }
 })
 
-// Unlike a regular express router, our sole job here is to put an action
-// on the stream with sufficient context for a renderer to respond.
+// Unlike a regular express router, our sole job here is to put an event
+// on the stream with sufficient context for a handler to respond.
 app.get("*", function(req, res) {
   const { path, query } = req
   const payload = { path, query }
 
   const type = "http/" + req.method.toLowerCase()
-  const action = { type, payload }
+  const event = { type, payload }
 
   // Provide the response object in the 2nd parameter 'context'
-  agent.process(action, { res })
+  agent.process(event, { res })
 
   console.log(payload)
 })

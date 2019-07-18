@@ -1,5 +1,5 @@
 import { Observable, Subscription } from "rxjs"
-import { SubscriberConfig } from "./types"
+import { HandlerConfig } from "./types"
 
 /**
  * Options that get mixed into the agent as read-only
@@ -11,30 +11,26 @@ export interface AgentConfig {
    * the way you'll create this will depend on your environment.
    */
   agentId?: any
-  /**
-   * If true, indicates that this Agent is willing to forward actions to others.
-   */
-  relayActions?: boolean
   [key: string]: any
 }
 
 /**
- * The core of the Rx-Helper Agent API: methods to add subscribers (filters or renderers)
- * and a single method to 'dispatch' an action (Flux Standard Action) to relevant subscribers.
+ * The core of the Rx-Helper Agent API: methods to add subscribers (filters or handlers)
+ * and a single method to 'dispatch' an event (Flux Standard Action) to relevant subscribers.
  */
-export interface ActionProcessor {
-  process(action: Action, context?: Object): ProcessResult
-  subscribe(action$: Observable<Action>, context?: Object): Subscription
-  filter(actionFilter: ActionFilter, renderer: Subscriber, config?: SubscriberConfig): Subscription
-  on(actionFilter: ActionFilter, renderer: Subscriber, config?: SubscriberConfig): Subscription
+export interface EventBus {
+  process(event: Action, context?: Object): ProcessResult
+  subscribe(event$: Observable<Action>, context?: Object): Subscription
+  filter(eventMatcher: EventMatcher, handler: Subscriber, config?: HandlerConfig): Subscription
+  on(eventMatcher: EventMatcher, handler: Subscriber, config?: HandlerConfig): Subscription
 }
 
 /**
- * A subscriber is either a renderer or a filter - a function which
- * receives as its argument the ActionStreamItem, typically to use
- * the payload of the `action` property to cause some side-effect.
+ * A subscriber is either a handler or a filter - a function which
+ * receives as its argument the EventBusItem, typically to use
+ * the payload of the `event` property to cause some side-effect.
  */
-export type Subscriber = Filter | Renderer
+export type Subscriber = Filter | Handler
 
 export interface Action {
   type: string
@@ -43,13 +39,11 @@ export interface Action {
   meta?: Object
 }
 
-export interface ActionStreamItem {
-  /** Alias for action */
-  event?: Action
-  /** The action which caused a filter/handler to be run */
-  action: Action
+export interface EventBusItem {
+  /** The event which caused a filter/handler to be run */
+  event: Action
   /** An optional object, like the websocket or http response
-   * that this action arrived on, on which its processing may
+   * that this event arrived on, on which its processing may
    * make function calls (such as res.write())
    */
   context?: Object
@@ -58,85 +52,83 @@ export interface ActionStreamItem {
 }
 
 /**
- * When a renderer (async usually) returns an Observable, it's possible
- * that multiple renderings will be active at once (see demo 'speak-up'). The options
- * are:
- * - parallel: Concurrent renders are unlimited, unadjusted
- * - serial: Concurrency of 1, render starts are queued
- * - cutoff: Concurrency of 1, any existing render is killed
- * - mute: Concurrency of 1, existing render prevents new renders
+ * When a handler (async usually) returns an Observable, it's possible
+ * that another handler for that type is running already (see demo 'speak-up').
+ * The options are:
+ * - parallel: Concurrent handlers are unlimited, unadjusted
+ * - serial: Concurrency of 1, handlers are queued
+ * - cutoff: Concurrency of 1, any existing handler is killed
+ * - mute: Concurrency of 1, existing handler prevents new handlers
  */
 export enum Concurrency {
   /**
-   * Concurrent renders are unlimited, unadjusted */
+   * Handlers are invoked on-demand - no limits */
   parallel = "parallel",
   /**
-   * Concurrency of 1, render starts are queued */
+   * Concurrency of 1, handlers are queued */
   serial = "serial",
   /**
-   * Concurrency of 1, any existing render is killed */
+   * Concurrency of 1, any existing handler is killed */
   cutoff = "cutoff",
   /**
-   * Concurrency of 1, existing render prevents new renders */
+   * Concurrency of 1, existing handler prevents new handlers */
   mute = "mute"
 }
 
 /**
- * The function you assign to handle `.on(actionType)`
- * events is known as a Renderer. It receives as arguments
- * 1) An object containing an event (aka action), and context as fields
+ * The function you assign to handle `.on(eventType)`
+ * events is known as a Handler. It receives as arguments
+ * 1) An object containing an event (aka event), and context as fields
  * 2) The event's payload as a 2nd parameter (This makes
  *    referring to the payload easy, and is actually similar to JQuery ha!)
  */
-export interface Renderer {
-  (item: ActionStreamItem, payload?: any): any
+export interface Handler {
+  (item: EventBusItem, payload?: any): any
 }
 /**
- * A Filter runs a synchronous function prior to any renderers
+ * A Filter runs a synchronous function prior to any handlers
  * being invoked, and can cancel future filters, and all handlers
  * by throwing an exception, which must be caught by the caller of
- * `process(action)`.
+ * `process(event)`.
  *
  * It does *not*, as its name suggest, split off a slice of the
- * stream. To do that see `actionsOfType`.
- * @see actionsOfType
+ * stream. To do that see `getAllEvents`.
+ * @see getAllEvents
  */
 export interface Filter {
-  (item: ActionStreamItem, payload?: any): any
+  (item: EventBusItem, payload?: any): any
 }
 
-export interface RendererPromiser {
-  (action: Action, context?: any): Promise<any>
+export interface handlerPromiser {
+  (event: Action, context?: any): Promise<any>
 }
 
-export interface SubscriberConfig {
-  /** A name by which the results will be keyed. Example: `agent.process(action).completed.NAME.then(() => ...)` */
+export interface HandlerConfig {
+  /** A name by which the results will be keyed. Example: `agent.process(event).completed.NAME.then(() => ...)` */
   name?: string
-  /** A string, regex, or boolean function controlling which actions this renderer is configured to run upon. */
-  actionsOfType?: ActionFilter
-  /** The concurrency mode to use. Governs what happens when renderings from this renderer overlap. */
+  /** The concurrency mode to use. Governs what happens when another handling from this handler is already in progress. */
   concurrency?: Concurrency
-  /** If true, the Observable returned by the renderer will be fed to `agent.subscribe`, so its actions are `process`ed. */
+  /** If true, the Observable returned by the handler will be fed to `agent.subscribe`, so its events are `process`ed. */
   processResults?: Boolean
-  /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
+  /** If provided, this handlers' Observables values will be wrapped in FSAs with this type. */
   type?: string
-  /** If provided, this will be called if cutoff mode terminates a rendering. Parameter is {action}. */
+  /** If provided, this will be called if cutoff mode terminates a handling. Parameter is {event}. */
   onCutoff?: Subscriber
-  /** If provided, the context of the action being responded to will be forwarded */
+  /** If provided, the context of the event being responded to will be forwarded */
   withContext?: Boolean
 }
 
 export interface SubscribeConfig {
-  /** If provided, this renderers' Observables values will be wrapped in FSAs with this type. */
+  /** If provided, this handlers' Observables values will be wrapped in FSAs with this type. */
   type?: string
-  /** If provided, this will be the context argument for each processed action */
+  /** If provided, this will be the context argument for each processed event */
   context?: any
 }
 
-export type ActionFilter = string | RegExp | Predicate | boolean
+export type EventMatcher = string | RegExp | Predicate | boolean
 
 export interface Predicate {
-  (asi: ActionStreamItem): boolean
+  (asi: EventBusItem): boolean
 }
 
 /**

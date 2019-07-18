@@ -8,7 +8,6 @@ import {
   Subscriber,
   reservedSubscriberNames,
   after,
-  agentConfigFilter,
   AgentConfig,
   toProps,
   ajaxStreamingGet,
@@ -20,15 +19,8 @@ let callCount = 0
 let blowupCount = 0
 let counter = 0
 
-// Synchronously uppdates our resettable counter.
-// Returns immediately completed observable
-const callCounter: Subscriber = ({ action }) => {
-  ++callCount
-  return empty()
-}
-
 // Returns next-callstack completed observable
-const deferredCallCounter: Subscriber = ({ action }) => {
+const deferredCallCounter: Subscriber = () => {
   return new Observable(notify => {
     setTimeout(() => {
       callCount++
@@ -41,40 +33,41 @@ const deferredCallCounter: Subscriber = ({ action }) => {
 }
 
 // @ts-ignore
-const delayedCall = (msec: number) => ({ action: Action }) => {
+const delayedCall = (msec: number) => () => {
   callCount++
-  return timer(msec).pipe(map(() => callCount))
+  return after(msec, () => callCount)
 }
 
 const peekOnly = () => {
   return of(callCount)
 }
 
-const seenFilter: Subscriber = ({ action }) => {
-  seen.push(action)
-  return action
+const seenFilter: Subscriber = ({ event }) => {
+  seen.push(event)
+  return event
 }
 
-// Updates our resettable array, and returns the action just seen
-const seenAdder: Subscriber = ({ action }) => {
-  seen.push(action)
-  return of(action)
+// Updates our resettable array, and returns the event just seen
+const seenAdder: Subscriber = ({ event }) => {
+  seen.push(event)
+  return of(event)
 }
 
 // Dies in a fire upon invocation, to test error handling
-const blowUpOnRender: Subscriber = ({ action }) => {
+const blowUpHandler: Subscriber = () => {
   blowupCount++
   throw new Error("Expected Error - wont fail the suite")
 }
 
 // Dies in a fire upon subscription
-const blowUpOnSubscribe: Subscriber = ({ action }) =>
-  new Observable(notify => {
+const blowUpOnSubscribe: Subscriber = () => {
+  return new Observable(() => {
     blowupCount++
     throw "Recipe threw when subscribed"
   })
+}
 
-const returnsObsErr: Subscriber = ({ action }) => throwError("Notified of Error")
+const returnsObsErr: Subscriber = () => throwError("Notified of Error")
 
 const handleError = (obj: Promise<any>, field: any, handler: Function) => {
   // obj.catch(handler)
@@ -99,9 +92,14 @@ describe("Agent", () => {
   })
 
   describe("config argument", () => {
-    it("should set agentId", () => {
+    it("should set agentId if given", () => {
       const agentId = 2.718 // or 'a3efcd' typically
       expect(new Agent({ agentId })).toHaveProperty("agentId", 2.718)
+    })
+    it("will make an agentId if not defined", () => {
+      expect(new Agent()).toMatchObject({
+        agentId: expect.stringMatching(/[0-9a-f]+/)
+      })
     })
     it("should not set properties not whitelisted", () => {
       expect(Agent.configurableProps).not.toContain("momofuku")
@@ -116,27 +114,34 @@ describe("Agent", () => {
       }).toThrow()
     })
 
-    describe("nextActionOfType", () => {
-      it("should be a promise for the first action matching the type", () => {
+    describe("getNextEvent", () => {
+      it("should be a promise for the first event matching the type", () => {
         expect.assertions(1)
         const agent = new Agent()
-        const seenIt = agent.nextActionOfType("test/foo")
+        const result = agent.getNextEvent("test/foo")
 
-        // fails without calling process
         const matcher = { type: "test/foo" }
         agent.process(matcher)
 
-        return seenIt.then(matchingAction => {
+        return result.then(matchingAction => {
           expect(matchingAction).toMatchObject(matcher)
         })
       })
+      it("defaults to the next event (true)", async () => {
+        expect.assertions(1)
+        const agent = new Agent()
+        const getNextEvent = agent.getNextEvent()
+        agent.process(anyEvent)
+        const seenIt = await getNextEvent
+        expect(seenIt).toEqual(anyEvent)
+      })
     })
 
-    describe("actionsOfType", () => {
-      it("should be an Observable of matching actions", () => {
+    describe("getAllEvents", () => {
+      it("should be an Observable of matching events", () => {
         const agent = new Agent()
         let counter = 0
-        agent.actionsOfType("test/foo").subscribe(() => counter++)
+        agent.getAllEvents("test/foo").subscribe(() => counter++)
 
         agent.process({ type: "test/foo" })
         agent.process({ type: "notCaught" })
@@ -149,13 +154,13 @@ describe("Agent", () => {
         expect.assertions(1)
         let state = []
         // define an aggregator function which appends to an array (same signature as reducer)
-        const builder = (state, action) => {
-          return [...state, action.payload]
+        const builder = (state, event) => {
+          return [...state, event.payload]
         }
 
-        // set it up to scan over the action stream, storing payloads
+        // set it up to scan over the event stream, storing payloads
         agent
-          .actionsOfType(() => true)
+          .getAllEvents(() => true)
           .pipe(
             scan(builder, []),
             tap(newState => {
@@ -184,11 +189,11 @@ describe("Agent", () => {
   })
 
   describe("#filter", () => {
-    it("will be called synchronously when an action is processed", () => {
+    it("will be called synchronously when an event is processed", () => {
       const spy = jest.fn()
       agent.filter(() => true, spy)
       expect(spy).not.toHaveBeenCalled()
-      agent.process(anyAction)
+      agent.process(anyEvent)
       expect(spy).toHaveBeenCalled()
     })
   })
@@ -209,29 +214,29 @@ describe("Agent", () => {
             expect(agent.filterNames()).toContain("filter_1")
           })
 
-          it("will be the actionType filter if given", () => {
-            expect(agent.rendererNames()).not.toContain("autonamer")
+          it("will be the eventType filter if given", () => {
+            expect(agent.handlerNames()).not.toContain("autonamer")
             agent.on("autonamer", () => null)
-            expect(agent.rendererNames()).toContain("autonamer")
+            expect(agent.handlerNames()).toContain("autonamer")
 
             expect(agent.filterNames()).not.toContain("autonamer")
             agent.filter("autonamer", () => null)
             expect(agent.filterNames()).toContain("autonamer")
           })
 
-          it("will be renderer_N if not given for a renderer", () => {
-            expect(agent.rendererNames()).not.toContain("renderer_1")
+          it("will be handler_N if not given for a handler", () => {
+            expect(agent.handlerNames()).not.toContain("handler_1")
             agent.on(true, () => 3.141)
-            expect(agent.rendererNames()).toContain("renderer_1")
+            expect(agent.handlerNames()).toContain("handler_1")
           })
 
-          it("will assign new name for existing renderer", () => {
-            expect(agent.rendererNames()).not.toContain("foo")
-            expect(agent.rendererNames()).not.toContain("foo_1")
+          it("will assign new name for existing handler", () => {
+            expect(agent.handlerNames()).not.toContain("foo")
+            expect(agent.handlerNames()).not.toContain("foo_1")
             agent.on("foo", () => 3.141)
             agent.on("foo", () => 2.718)
-            expect(agent.rendererNames()).toContain("foo")
-            expect(agent.rendererNames()).toContain("foo_1")
+            expect(agent.handlerNames()).toContain("foo")
+            expect(agent.handlerNames()).toContain("foo_1")
           })
 
           it("cannot be a reserved name", () => {
@@ -243,24 +248,25 @@ describe("Agent", () => {
             })
           })
 
-          it("can use a string from actionsOfType", () => {
-            // no autonumbering occurs for the first one of a string ActionFilter
+          it("Will use the event matcher, if a string", () => {
+            // no autonumbering occurs for the first one of a string EventMatcher
             // successive ones get numbers appended eg helloEcho_1
             agent.filter("helloEcho", () => "echo 1")
             agent.filter("helloEcho", () => "echo 2")
 
             // run through both filters
             const result = agent.process({ type: "helloEcho" })
-
-            expect(result.helloEcho).toEqual("echo 1")
-            expect(result["helloEcho_1"]).toEqual("echo 2")
+            expect(result).toMatchObject({
+              helloEcho: "echo 1",
+              helloEcho_1: "echo 2"
+            })
           })
         })
         describe("type", async () => {
-          it("will wrap the renderers return Observable in FSAs of this type if provided", () => {
+          it("will wrap the handlers return Observable in FSAs of this type if provided", () => {
             expect.assertions(1)
             const seenNums = []
-            agent.filter("num", ({ action: { payload } }) => seenNums.push(payload))
+            agent.filter("num", ({ event: { payload } }) => seenNums.push(payload))
             agent.on("start", () => from([1, 2, 3]), { type: "num" })
             agent.on("start", () => from([7, 8, 9]), { name: "notseen" })
 
@@ -272,13 +278,13 @@ describe("Agent", () => {
         })
       })
       describe("return value", () => {
-        it("is a subscription", () => {
+        it("is a subscription, to allow cancelation", () => {
           let callCount = 0
           const subscription = agent.filter(() => true, () => callCount++)
-          const result = agent.process(anyAction)
+          const result = agent.process(anyEvent)
           expect(callCount).toEqual(1)
           subscription.unsubscribe()
-          agent.process(anyAction)
+          agent.process(anyEvent)
           expect(callCount).toEqual(1)
         })
       })
@@ -287,33 +293,33 @@ describe("Agent", () => {
 
   describe("#on", () => {
     describe("arguments", () => {
-      describe("actionFilter", () => {
-        it("should only run the render on matching actions (string)", () => {
+      describe("eventMatcher", () => {
+        it("should only run the event handler on matching events (string)", () => {
           expect.assertions(1)
           agent.on("Counter.inc", () => of(++counter), { name: "inc" })
-          let result1 = agent.process(anyAction)
-          let result2 = agent.process({ type: "Counter.inc" }).completed.inc
+          agent.process(anyEvent)
+          let result = agent.process({ type: "Counter.inc" }).completed.inc
 
-          return result2.then(() => {
+          return result.then(() => {
             expect(counter).toEqual(1)
           })
         })
-        it("should only run the action render on matching actions (Regexp)", () => {
+        it("should only run the event handler on matching events (Regexp)", () => {
           expect.assertions(1)
           agent.on(/^Counter\./, () => of(++counter), { name: "inc" })
-          let result1 = agent.process(anyAction)
+          let result1 = agent.process(anyEvent)
           let result2 = agent.process({ type: "Counter.inc" }).completed.inc
 
           return result2.then(() => {
             expect(counter).toEqual(1)
           })
         })
-        it("should only run the action render on matching actions (Function)", () => {
+        it("should only run the event handler on matching events (Function)", () => {
           expect.assertions(1)
-          agent.on(({ action: { type } }) => type.startsWith("Counter"), () => of(++counter), {
+          agent.on(({ event: { type } }) => type.startsWith("Counter"), () => of(++counter), {
             name: "inc"
           })
-          let result1 = agent.process(anyAction)
+          let result1 = agent.process(anyEvent)
           let result2 = agent.process({ type: "Counter.inc" }).completed.inc
 
           return result2.then(() => {
@@ -331,12 +337,12 @@ describe("Agent", () => {
 
       describe("config", () => {
         describe("processResults", () => {
-          it("should enable returned actions from renderer to go through agent.process", () => {
+          it("should enable the returned events to be processed", () => {
             expect.assertions(1)
             agent.on(
               true,
-              ({ action }) => {
-                if (action.type === "addTwo") {
+              ({ event }) => {
+                if (event.type === "addTwo") {
                   counter += 2
                   return empty()
                 }
@@ -346,7 +352,7 @@ describe("Agent", () => {
               { processResults: true }
             )
 
-            // since this render returns another action, we'll get two calls
+            // since this handler returns another event, we'll get two calls
             agent.process({ type: "addOne" })
             return new Promise(resolve => {
               setTimeout(() => {
@@ -357,7 +363,7 @@ describe("Agent", () => {
           })
         })
         describe("type", () => {
-          it.skip("should embed the output payloads in actions of that type", () => {})
+          it.skip("should embed the handler's returned payload(s) in events of that type", () => {})
         })
         describe("withContext", () => {
           it("should allow context to be passed along", done => {
@@ -366,14 +372,13 @@ describe("Agent", () => {
             const ctx = { i: 1 }
             agent.on(
               "add",
-              ({ action }) => {
-                // agent.process({ type: "times", payload: 2.1 }, ctx)
+              () => {
                 return of({ type: "times", payload: 2.1 })
               },
               { processResults: true, withContext: true }
             )
 
-            agent.on("times", ({ action, context }) => {
+            agent.on("times", ({ context }) => {
               expect(context).toEqual(ctx)
               done()
             })
@@ -386,18 +391,18 @@ describe("Agent", () => {
         })
 
         describe("result mappers", () => {
-          it("providing type should wrap the renderer's Observable output as payloads", () => {
+          it("providing type should wrap the handler's Observable output as payloads", () => {
             expect.assertions(1)
-            let seenActions = []
+            let seenEvents = []
             agent = new Agent()
             // filter to remember
-            agent.filter(() => true, ({ action }) => (seenActions = [...seenActions, action]))
-            // renderer to wrap
+            agent.filter(() => true, ({ event }) => (seenEvents = [...seenEvents, event]))
+            // handler to wrap
 
             agent.on("wrap", () => of(2.1), { type: "mapped" }) // implies processResults: true
 
             return agent.process({ type: "wrap" }).completed.then(() => {
-              expect(seenActions).toContainEqual({ type: "mapped", payload: 2.1 })
+              expect(seenEvents).toContainEqual({ type: "mapped", payload: 2.1 })
             })
           })
         })
@@ -408,7 +413,7 @@ describe("Agent", () => {
       it("should supplement the return value of process via completed", () => {
         expect.assertions(3)
         const seenTypes = []
-        agent.on(/foo/, ({ action: { type } }) => {
+        agent.on(/foo/, ({ event: { type } }) => {
           seenTypes.push(type)
           return empty() // An Observable which completes, so we know it's completed
         })
@@ -427,22 +432,21 @@ describe("Agent", () => {
     })
 
     describe("error handling", () => {
-      it.skip("should set the renderResult to be in error", () => {})
-      it.skip("should unsubscribe the offending renderer", () => {})
+      it.skip("should unsubscribe the offending handler", () => {})
     })
   })
 
   describe("#process", () => {
-    describe("First argument: { type, action }", () => {
+    describe("First argument: event: { type, payload }", () => {
       it("Should be a Flux Standard Action", () => {
         expect.assertions(0)
-        agent.process(anyAction)
+        agent.process(anyEvent)
       })
     })
     describe("Second argument: context", () => {
       it("May be an object ", done => {
         expect.assertions(1)
-        const contextObj = { foo: "bar" } // an object such as an express request, which a renderer may do work upon
+        const contextObj = { foo: "bar" } // an object such as an express request, which a handler may do work upon
         agent.on(
           () => true,
           ({ context }) => {
@@ -450,24 +454,24 @@ describe("Agent", () => {
             done()
           }
         )
-        agent.process(anyAction, contextObj)
+        agent.process(anyEvent, contextObj)
       })
     })
 
     describe("Return Value", () => {
-      it("Has the properties of the action", () => {
-        const result = agent.process(anyAction)
-        expect(result).toMatchObject(anyAction)
+      it("Has the properties of the event", () => {
+        const result = agent.process(anyEvent)
+        expect(result).toMatchObject(anyEvent)
       })
       it("Has each filters result under its name", () => {
         agent.filter(() => true, seenFilter, { name: "seen" })
-        const results = agent.process(anyAction)
-        expect(results.seen).toMatchObject(anyAction)
+        const results = agent.process(anyEvent)
+        expect(results.seen).toMatchObject(anyEvent)
       })
-      it("Has render results as properties under #completed", async () => {
-        // Run on every action
+      it("Has handler results as properties under #completed", async () => {
+        // Run on every event
         agent.on(() => true, peekOnly, { name: "peek" })
-        agent.on(() => true, ({ action }) => action, { name: "seen" })
+        agent.on(() => true, ({ event }) => event, { name: "seen" })
         agent.on(() => true, deferredCallCounter, { name: "later" })
         agent.on(() => true, delayedCall(100), { name: "molater" })
         agent.on(() => true, () => Promise.resolve(5), { name: "promise" })
@@ -477,11 +481,11 @@ describe("Agent", () => {
         agent.on(() => false, () => of(undefined), { name: "notrun" })
 
         const anyAction = { type: "oOo" }
-        // Call #process. Result Duck types the action
+        // Call #process. Result Duck types the event
         const result = agent.process(anyAction)
         expect(result).toMatchObject(anyAction)
 
-        // Duck types a Promise for all renderer's completion
+        // Duck types a Promise for all handler's completion
         expect(result.completed).toHaveProperty("then")
         expect(result.completed).toHaveProperty("catch")
 
@@ -500,9 +504,8 @@ describe("Agent", () => {
           ary: [3, 1, "2!"]
         })
 
-        // the unrun ones
+        // The unrun ones
         expect(completedResult).toHaveProperty("notrun", undefined)
-        // TODO and the unsuccessful ones
 
         // The individual ones exist as Promises too
         expect(result.completed.num).toHaveProperty("then")
@@ -527,7 +530,7 @@ describe("Agent", () => {
         )
         const result = agent.process({ type: "inc" })
 
-        // expect same object is returned each time property is referenced
+        // Expect same object is returned each time property is referenced
         expect(result.completed === result.completed).toBeTruthy()
 
         return result.completed.then(() => {
@@ -536,7 +539,6 @@ describe("Agent", () => {
               expect(timesCalled).toEqual(1)
             })
             .then(() => {
-              // LEFTOFF this nested call to .inc reruns the renderer
               return result.completed.inc.then(() => {
                 expect(timesCalled).toEqual(1)
               })
@@ -548,25 +550,25 @@ describe("Agent", () => {
     describe("Behavior", () => {
       describe("Filters", () => {
         it("Will raise exceptions synchronously (without unsubscribing)", () => {
-          agent.filter(() => true, blowUpOnRender)
+          agent.filter(() => true, blowUpHandler)
           expect(() => {
-            agent.process(anyAction)
+            agent.process(anyEvent)
           }).toThrow()
           expect(() => {
-            agent.process(anyAction)
+            agent.process(anyEvent)
           }).toThrow()
         })
         it("may return values", () => {
           agent.filter(() => true, seenFilter, { name: "seen" })
-          const results = agent.process(anyAction)
-          expect(results.seen).toMatchObject(anyAction)
+          const results = agent.process(anyEvent)
+          expect(results.seen).toMatchObject(anyEvent)
         })
         it.skip("Will be run in order of their addition", () => {})
         it.skip("Will not be awaited if they return a promise", () => {})
-        it.skip("May modify the actions", () => {})
+        it.skip("May modify the events", () => {})
       })
 
-      describe("Renderers", () => {
+      describe("Handlers", () => {
         let goodSub1: Subscription
         let goodSub2: Subscription
         let badSubRender: Subscription
@@ -579,48 +581,48 @@ describe("Agent", () => {
 
         describe("Errors: Render/Subscribe-time", () => {
           it("Errors appear as rejected completed properties, not synchronously", () => {
-            badSubRender = agent.on(() => true, blowUpOnRender, { name: "blowUpOnRender" })
+            badSubRender = agent.on(() => true, blowUpHandler, { name: "blowUpHandler" })
 
-            const result = agent.process(anyAction)
+            const result = agent.process(anyEvent)
 
             // Available on the Promises
-            expect(result.completed.blowUpOnRender).rejects.toEqual(
+            expect(result.completed.blowUpHandler).rejects.toEqual(
               new Error("Expected Error - wont fail the suite")
             )
             expect(result.completed).rejects.toEqual(
               new Error("Expected Error - wont fail the suite")
             )
 
-            // Prevents unhandled rejection error on completed and completed.blowUpOnRender
-            handleError(result.completed, "blowUpOnRender", () => {})
+            // Prevents unhandled rejection error on completed and completed.blowUpHandler
+            handleError(result.completed, "blowUpHandler", () => {})
 
             // Doesn't prevent filters from running
-            expect(seen).toContain(anyAction)
-            // Doesn't prevent renderers added before or after
+            expect(seen).toContain(anyEvent)
+            // Doesn't prevent handlers added before or after
             expect(result.completed.pi).resolves.toEqual(3.14159)
             expect(result.completed.e).resolves.toEqual(2.71828)
           })
 
-          it("Will unsubscribe the renderer, processing no more actions through it", () => {
-            badSubRender = agent.on(() => true, blowUpOnRender, { name: "blowUpOnRender" })
+          it("Will unsubscribe the handler, processing no more events through it", () => {
+            badSubRender = agent.on(() => true, blowUpHandler, { name: "blowUpHandler" })
 
-            const result = agent.process(anyAction)
-            expect(result.completed.blowUpOnRender).rejects.toEqual(
+            const result = agent.process(anyEvent)
+            expect(result.completed.blowUpHandler).rejects.toEqual(
               new Error("Expected Error - wont fail the suite")
             )
             expect(result.completed).rejects.toEqual(
               new Error("Expected Error - wont fail the suite")
             )
 
-            // Prevents unhandled rejection error on completed and completed.blowUpOnRender
-            handleError(result.completed, "blowUpOnRender", () => {})
+            // Prevents unhandled rejection error on completed and completed.blowUpHandler
+            handleError(result.completed, "blowUpHandler", () => {})
 
             expect(goodSub1).toHaveProperty("closed", false)
             expect(goodSub2).toHaveProperty("closed", false)
             expect(badSubRender).toHaveProperty("closed", true)
 
-            // no sign of renderer - next action will work
-            expect(agent.process(anyAction).completed).resolves.toEqual({ e: 2.71828, pi: 3.14159 })
+            // no sign of handler - next event will work
+            expect(agent.process(anyEvent).completed).resolves.toEqual({ e: 2.71828, pi: 3.14159 })
           })
         })
 
@@ -628,10 +630,10 @@ describe("Agent", () => {
           it("Should return a rejected Promise, but keep the subscription", () => {
             const sub = agent.on(() => true, returnsObsErr, { name: "returnsObsErr" })
 
-            const result = agent.process(anyAction)
+            const result = agent.process(anyEvent)
             expect(result.completed).rejects.toEqual("Notified of Error")
             expect(sub).toHaveProperty("closed", false)
-            expect(agent.process(anyAction).completed).rejects.toEqual("Notified of Error")
+            expect(agent.process(anyEvent).completed).rejects.toEqual("Notified of Error")
           })
         })
 
@@ -641,7 +643,7 @@ describe("Agent", () => {
           it("Can return a Promise", () => {})
           it("Can return a single value - string", () => {})
           it("Will send results back through the agent if processResults: true", async () => {
-            agent.on("sound", ({ action }) => ({ type: "echo", payload: action.payload }), {
+            agent.on("sound", ({ event }) => ({ type: "echo", payload: event.payload }), {
               processResults: true
             })
 
@@ -650,7 +652,7 @@ describe("Agent", () => {
             expect(seen.map(a => a.type)).toEqual(["sound", "echo"])
           })
           it("Will send results back through the agent if type given a value", async () => {
-            agent.on("sound", ({ action }) => of(action.payload), {
+            agent.on("sound", ({ event }) => of(event.payload), {
               type: "echo"
             })
 
@@ -661,18 +663,18 @@ describe("Agent", () => {
         })
 
         describe("Concurrency Modes", () => {
-          const concurTester: Subscriber = ({ action }) =>
+          const concurTester: Subscriber = ({ event }) =>
             concat(
               // a sync result (will never be cutoff)
-              of(`now: ${action.payload}`),
+              of(`now: ${event.payload}`),
               // a next-stack result
-              after(0, `start: ${action.payload}`),
+              after(0, `start: ${event.payload}`),
               // a delayed result
-              after(20, `end: ${action.payload}`)
+              after(20, `end: ${event.payload}`)
             )
 
           describe("Parallel", () => {
-            it("Should start renderings up asap", async () => {
+            it("Should start handlings up asap", async () => {
               agent.on("concur", concurTester, {
                 type: "result",
                 concurrency: Concurrency.parallel
@@ -695,7 +697,7 @@ describe("Agent", () => {
             })
           })
           describe("Serial", () => {
-            it("Should enqueue renderings", async () => {
+            it("Should enqueue handlings", async () => {
               agent.on("concur", concurTester, {
                 type: "result",
                 concurrency: Concurrency.serial
@@ -723,7 +725,7 @@ describe("Agent", () => {
             })
           })
           describe("Mute", () => {
-            it("Should prevent concurrent renderings", async () => {
+            it("Should prevent Observables returned from handlers from starting if one is running already.", async () => {
               agent.on("concur", concurTester, {
                 type: "result",
                 concurrency: Concurrency.mute
@@ -737,7 +739,7 @@ describe("Agent", () => {
             })
           })
           describe("Cutoff", () => {
-            it("Should kill old renderings", async () => {
+            it("Should kill the current handler", async () => {
               agent.on("concur", concurTester, {
                 type: "result",
                 concurrency: Concurrency.cutoff
@@ -767,8 +769,8 @@ describe("Agent", () => {
               agent.on("concur", concurTester, {
                 type: "result",
                 concurrency: Concurrency.cutoff,
-                onCutoff: ({ action }) =>
-                  agent.process({ type: "canceled", payload: `cutoff: ${action.payload}` })
+                onCutoff: ({ event }) =>
+                  agent.process({ type: "canceled", payload: `cutoff: ${event.payload}` })
               })
 
               agent.process({ type: "concur", payload: 1 })
@@ -801,20 +803,20 @@ describe("Agent", () => {
     })
 
     describe("behavior", () => {
-      it("should emit the action on the actionsOfType Observable", () => {
+      it("should emit the event on the getAllEvents Observable", () => {
         expect.assertions(1)
 
         // Build up our assertion
         const assertion = agent
-          .actionsOfType(() => true)
+          .getAllEvents(() => true)
           .pipe(first())
           .toPromise()
-          .then(action => {
-            expect(action).toEqual(anyAction)
+          .then(event => {
+            expect(event).toEqual(anyEvent)
           })
 
-        // Then process an action
-        agent.process(anyAction)
+        // Then process an event
+        agent.process(anyEvent)
 
         // And return the assertion
         return assertion
@@ -836,7 +838,7 @@ describe("Agent", () => {
         agent.filter(() => true, incrementer, { name: "inc" })
         agent.filter(() => true, doubler, { name: "double" })
 
-        let result = agent.process(anyAction)
+        let result = agent.process(anyEvent)
         const { double, inc } = result
         expect({ double, inc }).toMatchSnapshot()
       })
@@ -855,9 +857,9 @@ describe("Agent", () => {
         })
       })
 
-      describe("errors in async renderers", () => {
+      describe("errors in async handlers", () => {
         it.skip("should not propogate up to the caller of #process, but surface somewhere", () => {})
-        it.skip("should unsubscribe the renderer", () => {})
+        it.skip("should unsubscribe the handler", () => {})
       })
     })
   })
@@ -873,7 +875,7 @@ describe("Agent", () => {
     })
     describe("Second argument <Config>", () => {
       describe("#type", () => {
-        it("should wrap observed items in actions", () => {
+        it("should wrap observed items in events", () => {
           agent.filter(() => true, seenFilter)
           const o = from(["A", "B"])
           agent.subscribe(o, {
@@ -900,8 +902,8 @@ describe("Agent", () => {
           const o = from([{ type: "A" }, { type: "B" }])
           agent.on(
             () => true,
-            ({ action, context }) =>
-              contextualRenderings.push({ type: action.type, payload: context })
+            ({ event, context }) =>
+              contextualRenderings.push({ type: event.type, payload: context })
           )
           agent.subscribe(o, {
             context: { client: 123 }
@@ -916,16 +918,16 @@ describe("Agent", () => {
   })
 
   describe("#reset", () => {
-    it("should remove all filters and renderers", () => {
+    it("should remove all filters and handlers", () => {
       let i = 0
       agent.on(/.*/, () => i++)
-      agent.process(anyAction)
+      agent.process(anyEvent)
       expect(i).toEqual(1)
       agent.filter(/.*/, () => {
         if (i === 1) throw new Error("woops")
       })
       agent.reset()
-      agent.process(anyAction)
+      agent.process(anyEvent)
       expect(i).toEqual(1)
     })
   })
@@ -991,24 +993,7 @@ describe("Utilities", () => {
     })
   })
 
-  describe("agentConfigFilter", () => {
-    it("should return a filter that adds agentConfig properties to an actions meta", () => {
-      const config: AgentConfig = { agentId: 12345 }
-      const agent = new Agent(config)
-      const filter = agentConfigFilter(agent)
-      agent.filter(() => true, filter)
-
-      const action = { type: "gotmeta" }
-      agent.process(action)
-      expect(action).toMatchObject(action)
-      // @ts-ignore // yep, filters may mutate their actions
-      expect(action.meta.agentId).toEqual(12345)
-      // @ts-ignore // again, filters may mutate their actions. Write it, Bart
-      expect(action.meta).toMatchObject(config)
-    })
-  })
-
-  describe("ajaxStreamingGet (test requires https://jsonplaceholder.typicode.com)", () => {
+  describe.skip("ajaxStreamingGet (test requires https://jsonplaceholder.typicode.com)", () => {
     it("should create an observable of many from an array ajax response", () => {
       jest.setTimeout(10000)
       expect.assertions(1)
@@ -1166,6 +1151,6 @@ describe("Utilities", () => {
 
 //#region Util Functions Below
 const nullFn = () => null
-const anyAction: Action = { type: "any" }
+const anyEvent: Action = { type: "any" }
 
 //#endregion

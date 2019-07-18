@@ -14,8 +14,8 @@
 // In contrast to RxJS marble tests, very complex assertions
 // can be made in a very readable format, and without ever
 // needing to write them (thanks Jest snapshots!)
-// Example of detecting a subtle bug in the interaction of
-// two invocations of a renderer:
+// Example of detecting a subtle bug in the interrction of
+// two invocations of a handler:
 // - Snapshot
 // + Received
 //     ①  🍓  ✅
@@ -51,7 +51,7 @@ describe("All Demos", () => {
     output = ""
     agent = new Agent()
   })
-  describe("Spoken-rendering Demo", () => {
+  describe("Spoken-handling Demo", () => {
     beforeAll(async () => {
       return await new Promise(resolve => setTimeout(resolve, 200))
     })
@@ -77,11 +77,11 @@ describe("All Demos", () => {
       await runDemo(Demos.serialFruit)
       expect(output).toMatchSnapshot()
     })
-    it("should abort in-flight renders in cutoff mode", async () => {
+    it("should abort in-flight handlers in cutoff mode", async () => {
       await runDemo(Demos.cutoffFruit)
       expect(output).toMatchSnapshot()
     })
-    it("should mute/drop new renders in mute mode", async () => {
+    it("should mute/drop new handlers in mute mode", async () => {
       await runDemo(Demos.muteFruit)
       expect(output).toMatchSnapshot()
     })
@@ -131,7 +131,7 @@ Object {
 
       // `log` adds to the `output` variable; add an additional line on start
       agent.filter("start", () => log("--started--"))
-      agent.filter(() => true, ({ action }) => log(format(action)))
+      agent.filter(() => true, ({ event }) => log(format(event)))
 
       agent.process({ type: "start", payload: { val: "bar" } })
       agent.process({ type: "foo", payload: { must: "bebar" } })
@@ -150,12 +150,12 @@ foo: must: bebar
       let comparator
 
       beforeEach(() => {
-        agent.filter(() => true, ({ action }) => log(format(action)))
+        agent.filter(() => true, ({ event }) => log(format(event)))
 
         comparator = agent.on(
           "comparison",
-          ({ action }) => {
-            const { item, toFind } = action.payload
+          ({ event }) => {
+            const { item, toFind } = event.payload
             if (item === toFind) {
               return of(item)
             } else {
@@ -171,7 +171,7 @@ foo: must: bebar
         const toFind = 3
 
         let searchSub
-        agent.on("match", ({ action }) => {
+        agent.on("match", ({ event }) => {
           log("DONE")
           searchSub.unsubscribe()
         })
@@ -192,7 +192,7 @@ comparison: toFind: 3, item: 4
         const toFind = 2
 
         let searchFound = false
-        agent.on("match", ({ action }) => {
+        agent.on("match", ({ event }) => {
           log("DONE!")
           searchFound = true
         })
@@ -203,11 +203,11 @@ comparison: toFind: 3, item: 4
           }
           agent.process({ type: "comparison", payload: { toFind, item } })
         }
-        
+
         expect(output).toMatchInlineSnapshot(`
 "comparison: toFind: 2, item: 1
 comparison: toFind: 2, item: 2
-match: 
+match:
 DONE!
 "
 `)
@@ -220,10 +220,10 @@ DONE!
 // snapshots wont work for tests that sometimes aren't run - Jest says 'obsolete'!
 // test output is too highly variable
 const expectedSpeak = `•
-> Processing action: Say.speak("International House of Pancakes")
+> Processing event: Say.speak("International House of Pancakes")
 < Done Processing
 •
-> Processing action: Say.speak("Starbucks")
+> Processing event: Say.speak("Starbucks")
 < Done Processing
 •
 •

@@ -5,12 +5,12 @@ const sayings = from(["International House of Pancakes", "Starbucks", "Dunkin"])
 
 /*
     The flow of this demo is:
-    - show a single spoken action
-    - show sequentially processed overlapping actions speak simultaneously
-        (these are mode:sync renderers that kick off async processes)
+    - show a single spoken event
+    - show sequentially processed overlapping events speak simultaneously
+        (these are mode:sync handlers that kick off async processes)
     - discuss the implications of promisifying - argue you need
-        a stream of renderings you can control
-    - option A: If you had a promise for the rendering, you could await it in renderer
+        a stream you can control instead
+    - option A: If you had a promise for the handling, you could await it
 */
 module.exports = ({ Agent, log, config }) => {
   const interactive = !!process.env.INTERACTIVE
@@ -29,15 +29,15 @@ module.exports = ({ Agent, log, config }) => {
     // This one speaks things
     agent.on(true, speakIt, { concurrency })
 
-    // We don't await the processing of each action, but we
-    // return a promise for the completion of all renderings
+    // We don't await the processing of each event, but we
+    // return a promise for the completion of all demos,
     // because the demo runner needs that to serialize demos.
     let allRenders = Promise.resolve()
     return getActions(interactive)
       .pipe(
-        flatMap(action => {
-          log(`> Processing action: Say.speak("${action.payload.toSpeak}")`)
-          let result = agent.process(action)
+        flatMap(event => {
+          log(`> Processing event: Say.speak("${event.payload.toSpeak}")`)
+          let result = agent.process(event)
           log("< Done Processing")
           return result.completed.then(() => log("< Done speaking"))
         })
@@ -111,10 +111,10 @@ module.exports = ({ Agent, log, config }) => {
           ]
         })
     ).pipe(
-      // expand these into their individual actions
+      // expand these into their individual events
       flatMap(arr => from(arr))
       // space them out: zip 'waits' on its argument
-      //zip(interval(tickInterval * 2), action => action)
+      //zip(interval(tickInterval * 2), event => event)
     )
   }
 
@@ -131,8 +131,8 @@ module.exports = ({ Agent, log, config }) => {
 
   // Return an observable that begins when subscribe is called,
   // and completes when say.speak ends
-  function speakIt({ action }) {
-    const { toSpeak } = action.payload
+  function speakIt({ event }) {
+    const { toSpeak } = event.payload
 
     // Remember: unlike Promises, which share a similar construction,
     // the observable function is not run until the Observable recieves

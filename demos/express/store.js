@@ -15,7 +15,7 @@ const store = init({
   }
 })
 
-const storeFilter = ({ action }) => store.dispatch(action)
+const storeFilter = ({ event }) => store.dispatch(event)
 store.subscribe(() => console.log("> ", store.getState()))
 
 module.exports = {

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Agent, agentConfigFilter, randomIdFilter } from "../src/agent"
+import { Agent, randomIdFilter } from "../src/agent"
 import { init } from "@rematch/core"
 import { triviaStoreConfig } from "../demos/trivia/store"
 describe("Multi-agent Trivia Game", () => {
@@ -10,7 +10,7 @@ describe("Multi-agent Trivia Game", () => {
   const pantsA = { answer: "No" }
 
   beforeAll(() => {
-    moderator = new Agent({ agentId: "moderator", relayActions: true })
+    moderator = new Agent({ agentId: "moderator" })
     player1 = new Agent({ agentId: "player1" })
     emcee = new Agent({ agentId: "emcee" })
 
@@ -34,8 +34,12 @@ describe("Multi-agent Trivia Game", () => {
         }
       })
 
-      // Stamp events with agentConfig
-      agent.filter(() => true, agentConfigFilter(agent))
+      // Stamp events with agentId
+      agent.filter(true, ({ event }) => {
+        Object.assign(event, { meta: event.meta || {} })
+        //@ts-ignore
+        event.meta.agentId = agent.agentId
+      })
       agent.filter(() => true, randomIdFilter())
 
       // Agents send events to the others in their topology
@@ -50,7 +54,6 @@ describe("Multi-agent Trivia Game", () => {
 
           // We send out events to others but tell them not to push them
           others.forEach(targetAgent => {
-            // TODO Dont send back the way we came. Requires agentConfigFilter
             targetAgent.process({
               ...event,
               meta: {
@@ -58,7 +61,7 @@ describe("Multi-agent Trivia Game", () => {
                 // Except, we can tell the moderator to push to all others
                 // This will change once diffs of the store are filtered and
                 // pushed, instead of the events that caused them.
-                push: targetAgent.relayActions ? true : false
+                push: targetAgent.agentId === "moderator" ? true : false
               }
             })
           })
