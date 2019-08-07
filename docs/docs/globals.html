@@ -1047,14 +1047,15 @@ img { max-width: 100%; }
 				<li>Stub out unknowns so you can get right to work on the essence of your application</li>
 				<li>Have a clean architecture that allows you to swap out UI frameworks, persistence tiers, or <em>any other component</em> while leaving most of your program unchanged.</li>
 			</ul>
-			<h2 id="what-s-the-tl-dr-">What&#39;s the TL;DR?</h2>
-			<p>Overview:</p>
+			<h2 id="what-s-the-api-">What&#39;s the API?</h2>
+			<p>There are only 4 important functions in the public API:
+			The 2 that get events into an Agent, and the 2 that flexibly assign Handlers to a subset of those events.</p>
 			<ol>
-				<li>An <code>app</code>, (instance of <code>Agent</code>) processes events with a <code>type</code> field (Flux Standard Actions) through either <code>process</code>/<code>trigger</code>, or <code>subscribe</code>, if the events are part of an Observable already.</li>
-				<li>Events are synchronously processed through functions attached via <code>filter</code>, and asynchronously processed through listener functions, attached via <code>on</code>.</li>
-				<li>Listeners specify a concurrency mode (<code>parallel</code>, <code>serial</code>, <code>cutoff</code>, <code>mute</code>) in case events come in while they are still running an async operations.</li>
-				<li>Listener functions may in turn raise events, by returning <a href="https://github.com/tc39/proposal-observable">Observables</a> of new events.</li>
+				<li>An <code>app</code>, (instance of <a href="https://deanius.github.io/rx-helper/docs/classes/agent.html"><code>Agent</code></a>) receives events with a <code>type</code> field (Flux Standard Actions) through either <code>process</code>/<code>trigger</code>.</li>
+				<li>Events are synchronously processed through Handler functions attached via <a href="https://deanius.github.io/rx-helper/docs/classes/agent.html#filter"><code>filter</code></a>, and generally processed asynchronously through Handlers attached via <a href="https://deanius.github.io/rx-helper/docs/classes/agent.html#on"><code>on</code></a>.</li>
 			</ol>
+			<p>That&#39;s it! Handlers can specify their async behavior declaratively: by specifying a concurrency mode (<code>parallel</code>, <code>serial</code>, <code>cutoff</code>, <code>mute</code>) in case events come in while they are still running an existing async operation.</p>
+			<p>Handler functions may in turn raise events, by returning <a href="https://github.com/tc39/proposal-observable">Observables</a> of new events, and specifying a <code>type</code> to add to each event of the Observable, or by indicating their results are already Flux Standard Actions, and configuring <code>processResults: true</code>.</p>
 			<h2 id="what-benefits-can-i-get-by-using-it-">What Benefits Can I Get By Using It?</h2>
 			<ul>
 				<li>A <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Clean Architecture</a> of code with a high degree of decoupling and fault-tolerance.</li>
@@ -1175,7 +1176,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Event<wbr>Matcher<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><a href="interfaces/predicate.html" class="tsd-signature-type">Predicate</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/types.ts#L124">types.ts:124</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/types.ts#L124">types.ts:124</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1185,7 +1186,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Subscriber<span class="tsd-signature-symbol">:</span> <a href="interfaces/filter.html" class="tsd-signature-type">Filter</a><span class="tsd-signature-symbol"> | </span><a href="interfaces/handler.html" class="tsd-signature-type">Handler</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/types.ts#L33">types.ts:33</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/types.ts#L33">types.ts:33</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1205,7 +1206,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">agent<span class="tsd-signature-symbol">:</span> <a href="classes/agent.html" class="tsd-signature-type">Agent</a><span class="tsd-signature-symbol"> =&nbsp;new Agent()</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L518">agent.ts:518</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L518">agent.ts:518</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1220,7 +1221,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">app<span class="tsd-signature-symbol">:</span> <a href="classes/agent.html" class="tsd-signature-type">Agent</a><span class="tsd-signature-symbol"> =&nbsp;agent</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L520">agent.ts:520</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L520">agent.ts:520</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1235,7 +1236,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">assert<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;typeof require &#x3D;&#x3D;&#x3D; &quot;undefined&quot; ? () &#x3D;&gt; null : require(&quot;assert&quot;)</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L39">agent.ts:39</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L39">agent.ts:39</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1245,7 +1246,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">filter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L522">agent.ts:522</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L522">agent.ts:522</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1255,7 +1256,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L522">agent.ts:522</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L522">agent.ts:522</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1265,7 +1266,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L522">agent.ts:522</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L522">agent.ts:522</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1275,7 +1276,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">reserved<wbr>Subscriber<wbr>Names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;completed&quot;, &quot;then&quot;, &quot;catch&quot;]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L442">agent.ts:442</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L442">agent.ts:442</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1285,7 +1286,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L522">agent.ts:522</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L522">agent.ts:522</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1295,7 +1296,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">subscribe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L522">agent.ts:522</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L522">agent.ts:522</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1305,7 +1306,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">trigger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L522">agent.ts:522</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L522">agent.ts:522</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1322,7 +1323,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L481">agent.ts:481</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L481">agent.ts:481</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1370,7 +1371,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/operators.ts#L14">operators.ts:14</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/operators.ts#L14">operators.ts:14</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1407,7 +1408,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/operators.ts#L37">operators.ts:37</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/operators.ts#L37">operators.ts:37</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1438,7 +1439,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L420">agent.ts:420</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L420">agent.ts:420</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1479,7 +1480,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/operators.ts#L58">operators.ts:58</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/operators.ts#L58">operators.ts:58</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1502,7 +1503,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L515">agent.ts:515</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L515">agent.ts:515</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1530,7 +1531,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L449">agent.ts:449</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L449">agent.ts:449</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1560,7 +1561,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L497">agent.ts:497</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L497">agent.ts:497</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1592,7 +1593,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L506">agent.ts:506</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L506">agent.ts:506</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1618,7 +1619,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/operators.ts#L43">operators.ts:43</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/operators.ts#L43">operators.ts:43</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1641,7 +1642,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L536">agent.ts:536</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L536">agent.ts:536</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1672,7 +1673,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/operators.ts#L92">operators.ts:92</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/operators.ts#L92">operators.ts:92</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1703,7 +1704,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/c4d0568/src/agent.ts#L435">agent.ts:435</a></li>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/840fd14/src/agent.ts#L435">agent.ts:435</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>

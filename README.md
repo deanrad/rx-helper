@@ -30,7 +30,7 @@ Rx-Helper is a library to help you use the power of RxJS to:
 There are only 4 important functions in the public API:
 The 2 that get events into an Agent, and the 2 that flexibly assign Handlers to a subset of those events.
 
-1.  An `app`, (instance of `Agent`) receives events with a `type` field (Flux Standard Actions) through either `process`/`trigger`.
+1.  An `app`, (instance of [`Agent`](https://deanius.github.io/rx-helper/docs/classes/agent.html)) receives events with a `type` field (Flux Standard Actions) through either `process`/`trigger`.
 1.  Events are synchronously processed through Handler functions attached via [`filter`](https://deanius.github.io/rx-helper/docs/classes/agent.html#filter), and generally processed asynchronously through Handlers attached via [`on`](https://deanius.github.io/rx-helper/docs/classes/agent.html#on).
 
 That's it! Handlers can specify their async behavior declaratively: by specifying a concurrency mode (`parallel`, `serial`, `cutoff`, `mute`) in case events come in while they are still running an existing async operation.
