@@ -519,10 +519,11 @@ export const agent = new Agent()
 /** An instance of Agent - also exported as `agent`. */
 export const app = agent
 /** Calls the corresponding method of, `app`, the default agent */
-export const { process, trigger, filter, on, subscribe, reset } = {
+export const { process, trigger, filter, spy, on, subscribe, reset } = {
   process: agent.process.bind(agent),
   trigger: agent.trigger.bind(agent),
   filter: agent.filter.bind(agent),
+  spy: agent.spy.bind(agent),
   on: agent.on.bind(agent),
   subscribe: agent.subscribe.bind(agent),
   reset: agent.reset.bind(agent)
