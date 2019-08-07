@@ -25,14 +25,17 @@ Rx-Helper is a library to help you use the power of RxJS to:
 - Stub out unknowns so you can get right to work on the essence of your application
 - Have a clean architecture that allows you to swap out UI frameworks, persistence tiers, or _any other component_ while leaving most of your program unchanged.
 
-## What's the TL;DR?
+## What's the API?
 
-Overview:
+There are only 4 important functions in the public API:
+The 2 that get events into an Agent, and the 2 that flexibly assign Handlers to a subset of those events.
 
-1.  An `app`, (instance of `Agent`) processes events with a `type` field (Flux Standard Actions) through either `process`/`trigger`, or `subscribe`, if the events are part of an Observable already.
-1.  Events are synchronously processed through functions attached via `filter`, and asynchronously processed through listener functions, attached via `on`.
-1.  Listeners specify a concurrency mode (`parallel`, `serial`, `cutoff`, `mute`) in case events come in while they are still running an async operations.
-1.  Listener functions may in turn raise events, by returning [Observables](https://github.com/tc39/proposal-observable) of new events.
+1.  An `app`, (instance of `Agent`) receives events with a `type` field (Flux Standard Actions) through either `process`/`trigger`.
+1.  Events are synchronously processed through Handler functions attached via [`filter`](https://deanius.github.io/rx-helper/docs/classes/agent.html#filter), and generally processed asynchronously through Handlers attached via [`on`](https://deanius.github.io/rx-helper/docs/classes/agent.html#on).
+
+That's it! Handlers can specify their async behavior declaratively: by specifying a concurrency mode (`parallel`, `serial`, `cutoff`, `mute`) in case events come in while they are still running an existing async operation.
+
+Handler functions may in turn raise events, by returning [Observables](https://github.com/tc39/proposal-observable) of new events, and specifying a `type` to add to each event of the Observable, or by indicating their results are already Flux Standard Actions, and configuring `processResults: true`.
 
 ## What Benefits Can I Get By Using It?
 

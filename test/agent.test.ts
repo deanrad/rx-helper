@@ -56,7 +56,7 @@ const seenAdder: Subscriber = ({ event }) => {
 // Dies in a fire upon invocation, to test error handling
 const blowUpHandler: Subscriber = () => {
   blowupCount++
-  throw new Error("Expected Error - wont fail the suite")
+  throw new Error("NoPrintError - wont fail the suite")
 }
 
 // Dies in a fire upon subscription
@@ -195,6 +195,30 @@ describe("Agent", () => {
       expect(spy).not.toHaveBeenCalled()
       agent.process(anyEvent)
       expect(spy).toHaveBeenCalled()
+    })
+  })
+
+  describe("#spy", () => {
+    it("runs for all events", () => {
+      const spy = jest.fn()
+
+      agent.spy(spy)
+      agent.process(anyEvent)
+
+      expect(spy).toHaveBeenCalled()
+    })
+
+    it("will be silently removed if it dies", () => {
+      const spy = jest.fn(() => {
+        throw new Error("NoPrintError")
+      })
+
+      const sub = agent.spy(spy)
+      expect(() => {
+        agent.process(anyEvent)
+      }).not.toThrow()
+
+      expect(sub).toHaveProperty("closed", true)
     })
   })
 
@@ -587,10 +611,10 @@ describe("Agent", () => {
 
             // Available on the Promises
             expect(result.completed.blowUpHandler).rejects.toEqual(
-              new Error("Expected Error - wont fail the suite")
+              new Error("NoPrintError - wont fail the suite")
             )
             expect(result.completed).rejects.toEqual(
-              new Error("Expected Error - wont fail the suite")
+              new Error("NoPrintError - wont fail the suite")
             )
 
             // Prevents unhandled rejection error on completed and completed.blowUpHandler
@@ -608,10 +632,10 @@ describe("Agent", () => {
 
             const result = agent.process(anyEvent)
             expect(result.completed.blowUpHandler).rejects.toEqual(
-              new Error("Expected Error - wont fail the suite")
+              new Error("NoPrintError - wont fail the suite")
             )
             expect(result.completed).rejects.toEqual(
-              new Error("Expected Error - wont fail the suite")
+              new Error("NoPrintError - wont fail the suite")
             )
 
             // Prevents unhandled rejection error on completed and completed.blowUpHandler
@@ -935,86 +959,99 @@ describe("Agent", () => {
 
 describe("Utilities", () => {
   describe("after", () => {
-    let c = 0
+    let counter = 0
     // a function incrementing c
-    const incrementVar = () => {
-      return ++c
+    const incrementCounter = () => {
+      return ++counter
     }
 
     describe("First argument", () => {
       it("should be the delay in msec", () => {})
     })
     describe("Second argument", () => {
-      describe("If an object", () => {
-        it("Becomes the value of the Observable", async () => {
-          const result = await after(1, () => 2.718).toPromise()
-          expect(result).toEqual(2.718)
-        })
-      })
       describe("If a function", () => {
-        it("should schedule its execution later", async () => {
-          expect.assertions(1)
-
+        it("Schedules its execution later", async () => {
           let counter = 0
           await after(1, () => counter++).toPromise()
           expect(counter).toEqual(1)
         })
-        describe("Optional name argument", () => {
-          it("Should be passed to the 2nd argument", async () => {
-            const namer = name => `Got ${name}`
-            const result1 = await after(1, namer, "foo").toPromise()
-            const result2 = await after(1, namer, "boo").toPromise()
-            expect(result1).toEqual("Got foo")
-            expect(result2).toEqual("Got boo")
-          })
+        it("Returns its return value", async () => {
+          let result = await after(1, () => 2.71).toPromise()
+          expect(result).toEqual(2.71)
+        })
+      })
+      describe("If not a function", () => {
+        it("Becomes the value of the Observable", async () => {
+          const result = await after(1, 2.718).toPromise()
+          expect(result).toEqual(2.718)
         })
       })
     })
-    describe("Behavior", () => {
-      it("Is an unstarted timer by default", async () => {
-        let o = after(1, incrementVar)
+    describe("Return Value", () => {
+      it("Is unstarted/lazy/not running", async () => {
+        after(1, incrementCounter) // no .subscribe() or .toPromise()
 
-        // didnt call subscribe or toPromise
+        // Wait long enough that we'd see a change if it was eager (but it's lazy)
         await timer(10).toPromise()
-        expect(c).toEqual(0)
+        expect(counter).not.toBeGreaterThan(0)
       })
-      it("Can be awaited by calling toPromise", async () => {
-        let o = after(1, () => 3.14)
-
-        // didnt call subscribe or toPromise
-        const result = await o.toPromise()
-        expect(result).toEqual(3.14)
-      })
-      it("can be awaited directly", async () => {
-        //expect a fail
+      it("Can be awaited directly", async () => {
         const result = await after(1, () => 2.718)
         expect(result).toEqual(2.718)
       })
     })
   })
 
-  describe.skip("ajaxStreamingGet (test requires https://jsonplaceholder.typicode.com)", () => {
-    it("should create an observable of many from an array ajax response", () => {
-      jest.setTimeout(10000)
-      expect.assertions(1)
-      const user$ = ajaxStreamingGet({
-        url: "https://jsonplaceholder.typicode.com/users/"
-      }).pipe(toArray())
-      return user$.toPromise().then(userArray => {
-        expect(userArray).toHaveLength(10)
-      })
-    })
-    it("should create an observable of one from a singular-object ajax response", () => {
-      jest.setTimeout(10000)
-      expect.assertions(1)
-      const user$ = ajaxStreamingGet({
-        url: "https://jsonplaceholder.typicode.com/users/1"
-      })
-      return user$.toPromise().then(user => {
-        expect(user).toHaveProperty("username")
-      })
-    })
+  const TEST_API_SERVER = "https://jsonplaceholder.typicode.com"
 
+  describe.skip(`ajaxStreamingGet (test requires ${TEST_API_SERVER})`, () => {
+    const singleEndpoint = `${TEST_API_SERVER}/users/1`
+    const pluralEndpointTopLevelArray = `${TEST_API_SERVER}/users`
+    const pluralEndpointNestedArray = "https://www.googleapis.com/books/v1/volumes?q=midsommar"
+
+    it("Returns an Observable of one from a singular-object ajax response", async () => {
+      jest.setTimeout(10000)
+      const result$ = ajaxStreamingGet({
+        url: singleEndpoint
+      })
+      const user = await result$.toPromise()
+
+      expect(user).toHaveProperty("username")
+    })
+    it("Returns an Observable of many from an array ajax response", async () => {
+      jest.setTimeout(10000)
+      const result$ = ajaxStreamingGet({
+        url: pluralEndpointTopLevelArray
+      })
+
+      const users = await result$.pipe(toArray()).toPromise()
+
+      expect(users.length).toBeGreaterThan(0)
+    })
+    it("Returns an Observable of 1 from a nested-array ajax response", async () => {
+      jest.setTimeout(10000)
+
+      const result$ = ajaxStreamingGet({
+        url: pluralEndpointNestedArray
+      })
+
+      const resultObj = result$.toPromise()
+      // The response container, with the items field will be the resolved value
+
+      expect(resultObj).toHaveProperty("items")
+    })
+    it("Returns an Observable of many from a nested-array ajax response, if expandKey specified", async () => {
+      jest.setTimeout(10000)
+      expect.assertions(1)
+
+      const result$ = ajaxStreamingGet({
+        url: pluralEndpointNestedArray,
+        expandKey: "items"
+      })
+
+      const resultArray = await result$.pipe(toArray()).toPromise()
+      expect(resultArray.length).toBeGreaterThan(0)
+    })
     describe("expandKey", () => {
       afterEach(() => {
         // @ts-ignore

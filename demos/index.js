@@ -1,6 +1,6 @@
 // This file is to run all demos+configs specified in configs.js
 // Example: npm run demos     # run them all, building the JS first
-//          node demos/index  # run them to skip the build if no antares change made
+//          node demos/index  # run them but skip the build
 //
 //          # Only demos whos key in config matches 'Fruit'
 //          cross-env DEMO=Fruit npm run demos

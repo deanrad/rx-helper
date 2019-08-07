@@ -1,6 +1,6 @@
 # Rx-Helper Demos
 
-These are command-line demos of antares output which:
+These are command-line demos which:
 
 - Are run at build-time
 - Print their output regardless of pass fail

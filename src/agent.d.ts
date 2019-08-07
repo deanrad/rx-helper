@@ -37,7 +37,7 @@ export declare class Agent implements EventBus {
      * @see trigger
      */
     process(event: Action, context?: any): any;
-    trigger(type: string, payload?: any): any;
+    trigger(type: string, payload?: any, context?: any): any;
     /**
      * Handlers attached via `on` are functions that exist to create side-effects
      * outside of the Rx-Helper Agent. Handlers may make changes to a
@@ -75,6 +75,7 @@ export declare class Agent implements EventBus {
      * automatically upon untrapped errors, like handlers attached via `on`.
      */
     filter(eventMatcher: EventMatcher, filter: Subscriber, config?: HandlerConfig): Subscription;
+    spy(fn: Subscriber, config?: HandlerConfig): Subscription;
     /**
      * Subscribes to an Observable of events (Flux Standard Action), sending
      * each through agent.process. If the Observable is not of FSAs, include
@@ -144,4 +145,4 @@ export declare const agent: Agent;
 /** An instance of Agent - also exported as `agent`. */
 export declare const app: Agent;
 /** Calls the corresponding method of, `app`, the default agent */
-export declare const process: (event: Action, context?: any) => any, trigger: (type: string, payload?: any) => any, filter: (eventMatcher: EventMatcher, filter: Subscriber, config?: HandlerConfig | undefined) => Subscription, on: (eventMatcher: EventMatcher, subscriber: Subscriber, config?: HandlerConfig | undefined) => Subscription, subscribe: (item$: Observable<any>, config?: string | SubscribeConfig | undefined) => Subscription, reset: () => void;
+export declare const process: (event: Action, context?: any) => any, trigger: (type: string, payload?: any, context?: any) => any, filter: (eventMatcher: EventMatcher, filter: Subscriber, config?: HandlerConfig | undefined) => Subscription, on: (eventMatcher: EventMatcher, subscriber: Subscriber, config?: HandlerConfig | undefined) => Subscription, subscribe: (item$: Observable<any>, config?: string | SubscribeConfig | undefined) => Subscription, reset: () => void;

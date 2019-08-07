@@ -48,7 +48,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements EventBus {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.0.0"
+  public static VERSION = "2.0.1"
 
   private event$: Observable<EventBusItem>
   [key: string]: any
@@ -175,9 +175,10 @@ export class Agent implements EventBus {
     return resultObject
   }
 
-  trigger(type: string, payload?: any): any {
-    return this.process({ type, payload })
+  trigger(type: string, payload?: any, context?: any): any {
+    return this.process({ type, payload }, context)
   }
+
   /**
    * Handlers attached via `on` are functions that exist to create side-effects
    * outside of the Rx-Helper Agent. Handlers may make changes to a
@@ -230,7 +231,7 @@ export class Agent implements EventBus {
 
       // Call this if we fail to get the recipe, or subscribe to it
       const reportFail = (ex: any) => {
-        console.error(ex)
+        reportError(ex)
         removeHandler.unsubscribe()
         ender.error(ex)
       }
@@ -336,6 +337,23 @@ export class Agent implements EventBus {
     // The subscription does little except give us an object
     // which, when unsubscribed, will remove our filter
     return removeFilter
+  }
+
+  spy(fn: Subscriber, config: HandlerConfig = {}) {
+    config.name = config.name || "spy"
+    let sub: Subscription
+    let callFnUnsubOnError = (item: EventBusItem, payload?: any): any => {
+      try {
+        return fn(item, payload)
+      } catch (err) {
+        reportError(err, `Spy ${config.name} threw an error "${err.message}" and has been removed`)
+        if (sub) {
+          sub.unsubscribe()
+        }
+      }
+    }
+    sub = this.filter(true, callFnUnsubOnError, config)
+    return sub
   }
 
   /**
@@ -483,6 +501,13 @@ export const randomIdFilter = (length: number = 7, key = "eventId") => ({
   const newId = randomId(length)
   // @ts-ignore
   event.meta[key] = newId
+}
+
+function reportError(err: Error, msg = err.message) {
+  if (msg.match(/NoPrintError/i)) {
+    return
+  }
+  console.error(msg, err.stack)
 }
 
 /**
