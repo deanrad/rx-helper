@@ -48,7 +48,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements EventBus {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.0.1"
+  public static VERSION = "2.0.2"
 
   private event$: Observable<EventBusItem>
   [key: string]: any
