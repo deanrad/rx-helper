@@ -418,7 +418,7 @@ export class Agent implements EventBus {
 }
 
 function getEventPredicate(eventMatcher: EventMatcher) {
-  let predicate: ((item: EventBusItem) => boolean)
+  let predicate: (item: EventBusItem) => boolean
 
   if (eventMatcher instanceof RegExp) {
     predicate = ({ event }: EventBusItem) => eventMatcher.test(event.type)
@@ -460,22 +460,24 @@ export const randomId = (length: number = 7) => {
  *
  * @example
  * ```js
- *
- *  const drawToCanvas(world) { ... }
- *
+ *  import { on, subscribe, GameLoop } from 'rx-helper'
  *  const frames = new GameLoop()
  *
- *  agent.on("world", ({ event: { payload: { world }}}) => {
- *    drawToCanvas(world)
- *  })
- *
+ *  // Derive the worlds by incorporating each new delta given by the GameLoop
  *  const worlds = frames.pipe(
  *     map(({ delta }) => delta),
  *     scan(function aWholeNewWorld(oldWorld, delta) {
  *       return aWholeNewWorld
  *     }, {})
  *  )
- *  agent.subscribe(worlds, { type: "world"})
+ *
+ *  // Handle a 'world' event by drawing it to the on-screen canvas
+ *  on("world", ({ event: { payload: { world }}}) => {
+ *    drawToCanvas(world)
+ *  })
+ *
+ *  // Process the world stream, derived from the GameLoop, as events of type 'world'
+ *  subscribe(worlds, { type: "world" })
  * ```
  */
 export function GameLoop() {

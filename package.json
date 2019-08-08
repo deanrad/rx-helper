@@ -24,7 +24,7 @@
     "prepare": "npm run build",
     "lint": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "build": "webpack --config webpack.config.js && mv src/agent.d.ts dist/rx-helper.d.ts; cp index.html docs/ && typedoc --out docs/docs --target es6 --theme minimal --mode file --hideGenerator --excludePrivate src",
+    "build": "webpack --config webpack.config.js && mv src/agent.d.ts dist/rx-helper.d.ts; typedoc --out docs --target es6 --theme minimal --mode file --hideGenerator --excludePrivate src",
     "start": "npm run express",
     "test": "npm run test:ci",
     "jest": "jest --expand",
