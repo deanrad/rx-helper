@@ -59,6 +59,8 @@ export interface EventBusItem {
  * - serial: Concurrency of 1, handlers are queued
  * - cutoff: Concurrency of 1, any existing handler is killed
  * - mute: Concurrency of 1, existing handler prevents new handlers
+ *
+ * ![concurrency modes](https://s3.amazonaws.com/www.deanius.com/ConcurModes.png)
  */
 export enum Concurrency {
   /**
