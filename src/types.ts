@@ -18,7 +18,7 @@ export interface AgentConfig {
  * The core of the Rx-Helper Agent API: methods to add subscribers (filters or handlers)
  * and a single method to 'dispatch' an event (Flux Standard Action) to relevant subscribers.
  */
-export interface EventBus {
+export interface Evented {
   process(event: Action, context?: Object): ProcessResult
   subscribe(event$: Observable<Action>, context?: Object): Subscription
   filter(eventMatcher: EventMatcher, handler: Subscriber, config?: HandlerConfig): Subscription
@@ -27,7 +27,7 @@ export interface EventBus {
 
 /**
  * A subscriber is either a handler or a filter - a function which
- * receives as its argument the EventBusItem, typically to use
+ * receives as its argument the EventedItem, typically to use
  * the payload of the `event` property to cause some side-effect.
  */
 export type Subscriber = Filter | Handler
@@ -39,7 +39,7 @@ export interface Action {
   meta?: Object
 }
 
-export interface EventBusItem {
+export interface EventedItem {
   /** The event which caused a filter/handler to be run */
   event: Action
   /** An optional object, like the websocket or http response
@@ -85,7 +85,7 @@ export enum Concurrency {
  *    referring to the payload easy, and is actually similar to JQuery ha!)
  */
 export interface Handler {
-  (item: EventBusItem, payload?: any): any
+  (item: EventedItem, payload?: any): any
 }
 /**
  * A Filter runs a synchronous function prior to any handlers
@@ -98,7 +98,7 @@ export interface Handler {
  * @see getAllEvents
  */
 export interface Filter {
-  (item: EventBusItem, payload?: any): any
+  (item: EventedItem, payload?: any): any
 }
 
 export interface HandlerConfig {
@@ -127,7 +127,7 @@ export type EventMatcher = string | RegExp | Predicate | boolean
 
 /* A function that can be used as an EventMatcher. */
 export interface Predicate {
-  (item: EventBusItem): boolean
+  (item: EventedItem): boolean
 }
 
 /**

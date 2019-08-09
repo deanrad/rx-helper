@@ -9,10 +9,10 @@ import {
 } from "rxjs"
 import { filter as rxFilter, map, first } from "rxjs/operators"
 import {
-  EventBus,
+  Evented,
   Action,
   EventMatcher,
-  EventBusItem,
+  EventedItem,
   AgentConfig,
   Concurrency,
   Subscriber,
@@ -24,7 +24,7 @@ export {
   Action,
   EventMatcher,
   AgentConfig,
-  EventBusItem,
+  EventedItem,
   Concurrency,
   ProcessResult,
   Subscriber,
@@ -46,15 +46,15 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  * A singleton instance is exported as `app`, and top-level `filter` `on`
  * `process` and `subscribe` are bound to it.
  */
-export class Agent implements EventBus {
+export class Agent implements Evented {
   public static configurableProps = ["agentId"]
   public static VERSION = "2.0.3"
 
-  private event$: Observable<EventBusItem>
+  private event$: Observable<EventedItem>
   [key: string]: any
 
   private _subscriberCount = 0
-  private eventBus: Subject<EventBusItem>
+  private Evented: Subject<EventedItem>
   private allFilters: Map<string, Subscriber>
   private allHandlers: Map<string, Function>
 
@@ -89,8 +89,8 @@ export class Agent implements EventBus {
   }
 
   constructor(config: AgentConfig = {}) {
-    this.eventBus = new Subject<EventBusItem>()
-    this.event$ = this.eventBus.asObservable()
+    this.Evented = new Subject<EventedItem>()
+    this.event$ = this.Evented.asObservable()
     this.allFilters = new Map<string, Subscriber>()
     this.allHandlers = new Map<string, Function>()
     config.agentId = config.agentId || randomId()
@@ -115,13 +115,13 @@ export class Agent implements EventBus {
   process(event: Action, context?: any): any {
     // Execute all filters one after the other, synchronously, in the order added
     const filterResults = new Map<string, any>()
-    const item: EventBusItem = {
+    const item: EventedItem = {
       event,
       results: filterResults
     }
     this.runFilters(item, filterResults)
 
-    this.eventBus.next(item)
+    this.Evented.next(item)
 
     // Add readonly properties for each filter result
     // The return value of agent.process ducktypes the event,
@@ -325,7 +325,7 @@ export class Agent implements EventBus {
 
     // Pass all events unless otherwise told
     const predicate = eventMatcher ? getEventPredicate(eventMatcher) : () => true
-    const _filter: Subscriber = (item: EventBusItem) => {
+    const _filter: Subscriber = (item: EventedItem) => {
       if (predicate(item)) {
         return filter(item, item.event.payload)
       }
@@ -342,7 +342,7 @@ export class Agent implements EventBus {
   spy(fn: Subscriber, config: HandlerConfig = {}) {
     config.name = config.name || "spy"
     let sub: Subscription
-    let callFnUnsubOnError = (item: EventBusItem, payload?: any): any => {
+    let callFnUnsubOnError = (item: EventedItem, payload?: any): any => {
       try {
         return fn(item, payload)
       } catch (err) {
@@ -381,7 +381,7 @@ export class Agent implements EventBus {
     this.allHandlers.clear()
   }
 
-  private runFilters(item: EventBusItem, results: Map<string, any>): void {
+  private runFilters(item: EventedItem, results: Map<string, any>): void {
     // Run all filters sync (RxJS as of v6 no longer will sync error)
     for (let filterName of this.allFilters.keys()) {
       let filter = this.allFilters.get(filterName)
@@ -418,16 +418,16 @@ export class Agent implements EventBus {
 }
 
 function getEventPredicate(eventMatcher: EventMatcher) {
-  let predicate: (item: EventBusItem) => boolean
+  let predicate: (item: EventedItem) => boolean
 
   if (eventMatcher instanceof RegExp) {
-    predicate = ({ event }: EventBusItem) => eventMatcher.test(event.type)
+    predicate = ({ event }: EventedItem) => eventMatcher.test(event.type)
   } else if (eventMatcher instanceof Function) {
     predicate = eventMatcher
   } else if (typeof eventMatcher === "boolean") {
     predicate = () => eventMatcher
   } else {
-    predicate = ({ event }: EventBusItem) => eventMatcher === event.type
+    predicate = ({ event }: EventedItem) => eventMatcher === event.type
   }
   return predicate
 }
@@ -496,9 +496,7 @@ export function GameLoop() {
  * event.meta.eventId to uniquely identify an event among its neighbors.
  * @see randomId
  */
-export const randomIdFilter = (length: number = 7, key = "eventId") => ({
-  event
-}: EventBusItem) => {
+export const randomIdFilter = (length: number = 7, key = "eventId") => ({ event }: EventedItem) => {
   event.meta = event.meta || {}
   const newId = randomId(length)
   // @ts-ignore
