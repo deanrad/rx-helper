@@ -53,11 +53,11 @@ module.exports = ({ Agent, log, append }) => {
     })
   ]
 
-  function getActions(interactive) {
-    return interactive ? getUserInputFromStdin(log) : getScriptedActions()
+  function getEvents(interactive) {
+    return interactive ? getUserInputFromStdin(log) : getScriptedEvents()
   }
 
-  function getScriptedActions() {
+  function getScriptedEvents() {
     return interval(1000).pipe(
       take(5),
       concat(
@@ -92,7 +92,7 @@ module.exports = ({ Agent, log, append }) => {
   agent.subscribe(cheatsDetected)
 
   // the promise to be awaited by the runner
-  let result = getActions(interactive)
+  let result = getEvents(interactive)
     .pipe(...displayClocks)
     .toPromise()
   return result

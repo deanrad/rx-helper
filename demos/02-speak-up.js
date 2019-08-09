@@ -33,7 +33,7 @@ module.exports = ({ Agent, log, config }) => {
     // return a promise for the completion of all demos,
     // because the demo runner needs that to serialize demos.
     let allRenders = Promise.resolve()
-    return getActions(interactive)
+    return getEvents(interactive)
       .pipe(
         flatMap(event => {
           log(`> Processing event: Say.speak("${event.payload.toSpeak}")`)
@@ -45,14 +45,14 @@ module.exports = ({ Agent, log, config }) => {
       .toPromise()
   }
 
-  function getActions(interactive) {
-    //return getDemoActions() // XXX interactive mode is busted
-    return interactive ? getUserActions() : getDemoActions()
+  function getEvents(interactive) {
+    //return getDemoEvents() // XXX interactive mode is busted
+    return interactive ? getUserEvents() : getDemoEvents()
   }
 
   // By returning an Observable, we can either hand back a static array
   // or an infinite stream over time (every 60 seconds)
-  function getDemoActions() {
+  function getDemoEvents() {
     if (infinite) {
       const faker = require("faker")
       const controls = [
@@ -78,7 +78,7 @@ module.exports = ({ Agent, log, config }) => {
     )
   }
 
-  function getUserActions() {
+  function getUserEvents() {
     const inquirer = require("inquirer")
     return from(
       inquirer

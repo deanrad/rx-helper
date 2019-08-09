@@ -20,8 +20,8 @@ agent.on(
   { type: "fallAsleep", name: "sleep" }
 )
 
-// 3. You can query all the agent sees, using getNextEvent and allActionsOfType,
-// which return Observable<Action> and Promise<Action>, respectively..
+// 3. You can query all the agent sees, using getNextEvent and allEventsOfType,
+// which return Observable<Event> and Promise<Event>, respectively..
 agent.getNextEvent("fallAsleep").then(event => {
   console.log("- Current status: " + event.payload)
 })

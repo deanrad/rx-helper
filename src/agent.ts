@@ -10,7 +10,7 @@ import {
 import { filter as rxFilter, map, first } from "rxjs/operators"
 import {
   Evented,
-  Action,
+  Event,
   EventMatcher,
   EventedItem,
   AgentConfig,
@@ -21,7 +21,7 @@ import {
 } from "./types"
 
 export {
-  Action,
+  Event,
   EventMatcher,
   AgentConfig,
   EventedItem,
@@ -112,7 +112,7 @@ export class Agent implements Evented {
    * @throws Throws if a filter errs, but not if a handler errs.
    * @see trigger
    */
-  process(event: Action, context?: any): any {
+  process(event: Event, context?: any): any {
     // Execute all filters one after the other, synchronously, in the order added
     const filterResults = new Map<string, any>()
     const item: EventedItem = {
@@ -219,7 +219,7 @@ export class Agent implements Evented {
 
     // Build a function, and keep it around for #process, which
     // returns a Promise for any handling done for this event
-    const handlerPromiser = (event: Action, context?: any) => {
+    const handlerPromiser = (event: Event, context?: any) => {
       // If this handler doesn't apply to this event...
       if (!predicate({ event })) {
         return Promise.resolve(undefined)
@@ -512,7 +512,7 @@ function reportError(err: Error, msg = err.message) {
 
 /**
  * Pretty-print an event */
-export const pp = (event: Action) => JSON.stringify(event)
+export const pp = (event: Event) => JSON.stringify(event)
 
 /** An instance of Agent - also exported as `app`. */
 export const agent = new Agent()

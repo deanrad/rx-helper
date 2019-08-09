@@ -2,7 +2,7 @@
 import { Observable, Subscription, of, from, empty, timer, throwError, concat } from "rxjs"
 import { map, first, toArray, scan, tap } from "rxjs/operators"
 import {
-  Action,
+  Event,
   Agent,
   Concurrency,
   Subscriber,
@@ -14,7 +14,7 @@ import {
   randomId
 } from "../src/agent"
 
-let seen: Array<Action> = []
+let seen: Array<Event> = []
 let callCount = 0
 let blowupCount = 0
 let counter = 0
@@ -123,8 +123,8 @@ describe("Agent", () => {
         const matcher = { type: "test/foo" }
         agent.process(matcher)
 
-        return result.then(matchingAction => {
-          expect(matchingAction).toMatchObject(matcher)
+        return result.then(matchingEvent => {
+          expect(matchingEvent).toMatchObject(matcher)
         })
       })
       it("defaults to the next event (true)", async () => {
@@ -504,10 +504,10 @@ describe("Agent", () => {
         agent.on(() => true, () => [3, 1, "2!"], { name: "ary" })
         agent.on(() => false, () => of(undefined), { name: "notrun" })
 
-        const anyAction = { type: "oOo" }
+        const anyEvent = { type: "oOo" }
         // Call #process. Result Duck types the event
-        const result = agent.process(anyAction)
-        expect(result).toMatchObject(anyAction)
+        const result = agent.process(anyEvent)
+        expect(result).toMatchObject(anyEvent)
 
         // Duck types a Promise for all handler's completion
         expect(result.completed).toHaveProperty("then")
@@ -519,7 +519,7 @@ describe("Agent", () => {
         // the successful ones
         expect(completedResult).toMatchObject({
           peek: 0,
-          seen: anyAction,
+          seen: anyEvent,
           later: 2,
           molater: 2, // same binding
           promise: 5,
@@ -913,10 +913,10 @@ describe("Agent", () => {
         it("should allow a string shorthand", () => {
           agent.filter(() => true, seenFilter)
           const o = from(["A", "B"])
-          agent.subscribe(o, "coolAction")
+          agent.subscribe(o, "coolEvent")
           expect(seen).toEqual([
-            { type: "coolAction", payload: "A" },
-            { type: "coolAction", payload: "B" }
+            { type: "coolEvent", payload: "A" },
+            { type: "coolEvent", payload: "B" }
           ])
         })
       })
@@ -1188,6 +1188,6 @@ describe("Utilities", () => {
 
 //#region Util Functions Below
 const nullFn = () => null
-const anyEvent: Action = { type: "any" }
+const anyEvent: Event = { type: "any" }
 
 //#endregion

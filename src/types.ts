@@ -19,8 +19,8 @@ export interface AgentConfig {
  * and a single method to 'dispatch' an event (Flux Standard Action) to relevant subscribers.
  */
 export interface Evented {
-  process(event: Action, context?: Object): ProcessResult
-  subscribe(event$: Observable<Action>, context?: Object): Subscription
+  process(event: Event, context?: Object): ProcessResult
+  subscribe(event$: Observable<Event>, context?: Object): Subscription
   filter(eventMatcher: EventMatcher, handler: Subscriber, config?: HandlerConfig): Subscription
   on(eventMatcher: EventMatcher, handler: Subscriber, config?: HandlerConfig): Subscription
 }
@@ -32,7 +32,7 @@ export interface Evented {
  */
 export type Subscriber = Filter | Handler
 
-export interface Action {
+export interface Event {
   type: string
   payload?: any
   error?: boolean
@@ -41,7 +41,7 @@ export interface Action {
 
 export interface EventedItem {
   /** The event which caused a filter/handler to be run */
-  event: Action
+  event: Event
   /** An optional object, like the websocket or http response
    * that this event arrived on, on which its processing may
    * make function calls (such as res.write())

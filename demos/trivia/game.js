@@ -31,6 +31,6 @@ module.exports = {
       }
     }
   },
-  // Actions other reducers will refer to are listed below
+  // Events other reducers will refer to are listed below
   nextQuestion: "game/nextQuestion"
 }

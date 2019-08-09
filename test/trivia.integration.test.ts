@@ -29,12 +29,12 @@ describe("Multi-agent Trivia Game", () => {
 
     // The topology defines who sends events to whom
     const topology = {
-      player1: [moderator],
-      emcee: [moderator],
-      moderator: [player1, emcee]
-    }
+        player1: [moderator],
+        emcee: [moderator],
+        moderator: [player1, emcee]
+      }
 
-    // Set up agents' properties and relationships to each other
+      // Set up agents' properties and relationships to each other
     ;[moderator, player1, emcee].forEach(agent => {
       // Stamp events with agentId
       agent.filter(true, ({ event }) => {
@@ -101,11 +101,11 @@ describe("Multi-agent Trivia Game", () => {
     // players answer when the round changes
 
     const playerAnswer = { from: player1.agentId, choice: "No" }
-    const filteredAction = player1.process({
+    const filteredEvent = player1.process({
       type: "round/respond",
       payload: playerAnswer
     })
-    expect(filteredAction.meta).toMatchObject({ agentId: "player1" })
+    expect(filteredEvent.meta).toMatchObject({ agentId: "player1" })
     expect(player1.state.round.responses).toContain(playerAnswer)
     expect(moderator.state.round.responses).toContain(playerAnswer)
     expect(moderator.state.round.summary).toMatchObject({ Yes: 0, No: 1 })

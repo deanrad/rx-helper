@@ -16,27 +16,27 @@ export interface AgentConfig {
  * The core of the Rx-Helper Agent API: methods to add subscribers (filters or handlers)
  * and a single method to 'dispatch' an event (Flux Standard Action) to relevant subscribers.
  */
-export interface EventBus {
-    process(event: Action, context?: Object): ProcessResult;
-    subscribe(event$: Observable<Action>, context?: Object): Subscription;
+export interface Evented {
+    process(event: Event, context?: Object): ProcessResult;
+    subscribe(event$: Observable<Event>, context?: Object): Subscription;
     filter(eventMatcher: EventMatcher, handler: Subscriber, config?: HandlerConfig): Subscription;
     on(eventMatcher: EventMatcher, handler: Subscriber, config?: HandlerConfig): Subscription;
 }
 /**
  * A subscriber is either a handler or a filter - a function which
- * receives as its argument the EventBusItem, typically to use
+ * receives as its argument the EventedItem, typically to use
  * the payload of the `event` property to cause some side-effect.
  */
 export declare type Subscriber = Filter | Handler;
-export interface Action {
+export interface Event {
     type: string;
     payload?: any;
     error?: boolean;
     meta?: Object;
 }
-export interface EventBusItem {
+export interface EventedItem {
     /** The event which caused a filter/handler to be run */
-    event: Action;
+    event: Event;
     /** An optional object, like the websocket or http response
      * that this event arrived on, on which its processing may
      * make function calls (such as res.write())
@@ -78,7 +78,7 @@ export declare enum Concurrency {
  *    referring to the payload easy, and is actually similar to JQuery ha!)
  */
 export interface Handler {
-    (item: EventBusItem, payload?: any): any;
+    (item: EventedItem, payload?: any): any;
 }
 /**
  * A Filter runs a synchronous function prior to any handlers
@@ -91,7 +91,7 @@ export interface Handler {
  * @see getAllEvents
  */
 export interface Filter {
-    (item: EventBusItem, payload?: any): any;
+    (item: EventedItem, payload?: any): any;
 }
 export interface HandlerConfig {
     /** A name by which the results will be keyed. Example: `agent.process(event).completed.NAME.then(() => ...)` */
@@ -115,7 +115,7 @@ export interface SubscribeConfig {
 }
 export declare type EventMatcher = string | RegExp | Predicate | boolean;
 export interface Predicate {
-    (item: EventBusItem): boolean;
+    (item: EventedItem): boolean;
 }
 /**
  * The return value from calling `process`/`trigger`.
