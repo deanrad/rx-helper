@@ -20,16 +20,14 @@ let configs = {
     require("./06-session-timeout"),
     { inactivityInterval: 300, warningInterval: 100 }
   ],
-  nodeCallback: [
-    require("./07-node-callback"),
-    {}
-  ]
+  nodeCallback: [require("./07-node-callback"), {}]
 }
 
 const failsInCI = {
   doubleSpeak: [require("./02-speak-up"), { count: 2, concurrency: "parallel" }],
   patientSpeak: [require("./02-speak-up"), { count: 2, concurrency: "serial" }],
-  interruptingSpeak: [require("./02-speak-up"), { count: 2, concurrency: "cutoff" }]
+  interruptingSpeak: [require("./02-speak-up"), { count: 2, concurrency: "cutoff" }],
+  preventedSpeak: [require("./02-speak-up"), { count: 2, concurrency: "mute" }]
 }
 
 if (!process.env.CI) {

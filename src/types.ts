@@ -32,6 +32,9 @@ export interface Evented {
  */
 export type Subscriber = Filter | Handler
 
+/**
+ * An object conforming to the Flux Standard Action specification
+ */
 export interface Event {
   type: string
   payload?: any
@@ -123,7 +126,7 @@ export interface SubscribeConfig {
   context?: any
 }
 
-export type EventMatcher = string | RegExp | Predicate | boolean
+export type EventMatcher = string | string[] | RegExp | Predicate | boolean
 
 /* A function that can be used as an EventMatcher. */
 export interface Predicate {
@@ -133,9 +136,9 @@ export interface Predicate {
 /**
  * The return value from calling `process`/`trigger`.
  * Basically this is the event that was passed to `process`,
- * but extended via `Object.assign`, with the return values of filters (under their name).
+ * but extended with the return values of filters (under their name).
  */
-export interface ProcessResult {
+export interface ProcessResult extends Event {
   [key: string]: any
 }
 

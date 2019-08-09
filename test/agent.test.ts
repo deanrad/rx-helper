@@ -350,6 +350,15 @@ describe("Agent", () => {
             expect(counter).toEqual(1)
           })
         })
+        it("should only run the event handler on matching events (Array)", async () => {
+          agent.on(["Counter.inc"], () => ++counter, {
+            name: "inc"
+          })
+          // await agent.process(anyEvent).completed
+          agent.process(anyEvent)
+          agent.trigger("Counter.inc")
+          expect(counter).toEqual(1)
+        })
       })
 
       describe("handler", () => {

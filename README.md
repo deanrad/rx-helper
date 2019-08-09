@@ -30,29 +30,33 @@ Rx-Helper is a library to help you use the power of RxJS to:
 There are only 4 important functions in the public API:
 The 2 that get events into an Agent, and the 2 that flexibly assign Handlers to a subset of those events.
 
-1.  An `app`, (instance of [`Agent`](https://deanius.github.io/rx-helper/docs/classes/agent.html)) receives events with a `type` field (Flux Standard Actions) through either `process`/`trigger`.
-1.  Events are synchronously processed through Handler functions attached via [`filter`](https://deanius.github.io/rx-helper/docs/classes/agent.html#filter), and generally processed asynchronously through Handlers attached via [`on`](https://deanius.github.io/rx-helper/docs/classes/agent.html#on).
+1.  Through either [`process`](https://deanius.github.io/rx-helper/classes/agent.html#process) or [`trigger`](https://deanius.github.io/rx-helper/classes/agent.html#trigger), an instance of [`Agent`](https://deanius.github.io/rx-helper/docs/classes/agent.html) is given events— objects with a `type` field (Flux Standard Actions).
+1.  If you have an Observable of items to process as events, you can pass it to [`subscribe`](https://deanius.github.io/rx-helper/classes/agent.html#subscribe).
+1.  Events are synchronously processed through Handler functions attached via [`filter`](https://deanius.github.io/rx-helper/docs/classes/agent.html#filter)
+1.  Async processing is begun by Handlers attached via [`on`](https://deanius.github.io/rx-helper/docs/classes/agent.html#on), whose concurrency mode (`parallel`, `serial`, `cutoff`, `mute`) can be specified to control what it does in the event of overlap with its own previous event processings.
 
-That's it! Handlers can specify their async behavior declaratively: by specifying a concurrency mode (`parallel`, `serial`, `cutoff`, `mute`) in case events come in while they are still running an existing async operation.
-
-Handler functions may in turn raise events, by returning [Observables](https://github.com/tc39/proposal-observable) of new events, and specifying a `type` to add to each event of the Observable, or by indicating their results are already Flux Standard Actions, and configuring `processResults: true`.
+Handler functions can be written to explicitly call `trigger` or `process` on the events they create. However, the config argument to `on` allows them to declare that they will make their events available as an Observable, and set that Observable to be processed as events using either the `processResults: true`, or `type: String` parameter.
 
 ## What Benefits Can I Get By Using It?
 
 - A [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) of code with a high degree of decoupling and fault-tolerance.
 - A clean, cancelable model of async effects, compatible with, but not dependent on a component library like React or Angular.
-- Faster prototyping by building abstrrctions that simulate input or output, allowing you to focus on the core functionality of your app.
-- Familiarity with the Observable datatype - a type that is a superset of Promise, and which can stand in for users, databases, servers, or any number of .
+- Faster prototyping by building abstractions that simulate input or output, allowing you to focus on the core functionality of your app.
+- Take advantage the Observable datatype - a type that is a superset of Promise, with a high degree of performance-tunability.
+- Solve performance and timing issues declaratively, keeping code mostly free from those details by applying modes for these common use cases:
+
+![](https://s3.amazonaws.com/www.deanius.com/ConcurModes.png)
 
 ## What kinds of apps can I build with it?
 
 There are many demo apps included in this project that show what you can build.
 
-- A console app that writes names to a file, and speaks them aloud
+- A Single Page App using React
+- A [Web Server](//github.com/deanius/rx-helper/blob/master/demos/express/index.js) using Express
 - A utility that turns all-at-the-end AJAX requests for arrays (eg `/users/`) into streaming Observables
-- A [Web Server](//github.com/deanius/rx-helper/blob/master/demos/express/index.js)
 - A Canvas-based requestAnimationFrame animation.
-- A Console app that detects a cheat-code of 5 clicks in a short interval.
+- A console app that writes names to a file, and speaks them aloud.
+- A console app that detects a cheat-code of 5 clicks in a short interval.
 - A Web Audio app that streams and queues up music from attachments in your Inbox.
 - An IOT application interfacing with Raspberry Pi GPIO
 
@@ -73,9 +77,14 @@ Rx-Helper is highly tested. And since testing async is hard, some integration le
 ## Gratitude, Props, Thanks To
 
 - Dan Abramov - [Redux](https://redux.js.org) ![twitter](https://img.shields.io/badge/twitter-@dan_abramov-55acee.svg)
-- Martin Kleppmann - [Turning the Database Inside Out](https://www.confluent.io/blog/turning-the-database-inside-out-with-apache-samza/) ![twitter](https://img.shields.io/badge/twitter-@martinkl-55acee.svg)
 - Alex Jover Morales - [Typescript Library Starter](https://github.com/alexjoverm/typescript-library-starter) ![twitter](https://img.shields.io/badge/twitter-@alexjoverm-55acee.svg)
 - All who worked on [RxJS](https://github.com/ReactiveX/rxjs), [Redux Observable](https://redux-observable.js.org/)
+
+## References
+
+- Martin Kleppmann - [Turning the Database Inside Out](https://www.confluent.io/blog/turning-the-database-inside-out-with-apache-samza/) ![twitter](https://img.shields.io/badge/twitter-@martinkl-55acee.svg)
+- Markus Eisele - [Building Reactive Systems Using the Actor Model](https://www.infoq.com/articles/Reactive-Systems-Akka-Actors-DomainDrivenDesign/)
+- Martin Fowler - [CQRS](https://martinfowler.com/bliki/CQRS.html)
 - Bob Martin - [Clean Architecture](https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html)<img src="https://8thlight.com/blog/assets/posts/2012-08-13-the-clean-architecture/CleanArchitecture-8d1fe066e8f7fa9c7d8e84c1a6b0e2b74b2c670ff8052828f4a7e73fcbbc698c.jpg"/>
 
 ---

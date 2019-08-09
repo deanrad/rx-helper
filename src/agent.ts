@@ -15,6 +15,7 @@ import {
   EventedItem,
   AgentConfig,
   Concurrency,
+  ProcessResult,
   Subscriber,
   SubscribeConfig,
   HandlerConfig
@@ -48,7 +49,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements Evented {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.0.3"
+  public static VERSION = "2.0.5"
 
   private event$: Observable<EventedItem>
   [key: string]: any
@@ -112,7 +113,7 @@ export class Agent implements Evented {
    * @throws Throws if a filter errs, but not if a handler errs.
    * @see trigger
    */
-  process(event: Event, context?: any): any {
+  process(event: Event, context?: any): ProcessResult {
     // Execute all filters one after the other, synchronously, in the order added
     const filterResults = new Map<string, any>()
     const item: EventedItem = {
@@ -175,13 +176,18 @@ export class Agent implements Evented {
     return resultObject
   }
 
-  trigger(type: string, payload?: any, context?: any): any {
+  /**
+   * Constructs an Event from the `type` and `payload` passed, and calls `process` with it.
+   * @see process
+   * */
+  trigger(type: string, payload?: any, context?: any): ProcessResult {
     return this.process({ type, payload }, context)
   }
 
   /**
    * Handlers attached via `on` are functions that exist to create side-effects
-   * outside of the Rx-Helper Agent. Handlers may make changes to a
+   * outside of the Rx-Helper Agent. Handlers specify the events they handle via an
+   * `EventMatcher`. Handlers may make changes to a
    * DOM, to a database, or communications (eg AJAX) sent on the wire. Handlers run
    * in parallel with respect to other handlers, and are error-isolated.
    * They return Observables - an object that models a series of notifications over
@@ -195,13 +201,13 @@ export class Agent implements Evented {
    *
    * ```js
    * //
-   * const { Agent, after } = require('rx-helper')
-   * const agent = new Agent()
-   * agent.on('kickoff', () => after(50, () => '#go'), { type: 'search' })
-
+   * const { on, process, after } = require('rx-helper')
+   * on('kickoff', () => after(50, () => '#go'), { type: 'search' })
    * // Logs Done once 50 ms has elapsed
-   * agent.process({ type: 'kickoff' }).completed.kickoff.then(() => console.log('done'))
+   * const result = process({ type: 'kickoff' })
+   * result.completed.kickoff.then(() => console.log('done'))
    * ```
+   * @see EventMatcher
    */
   on(eventMatcher: EventMatcher, subscriber: Subscriber, config: HandlerConfig = {}) {
     const removeHandler = new Subscription(() => {
@@ -426,6 +432,8 @@ function getEventPredicate(eventMatcher: EventMatcher) {
     predicate = eventMatcher
   } else if (typeof eventMatcher === "boolean") {
     predicate = () => eventMatcher
+  } else if (eventMatcher.constructor === Array) {
+    predicate = ({ event }: EventedItem) => eventMatcher.includes(event.type)
   } else {
     predicate = ({ event }: EventedItem) => eventMatcher === event.type
   }
