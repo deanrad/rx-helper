@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>StreamingGetOptions | rx-helper</title>
+	<title>StoreAgent | rx-helper</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2377,32 +2377,53 @@ img {
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
-		<li class="current tsd-kind-interface">
-			<a href="streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
+		<li class="current tsd-kind-class">
+			<a href="storeagent.html" class="tsd-kind-icon">Store<wbr>Agent</a>
 			<ul>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#body" class="tsd-kind-icon">body</a>
+				<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+					<a href="storeagent.html#constructor" class="tsd-kind-icon">constructor</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#expandkey" class="tsd-kind-icon">expand<wbr>Key</a>
+				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a href="storeagent.html#version" class="tsd-kind-icon">VERSION</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#headers" class="tsd-kind-icon">headers</a>
+				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a href="storeagent.html#configurableprops" class="tsd-kind-icon">configurable<wbr>Props</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#lib" class="tsd-kind-icon">lib</a>
+				<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+					<a href="storeagent.html#state" class="tsd-kind-icon">state</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#method" class="tsd-kind-icon">method</a>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#filter" class="tsd-kind-icon">filter</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#timeout" class="tsd-kind-icon">timeout</a>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#filternames" class="tsd-kind-icon">filter<wbr>Names</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#url" class="tsd-kind-icon">url</a>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#getallevents" class="tsd-kind-icon">get<wbr>All<wbr>Events</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#withcredentials" class="tsd-kind-icon">with<wbr>Credentials</a>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#getnextevent" class="tsd-kind-icon">get<wbr>Next<wbr>Event</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#handlernames" class="tsd-kind-icon">handler<wbr>Names</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#on" class="tsd-kind-icon">on</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#process" class="tsd-kind-icon">process</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#reset" class="tsd-kind-icon">reset</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#spy" class="tsd-kind-icon">spy</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#subscribe" class="tsd-kind-icon">subscribe</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="storeagent.html#trigger" class="tsd-kind-icon">trigger</a>
 				</li>
 			</ul>
 		</li>
@@ -2413,10 +2434,8 @@ img {
 		<section class="tsd-panel tsd-comment">
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>Options are typical from rxjs/ajax, however the expandKey string
-						is one corresponding to an OboeJS node matcher, or a sub-key, depending on whether
-						the <code>lib</code> option is set to &quot;oboe&quot; or &quot;rxjs&quot;. Oboe is used if present in the global
-					namespace, and lib is not set to <code>rxjs</code>.</p>
+					<p>An agent that accepts a <code>StoreLike</code> and synchronously dispatches every event (with <code>filter</code>)
+					to its store. Its process method will throw if the store or reducer throws.</p>
 				</div>
 			</div>
 		</section>
@@ -2424,121 +2443,503 @@ img {
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="target">StreamingGetOptions</span>
+					<a href="agent.html" class="tsd-signature-type">Agent</a>
+					<ul class="tsd-hierarchy">
+						<li>
+							<span class="target">StoreAgent</span>
+						</li>
+					</ul>
 				</li>
 			</ul>
+		</section>
+		<section class="tsd-panel">
+			<h3>Implements</h3>
+			<ul class="tsd-hierarchy">
+				<li><a href="../interfaces/evented.html" class="tsd-signature-type">Evented</a></li>
+			</ul>
+		</section>
+		<section class="tsd-panel tsd-kind-class">
+			<h3 class="tsd-before-signature">Indexable</h3>
+			<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
+			<div class="tsd-comment tsd-typography">
+				<div class="lead">
+					<p>An agent that accepts a <code>StoreLike</code> and synchronously dispatches every event (with <code>filter</code>)
+					to its store. Its process method will throw if the store or reducer throws.</p>
+				</div>
+			</div>
 		</section>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
 			<section class="tsd-panel tsd-index-panel">
 				<div class="tsd-index-content">
 					<section class="tsd-index-section ">
+						<h3>Constructors</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="storeagent.html#constructor" class="tsd-kind-icon">constructor</a></li>
+						</ul>
+					</section>
+					<section class="tsd-index-section tsd-is-inherited">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#body" class="tsd-kind-icon">body</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#expandkey" class="tsd-kind-icon">expand<wbr>Key</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#headers" class="tsd-kind-icon">headers</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#lib" class="tsd-kind-icon">lib</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#method" class="tsd-kind-icon">method</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#timeout" class="tsd-kind-icon">timeout</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#url" class="tsd-kind-icon">url</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#withcredentials" class="tsd-kind-icon">with<wbr>Credentials</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="storeagent.html#version" class="tsd-kind-icon">VERSION</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="storeagent.html#configurableprops" class="tsd-kind-icon">configurable<wbr>Props</a></li>
+						</ul>
+					</section>
+					<section class="tsd-index-section ">
+						<h3>Accessors</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="storeagent.html#state" class="tsd-kind-icon">state</a></li>
+						</ul>
+					</section>
+					<section class="tsd-index-section tsd-is-inherited">
+						<h3>Methods</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#filter" class="tsd-kind-icon">filter</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#filternames" class="tsd-kind-icon">filter<wbr>Names</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#getallevents" class="tsd-kind-icon">get<wbr>All<wbr>Events</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#getnextevent" class="tsd-kind-icon">get<wbr>Next<wbr>Event</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#handlernames" class="tsd-kind-icon">handler<wbr>Names</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#on" class="tsd-kind-icon">on</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#process" class="tsd-kind-icon">process</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#reset" class="tsd-kind-icon">reset</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#spy" class="tsd-kind-icon">spy</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#subscribe" class="tsd-kind-icon">subscribe</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="storeagent.html#trigger" class="tsd-kind-icon">trigger</a></li>
 						</ul>
 					</section>
 				</div>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
+			<h2>Constructors</h2>
+			<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+				<a name="constructor" class="tsd-anchor"></a>
+				<h3>constructor</h3>
+				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+					<li class="tsd-signature tsd-kind-icon">new <wbr>Store<wbr>Agent<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/agentconfig.html" class="tsd-signature-type">AgentConfig</a>, store<span class="tsd-signature-symbol">: </span><a href="../interfaces/storelike.html" class="tsd-signature-type">StoreLike</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="storeagent.html" class="tsd-signature-type">StoreAgent</a></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Overrides <a href="agent.html">Agent</a>.<a href="agent.html#constructor">constructor</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L438">agent.ts:438</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>config: <a href="../interfaces/agentconfig.html" class="tsd-signature-type">AgentConfig</a></h5>
+							</li>
+							<li>
+								<h5>store: <a href="../interfaces/storelike.html" class="tsd-signature-type">StoreLike</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <a href="storeagent.html" class="tsd-signature-type">StoreAgent</a></h4>
+					</li>
+				</ul>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 			<h2>Properties</h2>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="body" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> body</h3>
-				<div class="tsd-signature tsd-kind-icon">body<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Object</span></div>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+				<a name="version" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagStatic">Static</span> VERSION</h3>
+				<div class="tsd-signature tsd-kind-icon">VERSION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;2.0.6&quot;</span></div>
 				<aside class="tsd-sources">
+					<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#version">VERSION</a></p>
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L157">types.ts:157</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L53">agent.ts:53</a></li>
 					</ul>
 				</aside>
 			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="expandkey" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> expand<wbr>Key</h3>
-				<div class="tsd-signature tsd-kind-icon">expand<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+				<a name="configurableprops" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagStatic">Static</span> configurable<wbr>Props</h3>
+				<div class="tsd-signature tsd-kind-icon">configurable<wbr>Props<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;agentId&quot;]</span></div>
 				<aside class="tsd-sources">
+					<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#configurableprops">configurableProps</a></p>
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L154">types.ts:154</a></li>
-					</ul>
-				</aside>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>If an RxJS request, you can provide a key of an array field to turn its items into your notifications. If an Oboe request see: <a href="http://oboejs.com/api#pattern-matching">http://oboejs.com/api#pattern-matching</a></p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="headers" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> headers</h3>
-				<div class="tsd-signature tsd-kind-icon">headers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Object</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L156">types.ts:156</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L52">agent.ts:52</a></li>
 					</ul>
 				</aside>
 			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="lib" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> lib</h3>
-				<div class="tsd-signature tsd-kind-icon">lib<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"rxjs"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"oboe"</span></div>
+		</section>
+		<section class="tsd-panel-group tsd-member-group ">
+			<h2>Accessors</h2>
+			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+				<a name="state" class="tsd-anchor"></a>
+				<h3>state</h3>
+				<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> </div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L161">types.ts:161</a></li>
-					</ul>
-				</aside>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Defaults to <code>oboe</code> if global <code>oboe</code> is present, otherwise uses <code>rxjs</code></p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="method" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> method</h3>
-				<div class="tsd-signature tsd-kind-icon">method<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"GET"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"POST"</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L155">types.ts:155</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L436">agent.ts:436</a></li>
 					</ul>
 				</aside>
 			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="timeout" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> timeout</h3>
-				<div class="tsd-signature tsd-kind-icon">timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L159">types.ts:159</a></li>
-					</ul>
-				</aside>
+		</section>
+		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<h2>Methods</h2>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="filter" class="tsd-anchor"></a>
+				<h3>filter</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">filter<span class="tsd-signature-symbol">(</span>eventMatcher<span class="tsd-signature-symbol">: </span><a href="../globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a>, filter<span class="tsd-signature-symbol">: </span><a href="../globals.html#subscriber" class="tsd-signature-type">Subscriber</a>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/handlerconfig.html" class="tsd-signature-type">HandlerConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#filter">filter</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L327">agent.ts:327</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Filters are synchronous functions that sequentially process events,
+									possibly changing them or creating synchronous state changes.
+									Filters are useful for type-checking, writing to a memory-based store.
+								Filters run in series. Their results are present on the return value of <code>process</code>/<code>trigger</code></p>
+								<pre><code class="language-js">agent.filter(<span class="hljs-string">'search/message/success'</span>, ({ event }) =&gt; <span class="hljs-built_in">console</span>.log(event))</code></pre>
+								<p>Returns an object which, when unsubscribed, will remove our filter. Filters are <em>not</em> removed
+								automatically upon untrapped errors, like handlers attached via <code>on</code>.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>eventMatcher: <a href="../globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a></h5>
+							</li>
+							<li>
+								<h5>filter: <a href="../globals.html#subscriber" class="tsd-signature-type">Subscriber</a></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../interfaces/handlerconfig.html" class="tsd-signature-type">HandlerConfig</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
+					</li>
+				</ul>
 			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="url" class="tsd-anchor"></a>
-				<h3>url</h3>
-				<div class="tsd-signature tsd-kind-icon">url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L152">types.ts:152</a></li>
-					</ul>
-				</aside>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="filternames" class="tsd-anchor"></a>
+				<h3>filter<wbr>Names</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">filter<wbr>Names<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#filternames">filterNames</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L66">agent.ts:66</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
+					</li>
+				</ul>
 			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="withcredentials" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> with<wbr>Credentials</h3>
-				<div class="tsd-signature tsd-kind-icon">with<wbr>Credentials<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Boolean</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L158">types.ts:158</a></li>
-					</ul>
-				</aside>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="getallevents" class="tsd-anchor"></a>
+				<h3>get<wbr>All<wbr>Events</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">get<wbr>All<wbr>Events<span class="tsd-signature-symbol">(</span>matcher<span class="tsd-signature-symbol">: </span><a href="../globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/event.html" class="tsd-signature-type">Event</a><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#getallevents">getAllEvents</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L72">agent.ts:72</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Gets an Observable of all events matching the EventMatcher.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>matcher: <a href="../globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/event.html" class="tsd-signature-type">Event</a><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="getnextevent" class="tsd-anchor"></a>
+				<h3>get<wbr>Next<wbr>Event</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Next<wbr>Event<span class="tsd-signature-symbol">(</span>matcher<span class="tsd-signature-symbol">?: </span><a href="../globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/event.html" class="tsd-signature-type">Event</a><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#getnextevent">getNextEvent</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L82">agent.ts:82</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Gets a promise for the next event matching the EventMatcher.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> matcher: <a href="../globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/event.html" class="tsd-signature-type">Event</a><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="handlernames" class="tsd-anchor"></a>
+				<h3>handler<wbr>Names</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">handler<wbr>Names<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#handlernames">handlerNames</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L63">agent.ts:63</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="on" class="tsd-anchor"></a>
+				<h3>on</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>eventMatcher<span class="tsd-signature-symbol">: </span><a href="../globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a>, subscriber<span class="tsd-signature-symbol">: </span><a href="../globals.html#subscriber" class="tsd-signature-type">Subscriber</a>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/handlerconfig.html" class="tsd-signature-type">HandlerConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#on">on</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L213">agent.ts:213</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Handlers attached via <code>on</code> are functions that exist to create side-effects
+									outside of the Rx-Helper Agent. Handlers specify the events they handle via an
+									<code>EventMatcher</code>. Handlers may make changes to a
+									DOM, to a database, or communications (eg AJAX) sent on the wire. Handlers run
+									in parallel with respect to other handlers, and are error-isolated.
+									They return Observables - an object that models a series of notifications over
+									time, much like Promise models a single result over some time.
+									Should they overlap, the <code>concurrency</code> config parameter controls whether they
+								run immediately, are queued, dropped, or replace the existing running one.</p>
+							</div>
+							<p>Here we attach a handler to fire on events of <code>type: &#39;kickoff&#39;</code>.
+								After 50ms, the agent will process <code>{ type: &#39;search&#39;, payload: &#39;#go!&#39; }</code>,
+							at which point the Promise <code>result.completed.kickoff</code> will resolve.</p>
+							<pre><code class="language-js"><span class="hljs-comment">//</span>
+<span class="hljs-keyword">const</span> { on, process, after } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rx-helper'</span>)
+on(<span class="hljs-string">'kickoff'</span>, () =&gt; after(<span class="hljs-number">50</span>, () =&gt; <span class="hljs-string">'#go'</span>), { <span class="hljs-attr">type</span>: <span class="hljs-string">'search'</span> })
+<span class="hljs-comment">// Logs Done once 50 ms has elapsed</span>
+<span class="hljs-keyword">const</span> result = process({ <span class="hljs-attr">type</span>: <span class="hljs-string">'kickoff'</span> })
+result.completed.kickoff.then(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'done'</span>))</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>see</dt>
+								<dd><p>EventMatcher</p>
+								</dd>
+							</dl>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>eventMatcher: <a href="../globals.html#eventmatcher" class="tsd-signature-type">EventMatcher</a></h5>
+							</li>
+							<li>
+								<h5>subscriber: <a href="../globals.html#subscriber" class="tsd-signature-type">Subscriber</a></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../interfaces/handlerconfig.html" class="tsd-signature-type">HandlerConfig</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="process" class="tsd-anchor"></a>
+				<h3>process</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../interfaces/event.html" class="tsd-signature-type">Event</a>, context<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/processresult.html" class="tsd-signature-type">ProcessResult</a></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#process">process</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L117">agent.ts:117</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Process sends an event (eg Flux Standard Action), which
+									is an object with a payload and <code>type</code>, through the chain of
+								filters, and then triggers any applicable handlers.</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>throws</dt>
+								<dd><p>Throws if a filter errs, but not if a handler errs.</p>
+								</dd>
+								<dt>see</dt>
+								<dd><p>trigger</p>
+								</dd>
+							</dl>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>event: <a href="../interfaces/event.html" class="tsd-signature-type">Event</a></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> context: <span class="tsd-signature-type">any</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <a href="../interfaces/processresult.html" class="tsd-signature-type">ProcessResult</a></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="reset" class="tsd-anchor"></a>
+				<h3>reset</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#reset">reset</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L386">agent.ts:386</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Removes all filters and handlers, not canceling any in-progress consequences.
+								Useful as the first line of a script in a Hot-Module Reloading environment.</p>
+							</div>
+						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="spy" class="tsd-anchor"></a>
+				<h3>spy</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">spy<span class="tsd-signature-symbol">(</span>fn<span class="tsd-signature-symbol">: </span><a href="../globals.html#subscriber" class="tsd-signature-type">Subscriber</a>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/handlerconfig.html" class="tsd-signature-type">HandlerConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#spy">spy</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L349">agent.ts:349</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>fn: <a href="../globals.html#subscriber" class="tsd-signature-type">Subscriber</a></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../interfaces/handlerconfig.html" class="tsd-signature-type">HandlerConfig</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="subscribe" class="tsd-anchor"></a>
+				<h3>subscribe</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">subscribe<span class="tsd-signature-symbol">(</span>item$<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/subscribeconfig.html" class="tsd-signature-type">SubscribeConfig</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#subscribe">subscribe</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L374">agent.ts:374</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Subscribes to an Observable of events (Flux Standard Action), sending
+									each through agent.process. If the Observable is not of FSAs, include
+									{ type: &#39;theType&#39; } to wrap the Observable&#39;s items in FSAs of that type.
+								Allows a shorthand where the second argument is just a string type for wrapping.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>item$: <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../interfaces/subscribeconfig.html" class="tsd-signature-type">SubscribeConfig</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
+						<p>A subscription handle with which to unsubscribe()</p>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="trigger" class="tsd-anchor"></a>
+				<h3>trigger</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">trigger<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, payload<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span>, context<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/processresult.html" class="tsd-signature-type">ProcessResult</a></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from <a href="agent.html">Agent</a>.<a href="agent.html#trigger">trigger</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/agent.ts#L184">agent.ts:184</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Constructs an Event from the <code>type</code> and <code>payload</code> passed, and calls <code>process</code> with it.</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>see</dt>
+								<dd><p>process</p>
+								</dd>
+							</dl>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>type: <span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> payload: <span class="tsd-signature-type">any</span></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> context: <span class="tsd-signature-type">any</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <a href="../interfaces/processresult.html" class="tsd-signature-type">ProcessResult</a></h4>
+					</li>
+				</ul>
 			</section>
 		</section>
 		<footer>

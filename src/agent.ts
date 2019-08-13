@@ -18,7 +18,8 @@ import {
   ProcessResult,
   Subscriber,
   SubscribeConfig,
-  HandlerConfig
+  HandlerConfig,
+  StoreLike
 } from "./types"
 
 export {
@@ -49,7 +50,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements Evented {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.0.5"
+  public static VERSION = "2.0.6"
 
   private event$: Observable<EventedItem>
   [key: string]: any
@@ -423,6 +424,26 @@ export class Agent implements Evented {
   }
 }
 
+//
+//
+/**
+ * An agent that accepts a `StoreLike` and synchronously dispatches every event (with `filter`)
+ * to its store. Its process method will throw if the store or reducer throws.
+ */
+export class StoreAgent extends Agent {
+  private _store: StoreLike
+
+  public get state(): any {
+    return this._store.getState()
+  }
+
+  constructor(config: AgentConfig, store: StoreLike) {
+    super(config)
+    this._store = store
+
+    this.filter(true, ({ event }) => this._store.dispatch(event))
+  }
+}
 function getEventPredicate(eventMatcher: EventMatcher) {
   let predicate: (item: EventedItem) => boolean
 

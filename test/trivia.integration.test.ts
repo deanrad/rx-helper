@@ -1,31 +1,19 @@
 // @ts-nocheck
-import { Agent } from "../src/agent"
-import { init } from "@rematch/core"
+import { StoreAgent } from "../src/agent"
+import { init as initStore } from "@rematch/core"
 import { triviaStoreConfig } from "../demos/trivia/store"
+
 describe("Multi-agent Trivia Game", () => {
-  let moderator: Agent // the server
-  let player1: Agent // a player
-  let emcee: Agent // the real-life game operator
+  let moderator: StoreAgent // the server
+  let player1: StoreAgent // a player
+  let emcee: StoreAgent // the real-life game operator
   const pantsQ = { prompt: "Pants?", choices: ["Yes", "No"] }
   const pantsA = { answer: "No" }
 
   beforeAll(() => {
-    moderator = new Agent({ agentId: "moderator" })
-    player1 = new Agent({ agentId: "player1" })
-    emcee = new Agent({ agentId: "emcee" })
-
-    // Give memory to all
-    ;[moderator, player1, emcee].forEach(agent => {
-      // All agents have a store, process all events through it, and expose 'state'
-      const store = init(triviaStoreConfig)
-      agent.filter(() => true, ({ event }) => store.dispatch(event))
-
-      Object.defineProperty(agent, "state", {
-        get() {
-          return store.getState()
-        }
-      })
-    })
+    moderator = new StoreAgent({ agentId: "moderator" }, initStore(triviaStoreConfig))
+    player1 = new StoreAgent({ agentId: "player1" }, initStore(triviaStoreConfig))
+    emcee = new StoreAgent({ agentId: "emcee" }, initStore(triviaStoreConfig))
 
     // The topology defines who sends events to whom
     const topology = {
@@ -38,9 +26,7 @@ describe("Multi-agent Trivia Game", () => {
     ;[moderator, player1, emcee].forEach(agent => {
       // Stamp events with agentId
       agent.filter(true, ({ event }) => {
-        Object.assign(event, { meta: event.meta || {} })
-        //@ts-ignore
-        event.meta.agentId = agent.agentId
+        event.payload.agentId = agent.agentId
       })
 
       // Agents send events to the others in their topology
@@ -101,23 +87,24 @@ describe("Multi-agent Trivia Game", () => {
     // players answer when the round changes
 
     const playerAnswer = { from: player1.agentId, choice: "No" }
-    const filteredEvent = player1.process({
+    player1.process({
       type: "round/respond",
       payload: playerAnswer
     })
-    expect(filteredEvent.meta).toMatchObject({ agentId: "player1" })
+
     expect(player1.state.round.responses).toContain(playerAnswer)
     expect(moderator.state.round.responses).toContain(playerAnswer)
     expect(moderator.state.round.summary).toMatchObject({ Yes: 0, No: 1 })
 
     // Once the next question is chosen by the emcee, saveResponses
     // will process just prior to nextQuestion
-    const clearedIt = emcee.process({
+    emcee.process({
       type: "root/saveResponses",
       payload: playerAnswer
     })
     expect(emcee.state.game.responses).toContain(playerAnswer)
-    const nextedIt = emcee.process({
+
+    emcee.process({
       type: "game/nextQuestion",
       payload: pantsQ
     })

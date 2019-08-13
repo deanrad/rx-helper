@@ -160,3 +160,11 @@ export interface StreamingGetOptions {
   /** Defaults to `oboe` if global `oboe` is present, otherwise uses `rxjs` */
   lib?: "rxjs" | "oboe"
 }
+
+/**
+ * An object duck-typing a Redux store.
+ */
+export interface StoreLike {
+  dispatch(event: any): any
+  getState(): any
+}

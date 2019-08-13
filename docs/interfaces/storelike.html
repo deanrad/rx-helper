@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>StreamingGetOptions | rx-helper</title>
+	<title>StoreLike | rx-helper</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2378,31 +2378,13 @@ img {
 <nav class="tsd-navigation secondary">
 	<ul>
 		<li class="current tsd-kind-interface">
-			<a href="streaminggetoptions.html" class="tsd-kind-icon">Streaming<wbr>Get<wbr>Options</a>
+			<a href="storelike.html" class="tsd-kind-icon">Store<wbr>Like</a>
 			<ul>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#body" class="tsd-kind-icon">body</a>
+				<li class=" tsd-kind-method tsd-parent-kind-interface">
+					<a href="storelike.html#dispatch" class="tsd-kind-icon">dispatch</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#expandkey" class="tsd-kind-icon">expand<wbr>Key</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#headers" class="tsd-kind-icon">headers</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#lib" class="tsd-kind-icon">lib</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#method" class="tsd-kind-icon">method</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#timeout" class="tsd-kind-icon">timeout</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#url" class="tsd-kind-icon">url</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="streaminggetoptions.html#withcredentials" class="tsd-kind-icon">with<wbr>Credentials</a>
+				<li class=" tsd-kind-method tsd-parent-kind-interface">
+					<a href="storelike.html#getstate" class="tsd-kind-icon">get<wbr>State</a>
 				</li>
 			</ul>
 		</li>
@@ -2413,10 +2395,7 @@ img {
 		<section class="tsd-panel tsd-comment">
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>Options are typical from rxjs/ajax, however the expandKey string
-						is one corresponding to an OboeJS node matcher, or a sub-key, depending on whether
-						the <code>lib</code> option is set to &quot;oboe&quot; or &quot;rxjs&quot;. Oboe is used if present in the global
-					namespace, and lib is not set to <code>rxjs</code>.</p>
+					<p>An object duck-typing a Redux store.</p>
 				</div>
 			</div>
 		</section>
@@ -2424,7 +2403,7 @@ img {
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="target">StreamingGetOptions</span>
+					<span class="target">StoreLike</span>
 				</li>
 			</ul>
 		</section>
@@ -2433,112 +2412,56 @@ img {
 			<section class="tsd-panel tsd-index-panel">
 				<div class="tsd-index-content">
 					<section class="tsd-index-section ">
-						<h3>Properties</h3>
+						<h3>Methods</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#body" class="tsd-kind-icon">body</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#expandkey" class="tsd-kind-icon">expand<wbr>Key</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#headers" class="tsd-kind-icon">headers</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#lib" class="tsd-kind-icon">lib</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#method" class="tsd-kind-icon">method</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#timeout" class="tsd-kind-icon">timeout</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#url" class="tsd-kind-icon">url</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="streaminggetoptions.html#withcredentials" class="tsd-kind-icon">with<wbr>Credentials</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="storelike.html#dispatch" class="tsd-kind-icon">dispatch</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="storelike.html#getstate" class="tsd-kind-icon">get<wbr>State</a></li>
 						</ul>
 					</section>
 				</div>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
-			<h2>Properties</h2>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="body" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> body</h3>
-				<div class="tsd-signature tsd-kind-icon">body<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Object</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L157">types.ts:157</a></li>
-					</ul>
-				</aside>
+			<h2>Methods</h2>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<a name="dispatch" class="tsd-anchor"></a>
+				<h3>dispatch</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<li class="tsd-signature tsd-kind-icon">dispatch<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L168">types.ts:168</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>event: <span class="tsd-signature-type">any</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+					</li>
+				</ul>
 			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="expandkey" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> expand<wbr>Key</h3>
-				<div class="tsd-signature tsd-kind-icon">expand<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L154">types.ts:154</a></li>
-					</ul>
-				</aside>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>If an RxJS request, you can provide a key of an array field to turn its items into your notifications. If an Oboe request see: <a href="http://oboejs.com/api#pattern-matching">http://oboejs.com/api#pattern-matching</a></p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="headers" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> headers</h3>
-				<div class="tsd-signature tsd-kind-icon">headers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Object</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L156">types.ts:156</a></li>
-					</ul>
-				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="lib" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> lib</h3>
-				<div class="tsd-signature tsd-kind-icon">lib<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"rxjs"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"oboe"</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L161">types.ts:161</a></li>
-					</ul>
-				</aside>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Defaults to <code>oboe</code> if global <code>oboe</code> is present, otherwise uses <code>rxjs</code></p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="method" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> method</h3>
-				<div class="tsd-signature tsd-kind-icon">method<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"GET"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"POST"</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L155">types.ts:155</a></li>
-					</ul>
-				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="timeout" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> timeout</h3>
-				<div class="tsd-signature tsd-kind-icon">timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L159">types.ts:159</a></li>
-					</ul>
-				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="url" class="tsd-anchor"></a>
-				<h3>url</h3>
-				<div class="tsd-signature tsd-kind-icon">url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L152">types.ts:152</a></li>
-					</ul>
-				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="withcredentials" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> with<wbr>Credentials</h3>
-				<div class="tsd-signature tsd-kind-icon">with<wbr>Credentials<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Boolean</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L158">types.ts:158</a></li>
-					</ul>
-				</aside>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<a name="getstate" class="tsd-anchor"></a>
+				<h3>get<wbr>State</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<li class="tsd-signature tsd-kind-icon">get<wbr>State<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/037b5ef/src/types.ts#L169">types.ts:169</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+					</li>
+				</ul>
 			</section>
 		</section>
 		<footer>
