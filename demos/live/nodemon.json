@@ -1,6 +1,6 @@
 {
   "events": {
-    "start": ": > ../scratch/live-actors.yml",
-    "restart": ": > ../scratch/live-actors.yml"
+    "start": "clear; : > ../scratch/live-actors.yml",
+    "restart": "clear; : > ../scratch/live-actors.yml"
   }
 }

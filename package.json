@@ -44,7 +44,7 @@
     "size": "size-limit",
     "demos": "npm run build && node demos/index",
     "demos:setup": "npm install; npm run build; cd demos/live; npm install",
-    "demos:live:1": "npm run demos:install; cd demos/live; code ../scratch/live-actors.yml 01-write-file.js && nodemon 01-write-file.js",
+    "demos:live:1": "cd demos/live; code ../scratch/live-actors.yml 01-write-file.js && nodemon 01-write-file.js",
     "demos:sessionTimeout:1": "cross-env DEMO=sessionTimeout node demos/index",
     "demos:sessionTimeout:2": "cross-env inactivityInterval=5000 warningInterval=2000 DEMO=sessionTimeout node demos/index",
     "demos:sessionTimeout:3": "cross-env inactivityInterval=5000 warningInterval=2000 DEMO=sessionTimeout INTERACTIVE=1 node demos/index",
