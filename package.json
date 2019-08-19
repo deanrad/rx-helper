@@ -1,12 +1,12 @@
 {
   "name": "rx-helper",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Structure your applications around events. Focus on causes ⟺ effects.",
   "keywords": [],
   "sideEffects": false,
   "main": "dist/rx-helper.js",
   "module": "dist/rx-helper.js",
-  "typings": "dist/rx-helper.d.ts",
+  "types": "dist/rx-helper.d.ts",
   "files": [
     "dist/**/*",
     "runkitExample.js"

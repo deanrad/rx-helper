@@ -234,7 +234,7 @@ describe("Agent", () => {
         describe("name", () => {
           it("will be filter_N if not given for a filter", () => {
             expect(agent.filterNames()).not.toContain("filter_1")
-            agent.filter(() => true, () => 3.141)
+            agent.filter(true, () => 3.141)
             expect(agent.filterNames()).toContain("filter_1")
           })
 
@@ -267,7 +267,7 @@ describe("Agent", () => {
             expect.assertions(reservedSubscriberNames.length)
             reservedSubscriberNames.forEach(badName => {
               expect(() => {
-                agent.filter(() => true, nullFn, { name: badName })
+                agent.filter(true, nullFn, { name: badName })
               }).toThrow()
             })
           })
@@ -304,7 +304,7 @@ describe("Agent", () => {
       describe("return value", () => {
         it("is a subscription, to allow cancelation", () => {
           let callCount = 0
-          const subscription = agent.filter(() => true, () => callCount++)
+          const subscription = agent.filter(true, () => callCount++)
           const result = agent.process(anyEvent)
           expect(callCount).toEqual(1)
           subscription.unsubscribe()
@@ -429,9 +429,9 @@ describe("Agent", () => {
             let seenEvents = []
             agent = new Agent()
             // filter to remember
-            agent.filter(() => true, ({ event }) => (seenEvents = [...seenEvents, event]))
-            // handler to wrap
+            agent.filter(true, ({ event }) => (seenEvents = [...seenEvents, event]))
 
+            // handler to wrap
             agent.on("wrap", () => of(2.1), { type: "mapped" }) // implies processResults: true
 
             return agent.process({ type: "wrap" }).completed.then(() => {
@@ -503,15 +503,15 @@ describe("Agent", () => {
       })
       it("Has handler results as properties under #completed", async () => {
         // Run on every event
-        agent.on(() => true, peekOnly, { name: "peek" })
-        agent.on(() => true, ({ event }) => event, { name: "seen" })
-        agent.on(() => true, deferredCallCounter, { name: "later" })
-        agent.on(() => true, delayedCall(100), { name: "molater" })
-        agent.on(() => true, () => Promise.resolve(5), { name: "promise" })
-        agent.on(() => true, () => "the0ry", { name: "string" })
-        agent.on(() => true, () => 2.71828, { name: "num" })
-        agent.on(() => true, () => [3, 1, "2!"], { name: "ary" })
-        agent.on(() => false, () => of(undefined), { name: "notrun" })
+        agent.on(true, peekOnly, { name: "peek" })
+        agent.on(true, ({ event }) => event, { name: "seen" })
+        agent.on(true, deferredCallCounter, { name: "later" })
+        agent.on(true, delayedCall(100), { name: "molater" })
+        agent.on(true, () => Promise.resolve(5), { name: "promise" })
+        agent.on(true, () => "the0ry", { name: "string" })
+        agent.on(true, () => 2.71828, { name: "num" })
+        agent.on(true, () => [3, 1, "2!"], { name: "ary" })
+        agent.on(false, () => of(undefined), { name: "notrun" })
 
         const anyEvent = { type: "oOo" }
         // Call #process. Result Duck types the event

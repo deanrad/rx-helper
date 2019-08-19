@@ -50,7 +50,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements Evented {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.0.6"
+  public static VERSION = "2.0.7"
 
   private event$: Observable<EventedItem>
   [key: string]: any
@@ -187,14 +187,14 @@ export class Agent implements Evented {
 
   /**
    * Handlers attached via `on` are functions that exist to create side-effects
-   * outside of the Rx-Helper Agent. Handlers specify the events they handle via an
-   * `EventMatcher`. Handlers may make changes to a
-   * DOM, to a database, or communications (eg AJAX) sent on the wire. Handlers run
-   * in parallel with respect to other handlers, and are error-isolated.
+   * outside of the Rx-Helper Agent. Handlers may make changes to a DOM, database,
+   * or put messages (eg AJAX) onto the network.
+   * Handlers specify the events they handle via an `EventMatcher`.
+   * Handlers run in parallel with respect to other handlers, and are error-isolated.
    * They return Observables - an object that models a series of notifications over
    * time, much like Promise models a single result over some time.
    * Should they overlap, the `concurrency` config parameter controls whether they
-   * run immediately, are queued, dropped, or replace the existing running one.
+   * run immediately, are queued, dropped, or replace the currently running one.
    *
    * Here we attach a handler to fire on events of `type: 'kickoff'`.
    * After 50ms, the agent will process `{ type: 'search', payload: '#go!' }`,
@@ -217,7 +217,7 @@ export class Agent implements Evented {
 
     const name = this.uniquifyName(config.name, eventMatcher, "handler")
     const predicate = getEventPredicate(eventMatcher || (() => true))
-    const concurrency = config.concurrency || Concurrency.parallel
+    const concurrency = config.concurrency || config.mode || Concurrency.parallel
     const cutoffHandler = config.onCutoff
 
     let prevSub: Subscription // for cutoff to unsubscribe, mute not to start a new
@@ -255,8 +255,9 @@ export class Agent implements Evented {
       }
 
       // 2. If processing results, set that up
-      if (config.processResults || config.type) {
-        const opts: SubscribeConfig = config.type ? { type: config.type } : {}
+      if (config.processResults || config.type || config.triggerAs) {
+        const triggerType = config.type || config.triggerAs
+        const opts: SubscribeConfig = triggerType ? { type: triggerType } : {}
         if (config.withContext) {
           opts.context = context
         }
@@ -365,17 +366,23 @@ export class Agent implements Evented {
 
   /**
    * Subscribes to an Observable of events (Flux Standard Action), sending
-   * each through agent.process. If the Observable is not of FSAs, include
-   * { type: 'theType' } to wrap the Observable's items in FSAs of that type.
+   * each through `agent.process`. If the Observable is not of FSAs, include a
+   * `type` or `triggerAs` field in the 2nd argument to wrap the Observable's
+   * items in FSAs of that type.
    * Allows a shorthand where the second argument is just a string type for wrapping.
    * @return A subscription handle with which to unsubscribe()
    *
    */
   subscribe(item$: Observable<any>, config: SubscribeConfig | string = {}): Subscription {
     const _config = typeof config === "string" ? { type: config } : config
+    const triggerType = _config.type || _config.triggerAs
     return item$.subscribe(item => {
-      const event = _config.type ? { type: _config.type, payload: item } : item
-      this.process(event, _config.context)
+      if (triggerType) {
+        this.trigger(triggerType, item)
+      } else {
+        const event = _config.type ? { type: _config.type, payload: item } : item
+        this.process(event, _config.context)
+      }
     })
   }
 

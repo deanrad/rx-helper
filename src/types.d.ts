@@ -100,11 +100,15 @@ export interface HandlerConfig {
     /** A name by which the results will be keyed. Example: `agent.process(event).completed.NAME.then(() => ...)` */
     name?: string;
     /** The concurrency mode to use. Governs what happens when another handling from this handler is already in progress. */
+    mode?: Concurrency;
+    /** Alias for `mode`. */
     concurrency?: Concurrency;
     /** If true, the Observable returned by the handler will be fed to `agent.subscribe`, so its events are `process`ed. */
     processResults?: Boolean;
     /** If provided, this handlers' Observables values will be wrapped in FSAs with this type. */
     type?: string;
+    /** Alias for `type`. */
+    triggerAs?: string;
     /** If provided, this will be called if cutoff mode terminates a handling. Parameter is {event}. */
     onCutoff?: Subscriber;
     /** If provided, the context of the event being responded to will be forwarded */
@@ -113,6 +117,8 @@ export interface HandlerConfig {
 export interface SubscribeConfig {
     /** If provided, this handlers' Observables values will be wrapped in FSAs with this type. */
     type?: string;
+    /** Alias for `type`. */
+    triggerAs?: string;
     /** If provided, this will be the context argument for each processed event */
     context?: any;
 }
