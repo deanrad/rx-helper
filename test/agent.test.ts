@@ -361,11 +361,11 @@ describe("Agent", () => {
         })
       })
 
-      describe("handler", () => {
-        it.skip("should return an Observable", () => {})
-        it.skip("may return a Subscription", () => {})
-        it.skip("may return a Promise", () => {})
-        it.skip("may return any object, null, or undefined", () => {})
+      describe("Handler", () => {
+        it.skip("Returns an Observable", () => {})
+        it.skip("May return a Subscription", () => {})
+        it.skip("May return a Promise", () => {})
+        it.skip("May return any object, null, or undefined", () => {})
       })
 
       describe("config", () => {
@@ -442,8 +442,8 @@ describe("Agent", () => {
       })
     })
 
-    describe("behavior", () => {
-      it("should supplement the return value of process via completed", () => {
+    describe("Behavior", () => {
+      it("Supplements the return value of process via completed", () => {
         expect.assertions(3)
         const seenTypes = []
         agent.on(/foo/, ({ event: { type } }) => {
