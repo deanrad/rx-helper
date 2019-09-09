@@ -5,9 +5,10 @@ import {
   animationFrameScheduler,
   from,
   of,
-  interval
+  interval,
+  BehaviorSubject
 } from "rxjs"
-import { filter as rxFilter, map, first } from "rxjs/operators"
+import { filter as rxFilter, map, first, tap } from "rxjs/operators"
 import {
   Evented,
   Event,
@@ -55,6 +56,8 @@ export class Agent implements Evented {
   private event$: Observable<EventedItem>
   [key: string]: any
 
+  private _eventGraph: BehaviorSubject<Object>
+
   private _subscriberCount = 0
   private Evented: Subject<EventedItem>
   private allFilters: Map<string, Subscriber>
@@ -90,11 +93,28 @@ export class Agent implements Evented {
       .toPromise()
   }
 
+  get eventGraph() {
+    return this._eventGraph.asObservable()
+  }
+  private addEventGraphEdge(fromType: string, toType: string) {
+    const thisGraph = this._eventGraph.value
+    // @ts-ignore
+    const theseEdges = thisGraph[fromType] as Array<string>
+    const newEdges = theseEdges || []
+    newEdges.includes(toType) || newEdges.push(toType)
+    const newGraph = Object.assign({}, thisGraph, {
+      [fromType]: newEdges
+    })
+    this._eventGraph.next(newGraph)
+  }
+
   constructor(config: AgentConfig = {}) {
     this.Evented = new Subject<EventedItem>()
     this.event$ = this.Evented.asObservable()
     this.allFilters = new Map<string, Subscriber>()
     this.allHandlers = new Map<string, Function>()
+    this._eventGraph = new BehaviorSubject({})
+    this.triggerStack = []
     config.agentId = config.agentId || randomId()
     for (let key of Object.keys(config)) {
       Agent.configurableProps.includes(key) &&
@@ -107,6 +127,8 @@ export class Agent implements Evented {
     }
   }
 
+  private triggerStack: Array<string>
+
   /**
    * Process sends an event (eg Flux Standard Action), which
    * is an object with a payload and `type`, through the chain of
@@ -115,66 +137,77 @@ export class Agent implements Evented {
    * @see trigger
    */
   process(event: Event, context?: any): ProcessResult {
-    // Execute all filters one after the other, synchronously, in the order added
-    const filterResults = new Map<string, any>()
-    const item: EventedItem = {
-      event,
-      results: filterResults
-    }
-    this.runFilters(item, filterResults)
+    try {
+      this.triggerStack.push(event.type)
+      // Execute all filters one after the other, synchronously, in the order added
+      const filterResults = new Map<string, any>()
+      const item: EventedItem = {
+        event,
+        results: filterResults
+      }
+      this.runFilters(item, filterResults)
 
-    this.Evented.next(item)
+      this.Evented.next(item)
 
-    // Add readonly properties for each filter result
-    // The return value of agent.process ducktypes the event,
-    // plus some additional properties
-    const resultObject = Object.assign({}, event)
-    for (let [key, value] of filterResults) {
-      Object.defineProperty(resultObject, key.toString(), {
-        value,
+      // Add readonly properties for each filter result
+      // The return value of agent.process ducktypes the event,
+      // plus some additional properties
+      const resultObject = Object.assign({}, event)
+      for (let [key, value] of filterResults) {
+        Object.defineProperty(resultObject, key.toString(), {
+          value,
+          configurable: false,
+          enumerable: true,
+          writable: false
+        })
+      }
+
+      const handlerPromises = new Map<string, Promise<any>>()
+      for (let [name, handlerPromiser] of this.allHandlers) {
+        handlerPromises.set(name, handlerPromiser(event, context))
+      }
+
+      // From the handlerPromises, create the Promise for an array of {name, resolvedValue} objects,
+      // then reduce it to an object where the resolved values are keyed under the name
+      const completedObject = Promise.all(
+        Array.from(handlerPromises.keys()).map(name => {
+          // @ts-ignore
+          return handlerPromises.get(name).then(value => ({ name, resolvedValue: value }))
+        })
+      ).then(arrResults => {
+        return arrResults.reduce((all, one) => {
+          // @ts-ignore
+          all[one.name] = one.resolvedValue
+          return all
+        }, {})
+      })
+
+      for (let name of handlerPromises.keys()) {
+        Object.defineProperty(completedObject, name, {
+          value: handlerPromises.get(name),
+          configurable: false,
+          enumerable: true,
+          writable: false
+        })
+      }
+
+      Object.defineProperty(resultObject, "completed", {
+        value: completedObject,
         configurable: false,
         enumerable: true,
         writable: false
       })
+
+      if (this.triggerStack.length > 1) {
+        const lastIdx = this.triggerStack.length - 1
+        const fromType = this.triggerStack[lastIdx - 1]
+        const toType = this.triggerStack[lastIdx]
+        this.addEventGraphEdge(fromType, toType)
+      }
+      return resultObject
+    } finally {
+      this.triggerStack.pop()
     }
-
-    const handlerPromises = new Map<string, Promise<any>>()
-    for (let [name, handlerPromiser] of this.allHandlers) {
-      handlerPromises.set(name, handlerPromiser(event, context))
-    }
-
-    // From the handlerPromises, create the Promise for an array of {name, resolvedValue} objects,
-    // then reduce it to an object where the resolved values are keyed under the name
-    const completedObject = Promise.all(
-      Array.from(handlerPromises.keys()).map(name => {
-        // @ts-ignore
-        return handlerPromises.get(name).then(value => ({ name, resolvedValue: value }))
-      })
-    ).then(arrResults => {
-      return arrResults.reduce((all, one) => {
-        // @ts-ignore
-        all[one.name] = one.resolvedValue
-        return all
-      }, {})
-    })
-
-    for (let name of handlerPromises.keys()) {
-      Object.defineProperty(completedObject, name, {
-        value: handlerPromises.get(name),
-        configurable: false,
-        enumerable: true,
-        writable: false
-      })
-    }
-
-    Object.defineProperty(resultObject, "completed", {
-      value: completedObject,
-      configurable: false,
-      enumerable: true,
-      writable: false
-    })
-
-    return resultObject
   }
 
   /**
@@ -261,8 +294,25 @@ export class Agent implements Evented {
         if (config.withContext) {
           opts.context = context
         }
+
         // Some events from an Observable may be seen prior to the next event
-        this.subscribe(ender, opts)
+        this.subscribe(
+          ender.pipe(
+            tap(consequentialEvent => {
+              // @ts-ignore
+              const targetType = (config.processResults ? consequentialEvent.type : triggerType) || ""
+              try {
+                this.addEventGraphEdge(
+                  event.type,
+
+                  targetType
+                )
+              } finally {
+              }
+            })
+          ),
+          opts
+        )
       }
 
       // 3. Subscribe to the recipe accordingly

@@ -1,6 +1,16 @@
 /* tslint:disable  */
-import { Observable, Subscription, of, from, empty, timer, throwError, concat } from "rxjs"
-import { map, first, toArray, scan, tap } from "rxjs/operators"
+import {
+  Observable,
+  Subscription,
+  of,
+  from,
+  empty,
+  timer,
+  throwError,
+  concat,
+  BehaviorSubject
+} from "rxjs"
+import {  first, toArray, scan, tap } from "rxjs/operators"
 import {
   Event,
   Agent,
@@ -8,7 +18,6 @@ import {
   Subscriber,
   reservedSubscriberNames,
   after,
-  AgentConfig,
   toProps,
   ajaxStreamingGet,
   randomId
@@ -174,6 +183,57 @@ describe("Agent", () => {
         return agent.process({ type: "foo", payload: 1.2 }).completed.then(() => {
           expect(state).toEqual([1.1, 1.2])
         })
+      })
+    })
+
+    describe("eventGraph", () => {
+      const fs = require("fs")
+      const ps = require("child_process")
+      const graphJSON = "./demos/scratch/graph-agent.test.json"
+      const colorFile = "./demos/graph-colors.json"
+
+      // Contains a map of source event types to arrays of event types returned
+      it.only("Adds edges when events are configured to cause new events", () => {
+        const agent = new Agent()
+        const graphs = new BehaviorSubject({})
+        agent.eventGraph.subscribe(graphs)
+        agent.eventGraph.subscribe(graph => {
+          fs.writeFileSync(graphJSON, JSON.stringify(graph, null, 2))
+        })
+        expect(graphs.value).toEqual({})
+
+        agent.on(/foo.*/, () => of("a payload"), { triggerAs: "bar" })
+        agent.on("baz", () => of("a payload"), { triggerAs: "bar" })
+        agent.on("quux", () => of({ type: "boom" }), { processResults: true })
+        agent.on("quux", () => {
+          agent.trigger("bam")
+        })
+        agent.on("bam", () => {
+          agent.trigger("bangO!")
+        })
+
+        // wont add doubles
+        agent.trigger("foo")
+        agent.trigger("foo")
+
+        // edges will only appear for 'bar' since its in a handler config
+        expect(graphs.value).toEqual({ foo: ["bar"] })
+
+        // multiple trigger types can cause the same effect
+        agent.trigger("baz")
+        agent.trigger("fooz")
+        expect(graphs.value).toEqual({ foo: ["bar"], fooz: ["bar"], baz: ["bar"] })
+
+        // processResults events also done
+        agent.trigger("quux")
+        expect(graphs.value).toEqual({
+          bam: ["bangO!"],
+          foo: ["bar"], fooz: ["bar"], baz: ["bar"], quux: ["boom", "bam"] })
+
+        // Render graph to HTML and open in browser
+        // const graphHTML = graphJSON.replace(".json", ".html")
+        // ps.execSync(`dependito -f json -d ${graphJSON} -r ${colorFile} > ${graphHTML}`)
+        // ps.exec(`open ${graphHTML}`)
       })
     })
   })
