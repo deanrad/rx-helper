@@ -189,12 +189,28 @@ describe("Agent", () => {
   })
 
   describe("#filter", () => {
+    beforeEach(() => {
+      agent = new Agent()
+    })
     it("will be called synchronously when an event is processed", () => {
       const spy = jest.fn()
       agent.filter(() => true, spy)
       expect(spy).not.toHaveBeenCalled()
       agent.process(anyEvent)
       expect(spy).toHaveBeenCalled()
+    })
+
+    it("can add a handler called immediately (ala groupby)", () => {
+      const jitHandler = jest.fn()
+      agent.reset()
+      expect(agent.handlerNames()).toEqual([])
+      agent.filter("needsHandler", () => {
+        agent.on("needsHandler", jitHandler, { name: "jitHandler" })
+      })
+
+      agent.trigger("needsHandler")
+      expect(agent.handlerNames()).toEqual(["jitHandler"])
+      expect(jitHandler).toHaveBeenCalled()
     })
   })
 
