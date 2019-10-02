@@ -5,9 +5,10 @@ import {
   animationFrameScheduler,
   from,
   of,
-  interval
+  interval,
+  timer
 } from "rxjs"
-import { filter as rxFilter, map, first } from "rxjs/operators"
+import { filter as rxFilter, map, mapTo, first } from "rxjs/operators"
 import {
   Evented,
   Event,
@@ -50,7 +51,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements Evented {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.0.7"
+  public static VERSION = "2.1.0"
 
   private event$: Observable<EventedItem>
   [key: string]: any
@@ -119,6 +120,8 @@ export class Agent implements Evented {
     const filterResults = new Map<string, any>()
     const item: EventedItem = {
       event,
+      type: event.type,
+      payload: event.payload,
       results: filterResults
     }
     this.runFilters(item, filterResults)
@@ -245,7 +248,7 @@ export class Agent implements Evented {
 
       // 1. Get the Observable aka recipe back from the handler
       try {
-        const eventStreamItem = { event, context }
+        const eventStreamItem = { event, context, type: event.type, payload: event.payload }
         const subscriberReturnValue = subscriber(eventStreamItem, event.payload)
         recipe = toObservable(subscriberReturnValue)
       } catch (ex) {
@@ -563,6 +566,30 @@ export const { process, trigger, filter, spy, on, subscribe, reset } = {
   on: agent.on.bind(agent),
   subscribe: agent.subscribe.bind(agent),
   reset: agent.reset.bind(agent)
+}
+
+/**
+ * Delays the invocation of a function, for the number of milliseconds given.
+ * Produces an Observable of the thunk's invocation and subsequent return value.
+ * The optional 3rd argument can be a name string which will be passed to the thunk.
+ * @returns An Observable of the object or thunk return value. It is 'thenable', so may also be awaited directly.
+ * @example after(100, name => ({type: `Timeout-${name}`}), 'session_expired').subscribe(event => ...)
+ */
+export const after = (ms: number, objOrFn: any, name = "") => {
+  let returnObs: Observable<any>
+  if (objOrFn instanceof Function) {
+    returnObs = timer(ms).pipe(map(() => objOrFn(name)))
+  } else {
+    returnObs = timer(ms).pipe(mapTo(objOrFn))
+  }
+
+  // after is a 'thenable, thus usable with await.
+  // ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await
+  // @ts-ignore
+  returnObs.then = function(resolve, reject) {
+    return this.toPromise().then(resolve, reject)
+  }
+  return returnObs
 }
 
 /** Controls what types can be returned from an `on` handler:

@@ -1,32 +1,8 @@
 import { Observable, from, of } from "rxjs"
 import { ajax } from "rxjs/ajax"
 import { StreamingGetOptions } from "./types"
-import { timer } from "rxjs"
-import { map, mapTo, flatMap } from "rxjs/operators"
+import { flatMap } from "rxjs/operators"
 
-/**
- * Delays the invocation of a function, for the number of milliseconds given.
- * Produces an Observable of the thunk's invocation and subsequent return value.
- * The optional 3rd argument can be a name string which will be passed to the thunk.
- * @returns An Observable of the object or thunk return value. It is 'thenable', so may also be awaited directly.
- * @example after(100, name => ({type: `Timeout-${name}`}), 'session_expired').subscribe(event => ...)
- */
-export const after = (ms: number, objOrFn: any, name = "") => {
-  let returnObs: Observable<any>
-  if (objOrFn instanceof Function) {
-    returnObs = timer(ms).pipe(map(() => objOrFn(name)))
-  } else {
-    returnObs = timer(ms).pipe(mapTo(objOrFn))
-  }
-
-  // after is a 'thenable, thus usable with await.
-  // ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await
-  // @ts-ignore
-  returnObs.then = function(resolve, reject) {
-    return this.toPromise().then(resolve, reject)
-  }
-  return returnObs
-}
 
 /**
  * Gets the resource, returning an Observable of resources referred to by the URL

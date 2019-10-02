@@ -40,6 +40,10 @@ export interface Event {
 export interface EventedItem {
     /** The event which caused a filter/handler to be run */
     event: Event;
+    /** The type of the event */
+    type?: string;
+    payload?: any;
+    /** The payload of the event */
     /** An optional object, like the websocket or http response
      * that this event arrived on, on which its processing may
      * make function calls (such as res.write())

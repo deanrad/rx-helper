@@ -1,6 +1,6 @@
 /* tslint:disable  */
 import { Observable, Subscription, of, from, empty, timer, throwError, concat } from "rxjs"
-import { map, first, toArray, scan, tap } from "rxjs/operators"
+import { first, toArray, scan, tap } from "rxjs/operators"
 import {
   Event,
   Agent,
@@ -8,7 +8,6 @@ import {
   Subscriber,
   reservedSubscriberNames,
   after,
-  AgentConfig,
   toProps,
   ajaxStreamingGet,
   randomId
@@ -243,6 +242,15 @@ describe("Agent", () => {
       describe("function argument", () => {
         it("should be a function", () => {
           agent.filter(() => true, nullFn)
+        })
+        it("receives type and payload as properties on the first argument", () => {
+          const spy = jest.fn()
+          agent.filter(true, ({ type, payload }) => {
+            spy({ type, payload })
+          })
+          agent.process({ type: "foo", payload: "bar" })
+          expect(spy).toHaveBeenCalled()
+          expect(spy).toHaveBeenCalledWith({ type: "foo", payload: "bar" })
         })
       })
 
@@ -722,6 +730,15 @@ describe("Agent", () => {
               after(20, `end: ${event.payload}`)
             )
 
+          it("can be called with either concurrency or mode property", async () => {
+            const syncArray = []
+            agent.on("foo", ({ payload }) => after(20, () => syncArray.push(payload)), {
+              mode: Concurrency.serial
+            })
+            agent.trigger("foo", "bar1")
+            agent.trigger("foo", "bar2")
+            await after(25, () => expect(syncArray).toEqual(["bar1"]))
+          })
           describe("Parallel", () => {
             it("Should start handlings up asap", async () => {
               agent.on("concur", concurTester, {
