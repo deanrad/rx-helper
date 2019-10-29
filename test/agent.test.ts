@@ -1042,6 +1042,23 @@ describe("Utilities", () => {
         expect(result).toEqual(2.718)
       })
     })
+    describe("Cancelability", () => {
+      it("Can be canceled", async () => {
+        const results = []
+
+        const twoEvents = [1, 2].map(i => after(10, () => results.push(i)))
+
+        const sub = concat(...twoEvents).subscribe()
+
+        await after(10, () => {
+          expect(results).toEqual([1])
+          sub.unsubscribe()
+        })
+        await after(30, () => {
+          expect(results).toEqual([1])
+        })
+      })
+    })
   })
 
   const TEST_API_SERVER = "https://jsonplaceholder.typicode.com"
