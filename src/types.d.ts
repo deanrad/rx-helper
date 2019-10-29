@@ -60,8 +60,9 @@ export interface EventedItem {
  * - serial: Concurrency of 1, handlers are queued
  * - cutoff: Concurrency of 1, any existing handler is killed
  * - mute: Concurrency of 1, existing handler prevents new handlers
+ * - toggle: Concurrency of 1, kill existing, otherwise start anew
  *
- * ![concurrency modes](https://s3.amazonaws.com/www.deanius.com/ConcurModes.png)
+ * ![concurrency modes](https://s3.amazonaws.com/www.deanius.com/ConcurModes2.png)
  */
 export declare enum Concurrency {
     /**
@@ -75,7 +76,10 @@ export declare enum Concurrency {
     cutoff = "cutoff",
     /**
      * Concurrency of 1, existing handler prevents new handlers */
-    mute = "mute"
+    mute = "mute",
+    /**
+     * Concurrency of 1, existing handler is canceled, and prevents new handlers */
+    toggle = "toggle"
 }
 /**
  * The function you assign to handle `.on(eventType)`

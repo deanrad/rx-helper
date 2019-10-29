@@ -924,6 +924,9 @@ img { max-width: 100%; }
 				<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
 					<a href="concurrency.html#serial" class="tsd-kind-icon">serial</a>
 				</li>
+				<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+					<a href="concurrency.html#toggle" class="tsd-kind-icon">toggle</a>
+				</li>
 			</ul>
 		</li>
 	</ul>
@@ -941,9 +944,10 @@ img { max-width: 100%; }
 						<li>serial: Concurrency of 1, handlers are queued</li>
 						<li>cutoff: Concurrency of 1, any existing handler is killed</li>
 						<li>mute: Concurrency of 1, existing handler prevents new handlers</li>
+						<li>toggle: Concurrency of 1, kill existing, otherwise start anew</li>
 					</ul>
 				</div>
-				<p><img src="https://s3.amazonaws.com/www.deanius.com/ConcurModes.png" alt="concurrency modes"></p>
+				<p><img src="https://s3.amazonaws.com/www.deanius.com/ConcurModes2.png" alt="concurrency modes"></p>
 			</div>
 		</section>
 		<section class="tsd-panel-group tsd-index-group">
@@ -957,6 +961,7 @@ img { max-width: 100%; }
 							<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="concurrency.html#mute" class="tsd-kind-icon">mute</a></li>
 							<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="concurrency.html#parallel" class="tsd-kind-icon">parallel</a></li>
 							<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="concurrency.html#serial" class="tsd-kind-icon">serial</a></li>
+							<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="concurrency.html#toggle" class="tsd-kind-icon">toggle</a></li>
 						</ul>
 					</section>
 				</div>
@@ -970,7 +975,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">cutoff<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;cutoff&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/3459465/src/types.ts#L81">types.ts:81</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1f7f558/src/types.ts#L82">types.ts:82</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -985,7 +990,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">mute<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;mute&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/3459465/src/types.ts#L84">types.ts:84</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1f7f558/src/types.ts#L85">types.ts:85</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1000,7 +1005,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">parallel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;parallel&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/3459465/src/types.ts#L75">types.ts:75</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1f7f558/src/types.ts#L76">types.ts:76</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1015,12 +1020,27 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">serial<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;serial&quot;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/3459465/src/types.ts#L78">types.ts:78</a></li>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1f7f558/src/types.ts#L79">types.ts:79</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>Concurrency of 1, handlers are queued</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+				<a name="toggle" class="tsd-anchor"></a>
+				<h3>toggle</h3>
+				<div class="tsd-signature tsd-kind-icon">toggle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;toggle&quot;</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/deanius/rx-helper/blob/1f7f558/src/types.ts#L88">types.ts:88</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Concurrency of 1, existing handler is canceled, and prevents new handlers</p>
 					</div>
 				</div>
 			</section>

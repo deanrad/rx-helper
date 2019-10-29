@@ -51,7 +51,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements Evented {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.1.0"
+  public static VERSION = "2.1.1"
 
   private event$: Observable<EventedItem>
   [key: string]: any
@@ -270,9 +270,6 @@ export class Agent implements Evented {
 
       // 3. Subscribe to the recipe accordingly
       switch (concurrency) {
-        case Concurrency.parallel:
-          recipe.subscribe(ender)
-          break
         case Concurrency.serial:
           if (prevSub && !prevSub.closed) {
             if (!prevEnd) {
@@ -307,6 +304,17 @@ export class Agent implements Evented {
             })
           }
 
+          break
+        case Concurrency.toggle:
+          if (prevSub && !prevSub.closed) {
+            prevSub.unsubscribe()
+          } else {
+            prevSub = recipe.subscribe(ender)
+          }
+          break
+        case Concurrency.parallel:
+        default:
+          recipe.subscribe(ender)
           break
       }
 

@@ -864,6 +864,35 @@ describe("Agent", () => {
               ])
             })
           })
+          describe("Toggle", () => {
+            it("should work like a light switch", async () => {
+              agent.on("concur", concurTester, {
+                type: "result",
+                concurrency: Concurrency.toggle
+              })
+
+              agent.process({ type: "concur", payload: 1 })
+              await after(10, () => {
+                agent.process({ type: "concur", payload: 2 })
+              })
+
+              await after(10, () => {
+                agent.process({ type: "concur", payload: 3 })
+              })
+
+              await after(50, null).toPromise()
+              expect(seen.map(a => a.payload)).toEqual([
+                1,
+                "now: 1",
+                "start: 1",
+                2,
+                3,
+                "now: 3",
+                "start: 3",
+                "end: 3"
+              ])
+            })
+          })
         })
       })
     })
