@@ -1039,8 +1039,29 @@ describe("Utilities", () => {
       return ++counter
     }
 
-    describe("First argument", () => {
-      it("should be the delay in msec", () => {})
+    describe.only("First argument", () => {
+      describe("If zero (0)", () => {
+        it("executes synchronously when subscribed", () => {
+          const effects = []
+
+          after(0, () => effects.push(1)).subscribe()
+          after(0, () => effects.push(2))
+
+          expect(effects).toEqual([1])
+      })
+      describe("Greater than 0", () => {
+        it("defers the function till then", async () => {
+          const effects = []
+          after(5, ()=>{
+            effects.push(1)
+          }).subscribe()
+
+          expect(effects).toEqual([])
+          await after(10, ()=>{
+            expect(effects).toEqual([1])
+          })
+        })
+      })
     })
     describe("Second argument", () => {
       describe("If a function", () => {
@@ -1068,6 +1089,14 @@ describe("Utilities", () => {
         // Wait long enough that we'd see a change if it was eager (but it's lazy)
         await timer(10).toPromise()
         expect(counter).not.toBeGreaterThan(0)
+      })
+      it("Can be obtained via subscribe", done => {
+        after(10, 1.1).subscribe(
+          n => {
+            expect(n).toEqual(1.1)
+            done()
+          }
+        )
       })
       it("Can be awaited directly", async () => {
         const result = await after(1, () => 2.718)

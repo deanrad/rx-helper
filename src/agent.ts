@@ -6,7 +6,8 @@ import {
   from,
   of,
   interval,
-  timer
+  timer,
+  defer
 } from "rxjs"
 import { filter as rxFilter, map, mapTo, first } from "rxjs/operators"
 import {
@@ -51,7 +52,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements Evented {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.1.2"
+  public static VERSION = "2.1.3"
 
   private event$: Observable<EventedItem>
   [key: string]: any
@@ -583,12 +584,21 @@ export const { process, trigger, filter, spy, on, subscribe, reset } = {
 
 /**
  * Delays the invocation of a function, for the number of milliseconds given.
- * Produces an Observable of the thunk's invocation and subsequent return value.
- * The optional 3rd argument can be a name string which will be passed to the thunk.
+ * For a delay of 0, the function is executed synchronously when .subscribe is called,
+ * whether called explicitly (subscribe/toPromise) or implicitly (await).
+ * Produces an Observable of the functions' return value.
+ * The optional 3rd argument can be a name string which will be passed to the function.
  * @returns An Observable of the object or thunk return value. It is 'thenable', so may also be awaited directly.
  * @example after(100, name => ({type: `Timeout-${name}`}), 'session_expired').subscribe(event => ...)
  */
 export const after = (ms: number, objOrFn: any, name = "") => {
+  if (ms === 0) {
+    if (objOrFn instanceof Function) {
+      return defer(() => of(objOrFn(name)))
+    } else {
+      return of(objOrFn)
+    }
+  }
   let returnObs: Observable<any>
   if (objOrFn instanceof Function) {
     returnObs = timer(ms).pipe(map(() => objOrFn(name)))
