@@ -125,7 +125,7 @@ export interface HandlerConfig {
   type?: string
   /** Alias for `type`. */
   triggerAs?: string
-  /** If provided, this will be called if cutoff mode terminates a handling. Parameter is {event}. */
+  /** If provided, this will be called if a mode (cutoff, toggle) terminates a handling. Parameter is {event}. */
   onCutoff?: Subscriber
   /** If provided, the context of the event being responded to will be forwarded */
   withContext?: Boolean

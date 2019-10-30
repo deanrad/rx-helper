@@ -36,7 +36,7 @@ export {
 
 // Export utility rxjs operators and our own custom
 export * from "./operators"
-export { from, of, empty, concat, merge, interval, zip } from "rxjs"
+export { from, of, empty, concat, merge, interval, zip, Observable } from "rxjs"
 
 // Leave this as require not import! https://github.com/webpack/webpack/issues/1019
 const assert = typeof require === "undefined" ? () => null : require("assert")
@@ -51,7 +51,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements Evented {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.1.1"
+  public static VERSION = "2.1.2"
 
   private event$: Observable<EventedItem>
   [key: string]: any
@@ -310,6 +310,11 @@ export class Agent implements Evented {
             prevSub.unsubscribe()
           } else {
             prevSub = recipe.subscribe(ender)
+            if (cutoffHandler) {
+              prevSub.add(() => {
+                if (!ender.isStopped) cutoffHandler({ event })
+              })
+            }
           }
           break
         case Concurrency.parallel:

@@ -866,9 +866,11 @@ describe("Agent", () => {
           })
           describe("Toggle", () => {
             it("should work like a light switch", async () => {
+              const cutoffHandler = jest.fn()
               agent.on("concur", concurTester, {
                 type: "result",
-                concurrency: Concurrency.toggle
+                concurrency: Concurrency.toggle,
+                onCutoff: cutoffHandler
               })
 
               agent.process({ type: "concur", payload: 1 })
@@ -891,6 +893,7 @@ describe("Agent", () => {
                 "start: 3",
                 "end: 3"
               ])
+              expect(cutoffHandler).toHaveBeenCalledWith({ event: { payload: 1, type: "concur" } })
             })
           })
         })
