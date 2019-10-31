@@ -1041,23 +1041,29 @@ describe("Utilities", () => {
 
     describe.only("First argument", () => {
       describe("If zero (0)", () => {
-        it("executes synchronously when subscribed", () => {
+        it("executes synchronously when subscribed", async () => {
           const effects = []
 
+          // sync
           after(0, () => effects.push(1)).subscribe()
-          after(0, () => effects.push(2))
+          // not subscribed
+          const effect2 = after(0, () => effects.push(2))
 
           expect(effects).toEqual([1])
+
+          effect2.subscribe()
+          expect(effects).toEqual([1, 2])
+        })
       })
       describe("Greater than 0", () => {
         it("defers the function till then", async () => {
           const effects = []
-          after(5, ()=>{
+          after(5, () => {
             effects.push(1)
           }).subscribe()
 
           expect(effects).toEqual([])
-          await after(10, ()=>{
+          await after(10, () => {
             expect(effects).toEqual([1])
           })
         })
@@ -1091,12 +1097,10 @@ describe("Utilities", () => {
         expect(counter).not.toBeGreaterThan(0)
       })
       it("Can be obtained via subscribe", done => {
-        after(10, 1.1).subscribe(
-          n => {
-            expect(n).toEqual(1.1)
-            done()
-          }
-        )
+        after(10, 1.1).subscribe(n => {
+          expect(n).toEqual(1.1)
+          done()
+        })
       })
       it("Can be awaited directly", async () => {
         const result = await after(1, () => 2.718)
