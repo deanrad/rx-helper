@@ -46,6 +46,10 @@ const seenFilter: Subscriber = ({ event }) => {
   return event
 }
 
+const eventModifyingFilter = ({ event }) => {
+  event.foreverChanged = true
+}
+
 // Updates our resettable array, and returns the event just seen
 const seenAdder: Subscriber = ({ event }) => {
   seen.push(event)
@@ -56,14 +60,6 @@ const seenAdder: Subscriber = ({ event }) => {
 const blowUpHandler: Subscriber = () => {
   blowupCount++
   throw new Error("NoPrintError - wont fail the suite")
-}
-
-// Dies in a fire upon subscription
-const blowUpOnSubscribe: Subscriber = () => {
-  return new Observable(() => {
-    blowupCount++
-    throw "Recipe threw when subscribed"
-  })
 }
 
 const returnsObsErr: Subscriber = () => throwError("Notified of Error")
@@ -197,6 +193,14 @@ describe("Agent", () => {
       expect(spy).not.toHaveBeenCalled()
       agent.process(anyEvent)
       expect(spy).toHaveBeenCalled()
+    })
+
+    it.only("can modify the event", () => {
+      agent.filter(true, eventModifyingFilter)
+
+      const result = agent.process(anyEvent)
+      expect(anyEvent).toHaveProperty("foreverChanged", true)
+      expect(result).toHaveProperty("foreverChanged", true)
     })
 
     it("can add a handler called immediately (ala groupby)", () => {
@@ -1039,7 +1043,7 @@ describe("Utilities", () => {
       return ++counter
     }
 
-    describe.only("First argument", () => {
+    describe("First argument", () => {
       describe("If zero (0)", () => {
         it("executes synchronously when subscribed", async () => {
           const effects = []
