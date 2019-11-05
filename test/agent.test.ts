@@ -50,6 +50,10 @@ const eventModifyingFilter = ({ event }) => {
   event.foreverChanged = true
 }
 
+const ignoreEventFilter = ({ event }) => {
+  event.type = "_ignored"
+}
+
 // Updates our resettable array, and returns the event just seen
 const seenAdder: Subscriber = ({ event }) => {
   seen.push(event)
@@ -195,12 +199,22 @@ describe("Agent", () => {
       expect(spy).toHaveBeenCalled()
     })
 
-    it.only("can modify the event", () => {
+    it("can modify the event", () => {
       agent.filter(true, eventModifyingFilter)
 
       const result = agent.process(anyEvent)
       expect(anyEvent).toHaveProperty("foreverChanged", true)
       expect(result).toHaveProperty("foreverChanged", true)
+    })
+
+    it("can modify the event type to prevent a handler to run", () => {
+      agent.filter(true, ignoreEventFilter)
+      const sawAnUnignored = jest.fn()
+
+      agent.on(({ event: { type } }) => type != "_ignored", sawAnUnignored)
+      //agent.trigger("_ignored")
+      agent.process(anyEvent)
+      expect(sawAnUnignored).not.toHaveBeenCalled()
     })
 
     it("can add a handler called immediately (ala groupby)", () => {
@@ -726,9 +740,8 @@ describe("Agent", () => {
         describe("Concurrency Modes", () => {
           const concurTester: Subscriber = ({ event }) =>
             concat(
-              // a sync result (will never be cutoff)
+              // sync results (will never be cutoff)
               of(`now: ${event.payload}`),
-              // a next-stack result
               after(0, `start: ${event.payload}`),
               // a delayed result
               after(20, `end: ${event.payload}`)
@@ -757,9 +770,9 @@ describe("Agent", () => {
               expect(seen.map(a => a.payload)).toEqual([
                 1,
                 "now: 1",
+                "start: 1",
                 2,
                 "now: 2",
-                "start: 1",
                 "start: 2",
                 "end: 1",
                 "end: 2"
@@ -781,9 +794,9 @@ describe("Agent", () => {
               expect(seen.map(a => a.payload)).toEqual([
                 1,
                 "now: 1",
+                "start: 1",
                 2,
                 3,
-                "start: 1",
                 "end: 1",
                 "now: 2",
                 "start: 2",
@@ -805,7 +818,7 @@ describe("Agent", () => {
               agent.process({ type: "concur", payload: 2 })
 
               await after(50, null).toPromise()
-              expect(seen.map(a => a.payload)).toEqual([1, "now: 1", 2, "start: 1", "end: 1"])
+              expect(seen.map(a => a.payload)).toEqual([1, "now: 1", "start: 1", 2, "end: 1"])
             })
           })
           describe("Cutoff", () => {
@@ -826,6 +839,7 @@ describe("Agent", () => {
               expect(seen.map(a => a.payload)).toEqual([
                 1,
                 "now: 1",
+                "start: 1",
                 2,
                 "now: 2",
                 "start: 2",
@@ -854,6 +868,7 @@ describe("Agent", () => {
               expect(seen.map(a => a.payload)).toEqual([
                 1,
                 "now: 1",
+                "start: 1",
                 2,
                 "cutoff: 1",
                 "now: 2",
