@@ -1,4 +1,4 @@
-import { Observable, Subscription } from "rxjs";
+import { Observable, Subscription, Subscribable } from "rxjs";
 import { HandlerConfig } from "./types";
 /**
  * Options that get mixed into the agent as read-only
@@ -166,4 +166,6 @@ export interface StreamingGetOptions {
 export interface StoreLike {
     dispatch(event: any): any;
     getState(): any;
+}
+export interface AwaitableObservable extends PromiseLike<any>, Subscribable<any> {
 }

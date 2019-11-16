@@ -1051,7 +1051,7 @@ describe("Agent", () => {
 })
 
 describe("Utilities", () => {
-  describe("after", () => {
+  describe.only("after", () => {
     let counter = 0
     // a function incrementing c
     const incrementCounter = () => {
@@ -1085,6 +1085,17 @@ describe("Utilities", () => {
           await after(10, () => {
             expect(effects).toEqual([1])
           })
+        })
+      })
+      describe("Positive infinity", () => {
+        it("is Observable.never", () => {
+          const finished = jest.fn()
+          // Never do this obviously!
+          // await after(Infinity, () => {})
+          after(Infinity, () => {}).subscribe({
+            complete: finished
+          })
+          expect(finished).not.toHaveBeenCalled
         })
       })
     })

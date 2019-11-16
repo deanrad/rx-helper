@@ -7,7 +7,7 @@ import {
   of,
   interval,
   timer,
-  defer
+  never
 } from "rxjs"
 import { filter as rxFilter, map, mapTo, first } from "rxjs/operators"
 import {
@@ -21,7 +21,8 @@ import {
   Subscriber,
   SubscribeConfig,
   HandlerConfig,
-  StoreLike
+  StoreLike,
+  AwaitableObservable
 } from "./types"
 
 export {
@@ -52,7 +53,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements Evented {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.1.3"
+  public static VERSION = "2.1.4"
 
   private event$: Observable<EventedItem>
   [key: string]: any
@@ -583,36 +584,28 @@ export const { process, trigger, filter, spy, on, subscribe, reset } = {
 }
 
 /**
- * Delays the invocation of a function, for the number of milliseconds given.
- * For a delay of 0, the function is executed synchronously when .subscribe is called,
- * whether called explicitly (subscribe/toPromise) or implicitly (await).
- * Produces an Observable of the functions' return value.
- * The optional 3rd argument can be a name string which will be passed to the function.
+ * Returns an Observable of the value, or result of the function call, after
+ * the number of milliseconds given. After is lazy and cancelable! So nothing happens until .subscribe
+ * is called explicitly (via subscribe) or implicitly (toPromise(), await).
+ * For a delay of 0, the function is executed synchronously when .subscribe is called.
+ * The optional 3rd argument can be a label which will be passed to the function.
  * @returns An Observable of the object or thunk return value. It is 'thenable', so may also be awaited directly.
- * @example after(100, name => ({type: `Timeout-${name}`}), 'session_expired').subscribe(event => ...)
+ * @example after(100, label => ({type: `Timeout-${label}`}), 'session_expired').subscribe(event => ...)
  */
-export const after = (ms: number, objOrFn: any, name = "") => {
-  if (ms === 0) {
-    if (objOrFn instanceof Function) {
-      return defer(() => of(objOrFn(name)))
-    } else {
-      return of(objOrFn)
-    }
-  }
-  let returnObs: Observable<any>
-  if (objOrFn instanceof Function) {
-    returnObs = timer(ms).pipe(map(() => objOrFn(name)))
-  } else {
-    returnObs = timer(ms).pipe(mapTo(objOrFn))
-  }
+export const after = (ms: number, objOrFn: any, label?: any): AwaitableObservable => {
+  const valueProducer = objOrFn instanceof Function ? () => objOrFn(label) : () => objOrFn
+  const delay = ms <= 0 ? of(0) : ms === Infinity ? never() : timer(ms)
+
+  const resultObs = delay.pipe(map(valueProducer))
 
   // after is a 'thenable, thus usable with await.
   // ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await
   // @ts-ignore
-  returnObs.then = function(resolve, reject) {
+  resultObs.then = function(resolve, reject) {
     return this.toPromise().then(resolve, reject)
   }
-  return returnObs
+  // @ts-ignore
+  return resultObs
 }
 
 /** Controls what types can be returned from an `on` handler:
