@@ -506,6 +506,20 @@ describe("Agent", () => {
       })
     })
 
+    describe("unsubscribe", () => {
+      it("cancels any running handler", async () => {
+        let finished = jest.fn()
+
+        let sub = agent.on("foo", () => after(50, () => finished()))
+
+        agent.trigger("foo")
+        await after(20, () => sub.unsubscribe())
+        await after(50, null)
+
+        expect(finished).not.toHaveBeenCalled()
+      })
+    })
+
     describe("error handling", () => {
       it.skip("should unsubscribe the offending handler", () => {})
     })
@@ -1051,7 +1065,7 @@ describe("Agent", () => {
 })
 
 describe("Utilities", () => {
-  describe.only("after", () => {
+  describe("after", () => {
     let counter = 0
     // a function incrementing c
     const incrementCounter = () => {

@@ -9,7 +9,7 @@ import {
   timer,
   never
 } from "rxjs"
-import { filter as rxFilter, map, mapTo, first } from "rxjs/operators"
+import { filter as rxFilter, map, takeUntil, first } from "rxjs/operators"
 import {
   Evented,
   Event,
@@ -53,7 +53,7 @@ const assert = typeof require === "undefined" ? () => null : require("assert")
  */
 export class Agent implements Evented {
   public static configurableProps = ["agentId"]
-  public static VERSION = "2.1.4"
+  public static VERSION = "2.1.5"
 
   private event$: Observable<EventedItem>
   [key: string]: any
@@ -216,8 +216,10 @@ export class Agent implements Evented {
    * @see EventMatcher
    */
   on(eventMatcher: EventMatcher, subscriber: Subscriber, config: HandlerConfig = {}) {
+    const removed = new Subject()
     const removeHandler = new Subscription(() => {
       this.allHandlers.delete(name)
+      removed.next()
     })
 
     const name = this.uniquifyName(config.name, eventMatcher, "handler")
@@ -252,7 +254,7 @@ export class Agent implements Evented {
       try {
         const eventStreamItem = { event, context, type: event.type, payload: event.payload }
         const subscriberReturnValue = subscriber(eventStreamItem, event.payload)
-        recipe = toObservable(subscriberReturnValue)
+        recipe = toObservable(subscriberReturnValue).pipe(takeUntil(removed))
       } catch (ex) {
         reportFail(ex)
         // will warn of unhandled rejection error if completed and completed.bad are not handled
@@ -593,7 +595,7 @@ export const { process, trigger, filter, spy, on, subscribe, reset } = {
  * @example after(100, label => ({type: `Timeout-${label}`}), 'session_expired').subscribe(event => ...)
  */
 export const after = (ms: number, objOrFn: any, label?: any): AwaitableObservable => {
-  const valueProducer = objOrFn instanceof Function ? () => objOrFn(label) : () => objOrFn
+  const valueProducer = typeof objOrFn === "function" ? () => objOrFn(label) : () => objOrFn
   const delay = ms <= 0 ? of(0) : ms === Infinity ? never() : timer(ms)
 
   const resultObs = delay.pipe(map(valueProducer))
