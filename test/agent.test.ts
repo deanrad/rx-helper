@@ -177,16 +177,6 @@ describe("Agent", () => {
     })
   })
 
-  it("has instance methods", () => {
-    const agent = new Agent()
-    expect(agent).toMatchObject({
-      process: expect.any(Function),
-      on: expect.any(Function),
-      filter: expect.any(Function),
-      subscribe: expect.any(Function)
-    })
-  })
-
   describe("#filter", () => {
     beforeEach(() => {
       agent = new Agent()
@@ -328,7 +318,7 @@ describe("Agent", () => {
             })
           })
         })
-        describe("type", async () => {
+        describe("type", () => {
           it("will wrap the handlers return Observable in FSAs of this type if provided", () => {
             expect.assertions(1)
             const seenNums = []
