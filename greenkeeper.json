@@ -1,0 +1,11 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "demos/express/package.json",
+        "demos/live/package.json",
+        "package.json"
+      ]
+    }
+  }
+}
