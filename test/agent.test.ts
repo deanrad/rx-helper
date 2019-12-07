@@ -177,16 +177,6 @@ describe("Agent", () => {
     })
   })
 
-  it.skip("has instance methods", () => {
-    const agent = new Agent()
-    expect(agent).toMatchObject({
-      process: expect.any(Function),
-      on: expect.any(Function),
-      filter: expect.any(Function),
-      subscribe: expect.any(Function)
-    })
-  })
-
   describe("#filter", () => {
     beforeEach(() => {
       agent = new Agent()
