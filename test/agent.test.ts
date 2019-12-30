@@ -10,8 +10,10 @@ import {
   after,
   toProps,
   ajaxStreamingGet,
-  randomId
+  randomId,
+  StoreAgent
 } from "../src/agent"
+import { init } from "@rematch/core"
 
 let seen: Array<Event> = []
 let callCount = 0
@@ -1344,6 +1346,30 @@ describe("Utilities", () => {
   })
 })
 
+describe("StoreAgent", () => {
+  let store
+  beforeEach(() => {
+    store = init({
+      models: {
+        count: {
+          state: 0,
+          reducers: {
+            increment: (state, { amount = 1 } = {}) => state + amount
+          }
+        }
+      }
+    })
+  })
+
+  it("Rolls up the effects of all events", () => {
+    const a = new StoreAgent(store)
+    expect(a.state).toEqual({ count: 0 })
+    a.trigger("count/increment")
+    expect(a.state).toEqual({ count: 1 })
+    a.trigger("count/increment", { amount: 2 })
+    expect(a.state).toEqual({ count: 3 })
+  })
+})
 //#region Util Functions Below
 const nullFn = () => null
 const anyEvent: Event = { type: "any" }

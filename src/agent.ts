@@ -464,11 +464,11 @@ export class StoreAgent extends Agent {
     return this._store.getState()
   }
 
-  constructor(config: AgentConfig, store: StoreLike) {
+  constructor(store: StoreLike, config: AgentConfig = {}) {
     super(config)
     this._store = store
 
-    this.filter(true, ({ event }) => this._store.dispatch(event))
+    this.filter(true, ({ event }) => this._store.dispatch(event), { name: "_store" })
   }
 }
 function getEventPredicate(eventMatcher: EventMatcher) {
