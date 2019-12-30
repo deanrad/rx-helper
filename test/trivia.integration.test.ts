@@ -11,23 +11,24 @@ describe("Multi-agent Trivia Game", () => {
   const pantsA = { answer: "No" }
 
   it.only("should play the whole game without error", () => {
-    // set up questions
-    player1.trigger("game/addQuestion", pantsQ)
-    expect(server.state.game).toMatchObject({
+    // It is the emcee that sets up the questions of a game
+    let expetectedState = {
       questions: [pantsQ]
-    })
+    }
+    emcee.trigger("game/addQuestion", pantsQ)
+    expect(server.state.game).toMatchObject(expetectedState)
 
     // Players joining (on their local device) are known by the server
-    player1.trigger("game/joinPlayer", { name: "Declan" })
     const joinedState = {
       players: [{ name: "Declan" }]
     }
+    player1.trigger("game/joinPlayer", { name: "Declan" })
     expect(server.state.game).toMatchObject(joinedState)
     expect(server.state.game).toMatchObject(joinedState)
 
     // begin game
-    emcee.process({ type: "game/nextQuestion", payload: pantsQ, meta: { push: true } })
-    const roundUnanswered = {
+    emcee.process({ type: "game/nextQuestion", payload: pantsQ })
+    expetectedState = {
       game: {
         status: "playing",
         questions: []
@@ -36,8 +37,8 @@ describe("Multi-agent Trivia Game", () => {
         question: Object.assign(pantsQ, pantsA)
       }
     }
-    expect(server.state).toMatchObject(roundUnanswered)
-    expect(player1.state).toMatchObject(roundUnanswered)
+    expect(server.state).toMatchObject(expetectedState)
+    expect(player1.state).toMatchObject(expetectedState)
     // players answer when the round changes
 
     const playerAnswer = { from: player1.agentId, choice: "No" }
@@ -52,6 +53,7 @@ describe("Multi-agent Trivia Game", () => {
 
     // Once the next question is chosen by the emcee, saveResponses
     // will process just prior to nextQuestion
+    // LEFTOFF- check the rematch/core API for why this isn't right with 1.3.0
     emcee.process({
       type: "root/saveResponses",
       payload: playerAnswer
@@ -81,9 +83,12 @@ describe("Multi-agent Trivia Game", () => {
 
     // Follow the topology.. Each player to the servers, the server to players, emcee
     players.forEach(player => {
-      player.filter(["game/addQuestion", "game/joinPlayer", "game/nextQuestion"], ({ event }) => {
-        event.relay !== false && server.process(event)
-      })
+      player.filter(
+        ["game/addQuestion", "game/joinPlayer", "game/nextQuestion", "round/respond"],
+        ({ event }) => {
+          event.relay !== false && server.process(event)
+        }
+      )
     })
 
     server.filter(["game/nextQuestion"], ({ event }) => {
