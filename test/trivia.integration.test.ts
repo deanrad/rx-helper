@@ -10,53 +10,6 @@ describe("Multi-agent Trivia Game", () => {
   const pantsQ = { prompt: "Pants?", choices: ["Yes", "No"] }
   const pantsA = { answer: "No" }
 
-  beforeAll(() => {
-    moderator = new StoreAgent({ agentId: "moderator" }, initStore(triviaStoreConfig))
-    player1 = new StoreAgent({ agentId: "player1" }, initStore(triviaStoreConfig))
-    emcee = new StoreAgent({ agentId: "emcee" }, initStore(triviaStoreConfig))
-
-    // The topology defines who sends events to whom
-    const topology = {
-        player1: [moderator],
-        emcee: [moderator],
-        moderator: [player1, emcee]
-      }
-
-      // Set up agents' properties and relationships to each other
-    ;[moderator, player1, emcee].forEach(agent => {
-      // Stamp events with agentId
-      agent.filter(true, ({ event }) => {
-        event.payload.agentId = agent.agentId
-      })
-
-      // Agents send events to the others in their topology
-      const others = topology[agent.agentId]
-      agent.filter(
-        () => true,
-        ({ event }) => {
-          const meta = event.meta || {}
-
-          // events marked meta.push false are not even sent to the server
-          if (meta["push"] === false) return
-
-          // We send out events to others but tell them not to push them
-          others.forEach(targetAgent => {
-            targetAgent.process({
-              ...event,
-              meta: {
-                ...(event.meta || {}),
-                // Except, we can tell the moderator to push to all others
-                // This will change once diffs of the store are filtered and
-                // pushed, instead of the events that caused them.
-                push: targetAgent.agentId === "moderator" ? true : false
-              }
-            })
-          })
-        }
-      )
-    })
-  })
-
   it.only("should play the whole game without error", () => {
     // set up questions
     player1.process({ type: "game/addQuestion", payload: pantsQ })
@@ -110,5 +63,52 @@ describe("Multi-agent Trivia Game", () => {
     })
     expect(emcee.state.round.question).toMatchObject(pantsQ)
     expect(emcee.state.round.responses).toHaveLength(0)
+  })
+
+  beforeAll(() => {
+    moderator = new StoreAgent(initStore(triviaStoreConfig), { agentId: "moderator" })
+    player1 = new StoreAgent(initStore(triviaStoreConfig), { agentId: "player1" })
+    emcee = new StoreAgent(initStore(triviaStoreConfig), { agentId: "emcee" })
+
+    // The topology defines who sends events to whom
+    const topology = {
+      player1: [moderator],
+      emcee: [moderator],
+      moderator: [player1, emcee]
+    }
+
+    // Set up agents' properties and relationships to each other
+    ;[moderator, player1, emcee].forEach(agent => {
+      // Stamp events with agentId
+      agent.filter(true, ({ event }) => {
+        event.payload.agentId = agent.agentId
+      })
+
+      // Agents send events to the others in their topology
+      const others = topology[agent.agentId]
+      agent.filter(
+        () => true,
+        ({ event }) => {
+          const meta = event.meta || {}
+
+          // events marked meta.push false are not even sent to the server
+          if (meta["push"] === false) return
+
+          // We send out events to others but tell them not to push them
+          others.forEach(targetAgent => {
+            targetAgent.process({
+              ...event,
+              meta: {
+                ...(event.meta || {}),
+                // Except, we can tell the moderator to push to all others
+                // This will change once diffs of the store are filtered and
+                // pushed, instead of the events that caused them.
+                push: targetAgent.agentId === "moderator" ? true : false
+              }
+            })
+          })
+        }
+      )
+    })
   })
 })
