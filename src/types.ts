@@ -1,5 +1,4 @@
 import { Observable, Subscription, Subscribable } from "rxjs"
-import { HandlerConfig } from "./types"
 
 /**
  * Options that get mixed into the agent as read-only
@@ -183,4 +182,6 @@ export interface StoreLike {
   getState(): any
 }
 
-export interface AwaitableObservable extends PromiseLike<any>, Subscribable<any> {}
+export interface AwaitableObservable extends PromiseLike<any>, Subscribable<any> {
+  toPromise(): Promise<any>
+}
