@@ -30,7 +30,5 @@ module.exports = {
         status: "playing"
       }
     }
-  },
-  // Events other reducers will refer to are listed below
-  nextQuestion: "game/nextQuestion"
+  }
 }

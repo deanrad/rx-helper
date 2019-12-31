@@ -1,14 +1,13 @@
 // The round represents the current question, and any answers
 // See https://rematch.gitbooks.io/rematch/docs/api.html#reducers
 // Get the event name provided instead of having a magic string.
-const { nextQuestion } = require("./game")
 module.exports = {
   state: {
     responses: [],
     summary: {} // of answers chosen
   },
   reducers: {
-    [nextQuestion]: (state, question) => {
+    "game/nextQuestion": (state, question) => {
       const summary = question.choices.reduce((o, choice) => ({ ...o, [choice]: 0 }), {})
       return {
         ...state,
