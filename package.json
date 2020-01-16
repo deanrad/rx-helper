@@ -114,7 +114,7 @@
   "devDependencies": {
     "@rematch/core": "^1.0.0-beta.5",
     "@types/jest": "^24.0.23",
-    "@types/node": "^12.12.14",
+    "@types/node": "^13.1.7",
     "colors": "^1.1.2",
     "commitizen": "^4.0.3",
     "coveralls": "^3.0.0",
