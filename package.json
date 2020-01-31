@@ -106,7 +106,7 @@
     }
   },
   "dependencies": {
-    "@size-limit/preset-big-lib": "^2.2.2"
+    "@size-limit/preset-big-lib": "^3.0.1"
   },
   "peerDependencies": {
     "rxjs": ">=6.1.0"
