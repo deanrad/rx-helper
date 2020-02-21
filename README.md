@@ -14,7 +14,7 @@
 ![twitter link](https://img.shields.io/badge/twitter-@deaniusol-55acee.svg)
 
 ```
-npm install -S rxjs rx-helper
+npm install -S polyrhythm
 ```
 
 ## What Is Rx-Helper?
