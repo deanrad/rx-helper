@@ -11,6 +11,6 @@
   "license": "ISC",
   "devDependencies": {
     "rx-helper": ">=2.0.0",
-    "morgan": "^1.9.0"
+    "morgan": "^1.10.0"
   }
 }
