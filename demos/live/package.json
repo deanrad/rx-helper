@@ -13,7 +13,7 @@
   "dependencies": {
     "rx-helper": ">=2.0.0",
     "rxjs": "^6.3.3",
-    "rxjs-compat": "^6.3.3",
+    "rxjs-compat": "^6.5.5",
     "say": "^0.16.0"
   }
 }
