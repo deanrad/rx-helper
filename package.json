@@ -121,7 +121,7 @@
     "cross-env": "^6.0.3",
     "cz-conventional-changelog": "^3.0.2",
     "faker": "^4.1.0",
-    "husky": ">=1.0.0",
+    "husky": ">=4.2.4",
     "inquirer": "^7.0.0",
     "jest": "^24.9.0",
     "keypress": "^0.2.1",
