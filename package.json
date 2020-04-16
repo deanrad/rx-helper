@@ -133,7 +133,7 @@
     "replace-in-file": "^4.2.0",
     "rimraf": "^3.0.0",
     "say": "^0.16.0",
-    "semantic-release": "^15.4.1",
+    "semantic-release": "^17.0.5",
     "travis-deploy-once": "^5.0.0",
     "ts-jest": ">=23.10.0",
     "ts-loader": "^6.2.1",
