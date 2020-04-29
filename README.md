@@ -45,7 +45,7 @@ Handler functions can be written to explicitly call `trigger` or `process` on th
 - Take advantage the Observable datatype - a type that is a superset of Promise, with a high degree of performance-tunability.
 - Solve performance and timing issues declaratively, keeping code mostly free from those details by applying modes for these common use cases:
 
-![](https://s3.amazonaws.com/www.deanius.com/ConcurModes.png)
+![](https://s3.amazonaws.com/www.deanius.com/ConcurModes2.png)
 
 ## What kinds of apps can I build with it?
 
